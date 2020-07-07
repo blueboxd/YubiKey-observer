@@ -336,11 +336,13 @@
         </menu>
         <customObject id="494" customClass="YubiKey_observerAppDelegate">
             <connections>
+                <outlet property="addKeyMenuItem" destination="HJf-zz-hAk" id="wIN-4d-8ON"/>
                 <outlet property="pinDialog" destination="543" id="583"/>
                 <outlet property="pinTextField" destination="552" id="582"/>
                 <outlet property="prefWindow" destination="590" id="593"/>
                 <outlet property="prefsController" destination="622" id="632"/>
                 <outlet property="rememberPINCheckbox" destination="549" id="581"/>
+                <outlet property="removeKeyMenuItem" destination="5ao-Cp-pL8" id="gXC-YZ-V9r"/>
                 <outlet property="sshkeysSubMenu" destination="pzj-C8-Z08" id="8Jq-TM-ls2"/>
                 <outlet property="statusMenu" destination="627" id="631"/>
                 <outlet property="yubikeysSubMenu" destination="rac-g7-ufQ" id="UUT-hG-7lX"/>
@@ -392,9 +394,9 @@
                         </secureTextFieldCell>
                         <connections>
                             <accessibilityConnection property="link" destination="553" id="569"/>
-                            <binding destination="494" name="value" keyPath="self.pinText" id="678">
+                            <binding destination="494" name="value" keyPath="self.pinText" id="cXN-mA-HdU">
                                 <dictionary key="options">
-                                    <integer key="NSContinuouslyUpdatesValue" value="1"/>
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                 </dictionary>
                             </binding>
                             <outlet property="nextKeyView" destination="549" id="570"/>
@@ -483,7 +485,6 @@ Gw
                                 </button>
                             </subviews>
                         </view>
-                        <font key="titleFont" metaFont="message" size="11"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="Actions on device removal" id="598">
                         <rect key="frame" x="17" y="237" width="403" height="96"/>
@@ -528,7 +529,6 @@ Gw
                                 </button>
                             </subviews>
                         </view>
-                        <font key="titleFont" metaFont="message" size="11"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="PIN cache policy" id="603">
                         <rect key="frame" x="17" y="149" width="403" height="84"/>
@@ -588,7 +588,6 @@ Gw
                                 </textField>
                             </subviews>
                         </view>
-                        <font key="titleFont" metaFont="message" size="11"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="ssh custom paths" id="614">
                         <rect key="frame" x="17" y="16" width="403" height="129"/>
@@ -641,13 +640,13 @@ Gw
                                 </textField>
                             </subviews>
                         </view>
-                        <font key="titleFont" metaFont="message" size="11"/>
                     </box>
                 </subviews>
             </view>
             <point key="canvasLocation" x="202" y="90"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
+        <objectController id="kv6-7n-pSq"/>
         <menu id="627" userLabel="StatusMenu">
             <items>
                 <menuItem title="YubiKeys inserted" id="6Rr-dg-N9X">
@@ -663,9 +662,15 @@ Gw
                 <menuItem isSeparatorItem="YES" id="ZJe-2e-Gh5"/>
                 <menuItem title="Add keys" id="HJf-zz-hAk">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="addKeyAction:" target="494" id="wfX-tJ-FkT"/>
+                    </connections>
                 </menuItem>
                 <menuItem title="Remove keys" hidden="YES" id="5ao-Cp-pL8">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="removeKeyAction:" target="494" id="tKi-4j-B0b"/>
+                    </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="HkT-20-7pz"/>
                 <menuItem title="Settings..." id="628" userLabel="Preferences">
@@ -684,7 +689,7 @@ Gw
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-8" y="-312"/>
+            <point key="canvasLocation" x="65" y="-57"/>
         </menu>
     </objects>
     <resources>

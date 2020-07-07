@@ -7,6 +7,60 @@
 //
 
 #import "YubiKey_observerAppDelegate.h"
+#include <IOKit/IOKitLib.h>
+#include <IOKit/IOMessage.h>
+#include <IOKit/IOCFPlugIn.h>
+#include <IOKit/usb/IOUSBLib.h>
+#include <IOKit/hid/IOHIDKeys.h>
+#include <IOKit/pwr_mgt/IOPMLib.h>
+
+#define kExecSSHAddOnInsertionKey @"execSSHAddOnInsertion"
+#define kExecSSHAddOnRemovalKey @"execSSHAddOnRemoval"
+#define kSleepScreenOnRemovalKey @"sleepScreen"
+#define kLockScreenOnRemovalKey @"lockScreen"
+#define kWakeScreenOnInsertionKey @"wakeScreen"
+#define kIsPINExpiresKey @"pinExpires"
+#define kPINExpiresInKey @"expiresIn"
+#define kPKCSPathKey @"pkcsPath"
+#define kSSHAddPathKey @"sshAddPath"
+
+#define sshKeyID @"id"
+#define sshKeyBits @"bits"
+#define sshKeyHash @"hash"
+#define sshKeyAlgo @"algo"
+#define sshKeyOurs @"ours"
+
+@interface YubiKey_observerAppDelegate() {
+	NSStatusItem *statusItem;
+	NSMutableDictionary<NSString*, NSMenuItem*> *yubikeyMenuItemArray;
+	NSString *pin;
+}
+
+@property (strong) IBOutlet NSUserDefaultsController *prefsController;
+
+@property (strong) IBOutlet NSWindow *pinDialog;
+@property (nonatomic) IBOutlet NSButton *rememberPINCheckbox;
+@property (nonatomic) IBOutlet NSTextField * pinTextField;
+@property (nonatomic) IBOutlet NSString *pinText;
+
+@property (strong) IBOutlet NSWindow *prefWindow;
+
+@property (strong) IBOutlet NSMenu *statusMenu;
+@property (strong) IBOutlet NSMenu *yubikeysSubMenu;
+@property (strong) IBOutlet NSMenu *sshkeysSubMenu;
+
+@property (strong) IBOutlet NSMenuItem *addKeyMenuItem;
+@property (strong) IBOutlet NSMenuItem *removeKeyMenuItem;
+
+- (IBAction) confirmButtonAction:(id)sender;
+- (IBAction) cancelButtonAction:(id)sender;
+
+- (IBAction) forgetPINAction:(id)sender;
+
+- (IBAction) preferenceAction:(id)sender;
+- (IBAction) quitAction:(id)sender;
+
+@end
 
 @implementation YubiKey_observerAppDelegate
 
@@ -15,21 +69,23 @@
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
 		kPKCSPathKey:@"/usr/local/lib/libykcs11.dylib",
-		kSSHADDPathKey:@"/usr/local/bin/ssh-add"
+		kSSHAddPathKey:@"/usr/local/bin/ssh-add"
 	}];
-
 
 	NSArray *keys = [self enumerateSSHKeys];
 	[self updateSSHKeysMenu:keys];
+	BOOL isKeyAdded = [self isSSHKeyAdded];
+	[self.addKeyMenuItem setHidden:isKeyAdded];
+	[self.removeKeyMenuItem setHidden:!isKeyAdded];
 
-	self.yubikeyMenuItemArray = [NSMutableDictionary<NSString*, NSMenuItem*> new];
+	yubikeyMenuItemArray = [NSMutableDictionary<NSString*, NSMenuItem*> new];
 	
-	self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
-	self.statusItem.menu = self.statusMenu;
-	self.statusItem.highlightMode = YES;
-	self.statusItem.image = [NSImage imageNamed:@"yubikey"];
+	statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
+	statusItem.menu = self.statusMenu;
+	statusItem.highlightMode = YES;
+	statusItem.image = [NSImage imageNamed:@"yubikey"];
 	
-	self.pin = nil;
+	pin = nil;
 
 	kern_return_t kr = [self initMatchingNotification];
 	if(kr!=KERN_SUCCESS) {
@@ -64,8 +120,8 @@
 }
 
 - (NSString*) getPIN {
-	if(self.pin)
-		return self.pin;
+	if(pin)
+		return pin;
 
 	[self.rememberPINCheckbox setState:NSOnState];
 	NSString *enteredPIN = nil;
@@ -75,7 +131,7 @@
 		enteredPIN  = [self.pinTextField stringValue];
 		rememberPIN = [self.rememberPINCheckbox state];
 		if(rememberPIN) {
-			self.pin = enteredPIN;
+			pin = enteredPIN;
 		}
 
 		if ([[[self.prefsController values] valueForKey:kIsPINExpiresKey] intValue]) {
@@ -95,20 +151,39 @@
 
 - (IBAction) forgetPINAction:(id)sender {
 	NSLog(@"forgetting PIN");
-	self.pin = nil;
+	pin = nil;
+}
+
+- (IBAction)addKeyAction:(id)sender {
+	if([self isSSHKeyAdded])
+		return;
+	[self addSSHKey];
+}
+
+- (IBAction)removeKeyAction:(id)sender {
+	if(![self isSSHKeyAdded])
+		return;
+	[self removeSSHKey];
+}
+
+- (IBAction)dummyAction:(id)sender {
+
 }
 
 - (void) updateSSHKeysMenu:(NSArray*)keys {
 	[self.sshkeysSubMenu removeAllItems];
 	for (NSDictionary *key in keys) {
 		NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t%@\n\t[%@/%@]",key[sshKeyHash],key[sshKeyID],key[sshKeyAlgo],key[sshKeyBits]];
-		NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:nil keyEquivalent:@""];
+		NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:@selector(dummyAction:) keyEquivalent:@""];
 		NSDictionary *attributes = @{
 			NSFontAttributeName: [NSFont menuFontOfSize:[NSFont smallSystemFontSize]],
 	//		NSForegroundColorAttributeName: [NSColor textColor]
 		};
 		NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:[newMenuItem title] attributes:attributes];
 		[newMenuItem setAttributedTitle:attributedTitle];
+		if([key[sshKeyOurs] intValue])
+			//[newMenuItem setImage:[NSImage imageNamed:@"yubikey-c"]];
+			[newMenuItem setState:NSOnState];
 		[self.sshkeysSubMenu addItem:newMenuItem];
 	}
 }
@@ -121,7 +196,7 @@
 	  @"-E",
 	  @"md5"
 	];
-	result = [self execSystemCmd:[[self.prefsController values] valueForKey:kSSHADDPathKey] withArgs:args withStdIn:nil withStdOut:&stdoutStr withStdErr:&stderrStr];
+	result = [self execSystemCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil withStdOut:&stdoutStr withStdErr:&stderrStr];
 	if(result)
 		return nil;
 	
@@ -130,11 +205,20 @@
 	for (NSString *line in lines) {
 		if(![line length])continue;
 		NSArray *elements = [line componentsSeparatedByString:@" "];
+		NSString *pkcsPath = [[self.prefsController values] valueForKey:kPKCSPathKey];
+		NSString *pkcsRealPath = [pkcsPath stringByResolvingSymlinksInPath];
+		NSNumber *ours = @NO;
+		NSString *keyID = elements[2];
+		
+		if([keyID isEqualToString:pkcsPath] || [keyID isEqualToString:pkcsRealPath])
+			ours = @YES;
+
 		[keys addObject:@{
-			sshKeyID:elements[2],
+			sshKeyID:keyID,
 			sshKeyBits:elements[0],
 			sshKeyHash:elements[1],
 			sshKeyAlgo:[elements[3] substringWithRange:NSMakeRange(1, ([elements[3] length]-2))],
+			sshKeyOurs:ours,
 		}];
 	}
 	NSLog(@"%@",keys);
@@ -143,10 +227,8 @@
 
 - (BOOL) isSSHKeyAdded {
 	NSArray *keys = [self enumerateSSHKeys];
-	NSString *pkcsPath = [[self.prefsController values] valueForKey:kPKCSPathKey];
-	NSString *pkcsRealPath = [pkcsPath stringByResolvingSymlinksInPath];
 	for (NSDictionary *key in keys) {
-		if([key[sshKeyID] isEqualToString:pkcsPath] || [key[sshKeyID] isEqualToString:pkcsRealPath])
+		if([key[sshKeyOurs] intValue])
 			return YES;
 	}
 	return NO;
@@ -161,8 +243,8 @@
 	}
 
 	NSArray *args = @[
-	  @"-s",
-	  [[self.prefsController values] valueForKey:kPKCSPathKey],
+		@"-s",
+		[[self.prefsController values] valueForKey:kPKCSPathKey],
 	];
 
 	NSArray *stdinArgs = @[
@@ -174,11 +256,17 @@
 
 	NSString *stdoutStr, *stderrStr;
 	uint32_t result;
-	result = [self execSystemCmd:[[self.prefsController values] valueForKey:kSSHADDPathKey] withArgs:args withStdIn:stdinArgs withStdOut:&stdoutStr withStdErr:&stderrStr];
-	if (!result)
-		self.statusItem.image = [NSImage imageNamed:@"yubikey-ok"];
-	else
-		self.statusItem.image = [NSImage imageNamed:@"yubikey-ng"];
+	result = [self execSystemCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:stdinArgs withStdOut:&stdoutStr withStdErr:&stderrStr];
+	if (!result) {
+		statusItem.image = [NSImage imageNamed:@"yubikey-ok"];
+		[self.addKeyMenuItem setHidden:YES];
+		[self.removeKeyMenuItem setHidden:NO];
+	} else {
+		statusItem.image = [NSImage imageNamed:@"yubikey-ng"];
+	}
+	
+	NSArray *keys = [self enumerateSSHKeys];
+	[self updateSSHKeysMenu:keys];
 }
 
 - (void) removeSSHKey {
@@ -189,7 +277,14 @@
 	];
 	NSString *stdoutStr, *stderrStr;
 	uint32_t result;
-	result = [self execSystemCmd:[[self.prefsController values] valueForKey:kSSHADDPathKey] withArgs:args withStdIn:@[] withStdOut:&stdoutStr withStdErr:&stderrStr];
+	result = [self execSystemCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:@[] withStdOut:&stdoutStr withStdErr:&stderrStr];
+	if(!result) {
+		statusItem.image = [NSImage imageNamed:@"yubikey-c"];
+		[self.addKeyMenuItem setHidden:NO];
+		[self.removeKeyMenuItem setHidden:YES];
+	}
+	NSArray *keys = [self enumerateSSHKeys];
+	[self updateSSHKeysMenu:keys];
 }
 
 - (NSString*) getPKeyFromDevDict:(NSDictionary*) dev {
@@ -198,23 +293,23 @@
 
 - (void) deviceAdded:(NSDictionary*)dev {
 	NSLog(@"deviceAdded:%@(SN#%@)",dev[@kUSBProductString],dev[@kUSBSerialNumberString]);
-	self.statusItem.image = [NSImage imageNamed:@"yubikey-c"];
+	statusItem.image = [NSImage imageNamed:@"yubikey-c"];
 	NSString *newKeyString = [NSString stringWithFormat:@"%@ (SN#%@) at %@",dev[@kUSBProductString],dev[@kUSBSerialNumberString],dev[@kUSBDevicePropertyLocationID]];
-	NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:nil keyEquivalent:@""];
+	NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:@selector(dummyAction:) keyEquivalent:@""];
 	NSDictionary *attributes = @{
 		NSFontAttributeName: [NSFont menuFontOfSize:[NSFont smallSystemFontSize]],
 //		NSForegroundColorAttributeName: [NSColor textColor]
 	};
 	NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:[newMenuItem title] attributes:attributes];
 	[newMenuItem setAttributedTitle:attributedTitle];
-	self.yubikeyMenuItemArray[[self getPKeyFromDevDict:dev]] = newMenuItem;
+	yubikeyMenuItemArray[[self getPKeyFromDevDict:dev]] = newMenuItem;
 	[self.yubikeysSubMenu addItem:newMenuItem];
 
-	if([[[self.prefsController values] valueForKey:kExecSSHADDOnInsertionKey] intValue]){
+	if([[[self.prefsController values] valueForKey:kExecSSHAddOnInsertionKey] intValue]){
 		if(![self isSSHKeyAdded])
 			[self addSSHKey];
 		else
-			self.statusItem.image = [NSImage imageNamed:@"yubikey-ok"];
+			statusItem.image = [NSImage imageNamed:@"yubikey-ok"];
 	}
 
 	if([[[self.prefsController values] valueForKey:kWakeScreenOnInsertionKey] intValue]){
@@ -226,12 +321,12 @@
 
 - (void) deviceRemoved:(NSDictionary*)dev {
 	NSLog(@"deviceRemoved:%@(SN#%@)",dev[@kUSBProductString],dev[@kUSBSerialNumberString]);
-	self.statusItem.image = [NSImage imageNamed:@"yubikey"];
-	NSMenuItem *targetMenuItem = self.yubikeyMenuItemArray[[self getPKeyFromDevDict:dev]];
+	statusItem.image = [NSImage imageNamed:@"yubikey"];
+	NSMenuItem *targetMenuItem = yubikeyMenuItemArray[[self getPKeyFromDevDict:dev]];
 	if(targetMenuItem)
 		[self.yubikeysSubMenu removeItem:targetMenuItem];
 	
-	if([[[self.prefsController values] valueForKey:kExecSSHADDOnRemovalKey] intValue]){
+	if([[[self.prefsController values] valueForKey:kExecSSHAddOnRemovalKey] intValue]){
 		[self removeSSHKey];
 	}
 	
@@ -314,7 +409,7 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 		CFDictionaryRef dict = GetKeyInfo(usbDevice);
 		if(dict) {
 			NSLog(@"initial device found:%@",dict);
-			self.statusItem.image = [NSImage imageNamed:@"yubikey-c"];
+			statusItem.image = [NSImage imageNamed:@"yubikey-c"];
 			[((YubiKey_observerAppDelegate*)[NSApp delegate]) deviceAdded:(__bridge_transfer NSDictionary*)dict];
 		}
 	}
