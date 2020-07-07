@@ -11,6 +11,7 @@
 #include <IOKit/IOMessage.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
+#include <IOKit/hid/IOHIDKeys.h>
 #include <IOKit/pwr_mgt/IOPMLib.h>
 
 #define kExecSSHADDOnInsertionKey @"values.execSSHAddOnInsertion"
