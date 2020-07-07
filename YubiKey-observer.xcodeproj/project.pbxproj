@@ -258,10 +258,20 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = (
+					"-Wno-double-promotion",
+					"-Wno-gnu-statement-expression",
+					"-Wno-objc-messaging-id",
+					"-Weverything",
+					"-Wno-direct-ivar-access",
+					"-Wno-reserved-id-macro",
+					"-Wno-missing-variable-declarations",
+					"-Wno-undef",
+					"-Wno-objc-missing-property-synthesis",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "cx.lab.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "YubiKey-observer";
-				SDKROOT = macosx10.13;
+				SDKROOT = macosx10.14;
 			};
 			name = Debug;
 		};
@@ -284,10 +294,20 @@
 					"\"$(SRCROOT)\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = (
+					"-Wno-double-promotion",
+					"-Wno-gnu-statement-expression",
+					"-Wno-objc-messaging-id",
+					"-Weverything",
+					"-Wno-direct-ivar-access",
+					"-Wno-reserved-id-macro",
+					"-Wno-missing-variable-declarations",
+					"-Wno-undef",
+					"-Wno-objc-missing-property-synthesis",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "cx.lab.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "YubiKey-observer";
-				SDKROOT = macosx10.13;
+				SDKROOT = macosx10.14;
 			};
 			name = Release;
 		};
@@ -338,7 +358,7 @@
 					dynamic_lookup,
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx10.13;
+				SDKROOT = macosx10.14;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = x86_64;
 			};
@@ -388,7 +408,7 @@
 					dynamic_lookup,
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx10.13;
+				SDKROOT = macosx10.14;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = x86_64;
 			};

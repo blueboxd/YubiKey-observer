@@ -31,9 +31,6 @@
 #define sshKeyOurs @"ours"
 
 @interface YubiKey_observerAppDelegate() {
-	NSStatusItem *statusItem;
-	NSMutableDictionary<NSString*, NSMenuItem*> *yubikeyMenuItemArray;
-	NSString *pin;
 }
 
 @property (strong) IBOutlet NSUserDefaultsController *prefsController;
@@ -62,7 +59,11 @@
 
 @end
 
-@implementation YubiKey_observerAppDelegate
+@implementation YubiKey_observerAppDelegate {
+	NSStatusItem *statusItem;
+	NSMutableDictionary<NSString*, NSMenuItem*> *yubikeyMenuItemArray;
+	NSString *pin;
+}
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	unsetenv("DISPLAY");
@@ -155,6 +156,7 @@
 }
 
 - (IBAction)addKeyAction:(id)sender {
+
 	if([self isSSHKeyAdded])
 		return;
 	[self addSSHKey];
@@ -174,9 +176,10 @@
 	[self.sshkeysSubMenu removeAllItems];
 	for (NSDictionary *key in keys) {
 		NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t%@\n\t[%@/%@]",key[sshKeyHash],key[sshKeyID],key[sshKeyAlgo],key[sshKeyBits]];
-		NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:@selector(dummyAction:) keyEquivalent:@""];
+		SEL action = [key[sshKeyOurs] intValue]?@selector(dummyAction:):nil;
+		NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:action keyEquivalent:@""];
 		NSDictionary *attributes = @{
-			NSFontAttributeName: [NSFont menuFontOfSize:[NSFont smallSystemFontSize]],
+			NSFontAttributeName: [NSFont userFixedPitchFontOfSize:[NSFont smallSystemFontSize]],
 	//		NSForegroundColorAttributeName: [NSColor textColor]
 		};
 		NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:[newMenuItem title] attributes:attributes];
@@ -294,10 +297,10 @@
 - (void) deviceAdded:(NSDictionary*)dev {
 	NSLog(@"deviceAdded:%@(SN#%@)",dev[@kUSBProductString],dev[@kUSBSerialNumberString]);
 	statusItem.image = [NSImage imageNamed:@"yubikey-c"];
-	NSString *newKeyString = [NSString stringWithFormat:@"%@ (SN#%@) at %@",dev[@kUSBProductString],dev[@kUSBSerialNumberString],dev[@kUSBDevicePropertyLocationID]];
+	NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t[SN#%@] at %@",dev[@kUSBProductString],dev[@kUSBSerialNumberString],dev[@kUSBDevicePropertyLocationID]];
 	NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:@selector(dummyAction:) keyEquivalent:@""];
 	NSDictionary *attributes = @{
-		NSFontAttributeName: [NSFont menuFontOfSize:[NSFont smallSystemFontSize]],
+		NSFontAttributeName: [NSFont userFixedPitchFontOfSize:[NSFont smallSystemFontSize]],
 //		NSForegroundColorAttributeName: [NSColor textColor]
 	};
 	NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:[newMenuItem title] attributes:attributes];
