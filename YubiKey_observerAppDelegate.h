@@ -24,6 +24,11 @@
 #define kPKCSPathKey @"pkcsPath"
 #define kSSHADDPathKey @"sshAddPath"
 
+#define sshKeyID @"id"
+#define sshKeyBits @"bits"
+#define sshKeyHash @"hash"
+#define sshKeyAlgo @"algo"
+
 @interface YubiKey_observerAppDelegate : NSObject <NSApplicationDelegate> {
 	
 }

@@ -10,10 +10,6 @@
 
 @implementation YubiKey_observerAppDelegate
 
-void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
-void IOServiceTerminatedCallback(void* refcon, io_iterator_t iterator);
-
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	unsetenv("DISPLAY");
 	
@@ -22,7 +18,11 @@ void IOServiceTerminatedCallback(void* refcon, io_iterator_t iterator);
 		kSSHADDPathKey:@"/usr/local/bin/ssh-add"
 	}];
 
-	self.yubikeyMenuItemArray = [[NSMutableDictionary<NSString*, NSMenuItem*> alloc] init];
+
+	NSArray *keys = [self enumerateSSHKeys];
+	[self updateSSHKeysMenu:keys];
+
+	self.yubikeyMenuItemArray = [NSMutableDictionary<NSString*, NSMenuItem*> new];
 	
 	self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
 	self.statusItem.menu = self.statusMenu;
@@ -98,8 +98,58 @@ void IOServiceTerminatedCallback(void* refcon, io_iterator_t iterator);
 	self.pin = nil;
 }
 
-- (NSDictionary*) enumerateSSHKeys {
+- (void) updateSSHKeysMenu:(NSArray*)keys {
+	[self.sshkeysSubMenu removeAllItems];
+	for (NSDictionary *key in keys) {
+		NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t%@\n\t[%@/%@]",key[sshKeyHash],key[sshKeyID],key[sshKeyAlgo],key[sshKeyBits]];
+		NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:nil keyEquivalent:@""];
+		NSDictionary *attributes = @{
+			NSFontAttributeName: [NSFont menuFontOfSize:[NSFont smallSystemFontSize]],
+	//		NSForegroundColorAttributeName: [NSColor textColor]
+		};
+		NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:[newMenuItem title] attributes:attributes];
+		[newMenuItem setAttributedTitle:attributedTitle];
+		[self.sshkeysSubMenu addItem:newMenuItem];
+	}
+}
+
+- (NSArray*) enumerateSSHKeys {
+	int32_t result;
+	NSString *stdoutStr, *stderrStr;
+	NSArray *args = @[
+	  @"-l",
+	  @"-E",
+	  @"md5"
+	];
+	result = [self execSystemCmd:[[self.prefsController values] valueForKey:kSSHADDPathKey] withArgs:args withStdIn:nil withStdOut:&stdoutStr withStdErr:&stderrStr];
+	if(result)
+		return nil;
 	
+	NSArray *lines = [stdoutStr componentsSeparatedByString:@"\n"];
+	NSMutableArray *keys = [NSMutableArray new];
+	for (NSString *line in lines) {
+		if(![line length])continue;
+		NSArray *elements = [line componentsSeparatedByString:@" "];
+		[keys addObject:@{
+			sshKeyID:elements[2],
+			sshKeyBits:elements[0],
+			sshKeyHash:elements[1],
+			sshKeyAlgo:[elements[3] substringWithRange:NSMakeRange(1, ([elements[3] length]-2))],
+		}];
+	}
+	NSLog(@"%@",keys);
+	return keys;
+}
+
+- (BOOL) isSSHKeyAdded {
+	NSArray *keys = [self enumerateSSHKeys];
+	NSString *pkcsPath = [[self.prefsController values] valueForKey:kPKCSPathKey];
+	NSString *pkcsRealPath = [pkcsPath stringByResolvingSymlinksInPath];
+	for (NSDictionary *key in keys) {
+		if([key[sshKeyID] isEqualToString:pkcsPath] || [key[sshKeyID] isEqualToString:pkcsRealPath])
+			return YES;
+	}
+	return NO;
 }
 
 - (void) addSSHKey {
@@ -161,7 +211,10 @@ void IOServiceTerminatedCallback(void* refcon, io_iterator_t iterator);
 	[self.yubikeysSubMenu addItem:newMenuItem];
 
 	if([[[self.prefsController values] valueForKey:kExecSSHADDOnInsertionKey] intValue]){
-		[self addSSHKey];
+		if(![self isSSHKeyAdded])
+			[self addSSHKey];
+		else
+			self.statusItem.image = [NSImage imageNamed:@"yubikey-ok"];
 	}
 
 	if([[[self.prefsController values] valueForKey:kWakeScreenOnInsertionKey] intValue]){
@@ -211,7 +264,7 @@ void IOServiceTerminatedCallback(void* refcon, io_iterator_t iterator);
 	NSPipe *stdinPipe = [NSPipe pipe];
 	NSFileHandle *stdinFile = stdinPipe.fileHandleForWriting;
 
-	NSTask *task = [[NSTask alloc] init];
+	NSTask *task = [NSTask new];
 	task.launchPath = cmd;
 	task.arguments = args;
 	task.standardOutput = stdoutPipe;
@@ -235,6 +288,7 @@ void IOServiceTerminatedCallback(void* refcon, io_iterator_t iterator);
 	return task.terminationStatus;
 }
 
+void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 - (bool) initMatchingNotification {
 	kern_return_t kr;
 
@@ -261,6 +315,7 @@ void IOServiceTerminatedCallback(void* refcon, io_iterator_t iterator);
 		if(dict) {
 			NSLog(@"initial device found:%@",dict);
 			self.statusItem.image = [NSImage imageNamed:@"yubikey-c"];
+			[((YubiKey_observerAppDelegate*)[NSApp delegate]) deviceAdded:(__bridge_transfer NSDictionary*)dict];
 		}
 	}
 
