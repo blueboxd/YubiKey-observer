@@ -14,17 +14,15 @@
 #include <IOKit/hid/IOHIDKeys.h>
 #include <IOKit/pwr_mgt/IOPMLib.h>
 
-#define kExecSSHADDOnInsertionKey @"values.execSSHAddOnInsertion"
-#define kExecSSHADDOnRemovalKey @"values.execSSHAddOnRemoval"
-#define kSleepScreenOnRemovalKey @"values.sleepScreen"
-#define kLockScreenOnRemovalKey @"values.lockScreen"
-#define kWakeScreenOnInsertionKey @"values.wakeScreen"
-#define kIsPINExpiresKey @"values.pinExpires"
-#define kPINExpiresInKey @"values.expiresIn"
-#define kPKCSPathKey @"values.pkcsPath"
-#define kPKCSPathKeyDefault @"pkcsPath"
-#define kSSHADDPathKey @"values.sshAddPath"
-#define kSSHADDPathKeyDefault @"sshAddPath"
+#define kExecSSHADDOnInsertionKey @"execSSHAddOnInsertion"
+#define kExecSSHADDOnRemovalKey @"execSSHAddOnRemoval"
+#define kSleepScreenOnRemovalKey @"sleepScreen"
+#define kLockScreenOnRemovalKey @"lockScreen"
+#define kWakeScreenOnInsertionKey @"wakeScreen"
+#define kIsPINExpiresKey @"pinExpires"
+#define kPINExpiresInKey @"expiresIn"
+#define kPKCSPathKey @"pkcsPath"
+#define kSSHADDPathKey @"sshAddPath"
 
 @interface YubiKey_observerAppDelegate : NSObject <NSApplicationDelegate> {
 	
@@ -35,16 +33,18 @@
 @property (strong) IBOutlet NSWindow *pinDialog;
 @property (nonatomic) IBOutlet NSButton *rememberPINCheckbox;
 @property (nonatomic) IBOutlet NSTextField * pinTextField;
-@property (nonatomic) IBOutlet NSString *pinText;
+@property (nonatomic) NSString *pinText;
 
 @property (strong) IBOutlet NSWindow *prefWindow;
 
-@property (strong) IBOutlet NSMenu *statusMenu;
 @property (strong) NSStatusItem *statusItem;
+@property (strong) IBOutlet NSMenu *statusMenu;
+@property (strong) IBOutlet NSMenu *yubikeysSubMenu;
+@property (strong) IBOutlet NSMenu *sshkeysSubMenu;
 
 @property (strong,nonatomic) NSString *pin;
 @property (nonatomic) IONotificationPortRef notifyPort;
-
+@property NSMutableDictionary<NSString*, NSMenuItem*> *yubikeyMenuItemArray;
 
 - (IBAction) confirmButtonAction:(id)sender;
 - (IBAction) cancelButtonAction:(id)sender;

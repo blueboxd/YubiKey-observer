@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="101300" identifier="macosx"/>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -332,7 +332,7 @@
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-62" y="113"/>
+            <point key="canvasLocation" x="56" y="32"/>
         </menu>
         <customObject id="494" customClass="YubiKey_observerAppDelegate">
             <connections>
@@ -341,7 +341,9 @@
                 <outlet property="prefWindow" destination="590" id="593"/>
                 <outlet property="prefsController" destination="622" id="632"/>
                 <outlet property="rememberPINCheckbox" destination="549" id="581"/>
+                <outlet property="sshkeysSubMenu" destination="pzj-C8-Z08" id="8Jq-TM-ls2"/>
                 <outlet property="statusMenu" destination="627" id="631"/>
+                <outlet property="yubikeysSubMenu" destination="rac-g7-ufQ" id="UUT-hG-7lX"/>
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
@@ -481,6 +483,7 @@ Gw
                                 </button>
                             </subviews>
                         </view>
+                        <font key="titleFont" metaFont="message" size="11"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="Actions on device removal" id="598">
                         <rect key="frame" x="17" y="237" width="403" height="96"/>
@@ -501,7 +504,7 @@ Gw
                                     </connections>
                                 </button>
                                 <button id="601">
-                                    <rect key="frame" x="16" y="34" width="101" height="18"/>
+                                    <rect key="frame" x="16" y="34" width="102" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Sleep Screen" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="602">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -525,6 +528,7 @@ Gw
                                 </button>
                             </subviews>
                         </view>
+                        <font key="titleFont" metaFont="message" size="11"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="PIN cache policy" id="603">
                         <rect key="frame" x="17" y="149" width="403" height="84"/>
@@ -584,6 +588,7 @@ Gw
                                 </textField>
                             </subviews>
                         </view>
+                        <font key="titleFont" metaFont="message" size="11"/>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="ssh custom paths" id="614">
                         <rect key="frame" x="17" y="16" width="403" height="129"/>
@@ -636,15 +641,35 @@ Gw
                                 </textField>
                             </subviews>
                         </view>
+                        <font key="titleFont" metaFont="message" size="11"/>
                     </box>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="56" y="106"/>
+            <point key="canvasLocation" x="202" y="90"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
         <menu id="627" userLabel="StatusMenu">
             <items>
-                <menuItem title="Settings…" id="628" userLabel="Preferences">
+                <menuItem title="YubiKeys inserted" id="6Rr-dg-N9X">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="YubiKeys" id="rac-g7-ufQ"/>
+                </menuItem>
+                <menuItem title="ssh keys added" id="N7U-XZ-LrI">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="ssh-keys" id="pzj-C8-Z08"/>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="ZJe-2e-Gh5"/>
+                <menuItem title="Add keys" id="HJf-zz-hAk">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Remove keys" hidden="YES" id="5ao-Cp-pL8">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="HkT-20-7pz"/>
+                <menuItem title="Settings..." id="628" userLabel="Preferences">
+                    <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="preferenceAction:" target="494" id="643"/>
@@ -652,13 +677,14 @@ Gw
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="644"/>
                 <menuItem title="Quit" id="630" userLabel="Quit">
+                    <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="quitAction:" target="494" id="645"/>
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-282" y="-43"/>
+            <point key="canvasLocation" x="-8" y="-312"/>
         </menu>
     </objects>
     <resources>

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		256AC3DA0F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -16,6 +15,7 @@
 		FB29E7D3218AC08100F7F216 /* yubikey-c.png in Resources */ = {isa = PBXBuildFile; fileRef = FB29E7D2218AC08100F7F216 /* yubikey-c.png */; };
 		FBAA8EF0218B4B690087A09A /* yubikey-ng.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EEE218B4B690087A09A /* yubikey-ng.png */; };
 		FBAA8EF3218B4B940087A09A /* yubikey-ok.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EF2218B4B940087A09A /* yubikey-ok.png */; };
+		FBB5D75724B4D8B6001645BD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBB5D75524B4D8B6001645BD /* MainMenu.xib */; };
 		FBBB48F42183E30400BFD260 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBB48F32183E30400BFD260 /* IOKit.framework */; };
 		FBBB48FB2183F2B000BFD260 /* Key_Large@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */; };
 		FBDA078021921F0D00AF79EA /* login.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBDA077F21921F0D00AF79EA /* login.framework */; };
@@ -35,9 +35,9 @@
 		8D1107320486CEB800E47090 /* YubiKey-observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "YubiKey-observer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB29E7C7218AC04400F7F216 /* yubikey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yubikey.png; sourceTree = "<group>"; };
 		FB29E7D2218AC08100F7F216 /* yubikey-c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-c.png"; sourceTree = "<group>"; };
-		FB603085224F4BAA0028B949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		FBAA8EEE218B4B690087A09A /* yubikey-ng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ng.png"; sourceTree = "<group>"; };
 		FBAA8EF2218B4B940087A09A /* yubikey-ok.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ok.png"; sourceTree = "<group>"; };
+		FBB5D75624B4D8B6001645BD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		FBBB48F32183E30400BFD260 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Key_Large@2x.png"; sourceTree = "<group>"; };
 		FBDA077F21921F0D00AF79EA /* login.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = login.framework; path = /System/Library/PrivateFrameworks/login.framework; sourceTree = "<absolute>"; };
@@ -125,7 +125,7 @@
 				FBAA8EF2218B4B940087A09A /* yubikey-ok.png */,
 				8D1107310486CEB800E47090 /* YubiKey_observer-Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
+				FBB5D75524B4D8B6001645BD /* MainMenu.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -195,11 +195,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
-				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				FBBB48FB2183F2B000BFD260 /* Key_Large@2x.png in Resources */,
 				FB29E7C8218AC04400F7F216 /* yubikey.png in Resources */,
 				FB29E7D3218AC08100F7F216 /* yubikey-c.png in Resources */,
 				FBAA8EF0218B4B690087A09A /* yubikey-ng.png in Resources */,
+				FBB5D75724B4D8B6001645BD /* MainMenu.xib in Resources */,
 				FBAA8EF3218B4B940087A09A /* yubikey-ok.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -227,10 +227,10 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		1DDD58140DA1D0A300B32029 /* MainMenu.xib */ = {
+		FBB5D75524B4D8B6001645BD /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				FB603085224F4BAA0028B949 /* Base */,
+				FBB5D75624B4D8B6001645BD /* English */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -258,6 +258,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "cx.lab.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "YubiKey-observer";
 				SDKROOT = macosx10.13;
@@ -283,6 +284,7 @@
 					"\"$(SRCROOT)\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "cx.lab.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "YubiKey-observer";
 				SDKROOT = macosx10.13;
@@ -336,7 +338,7 @@
 					dynamic_lookup,
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.13;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = x86_64;
 			};
@@ -386,7 +388,7 @@
 					dynamic_lookup,
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.13;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = x86_64;
 			};
