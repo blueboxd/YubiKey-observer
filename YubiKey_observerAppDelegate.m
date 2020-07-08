@@ -39,6 +39,7 @@
 @property (nonatomic) IBOutlet NSButton *rememberPINCheckbox;
 @property (nonatomic) IBOutlet NSTextField * pinTextField;
 @property (nonatomic) IBOutlet NSString *pinText;
+@property (nonatomic) IBOutlet NSTextField *keyIDLabel;
 
 @property (strong) IBOutlet NSWindow *prefWindow;
 
@@ -120,10 +121,11 @@
 	[NSApp terminate:self];
 }
 
-- (NSString*) getPIN {
+- (NSString*) getPIN:(NSString*)informativeText {
 	if(pin)
 		return pin;
 
+	[self.keyIDLabel setStringValue:informativeText];
 	[self.rememberPINCheckbox setState:NSOnState];
 	NSString *enteredPIN = nil;
 	BOOL rememberPIN = NO;
@@ -146,6 +148,7 @@
 	[self.pinDialog orderOut:self];
 	[self.pinTextField setStringValue:@""];
 	[self.pinTextField becomeFirstResponder];
+	[self.keyIDLabel setStringValue:@""];
 
 	return enteredPIN;
 }
@@ -159,7 +162,7 @@
 
 	if([self isSSHKeyAdded])
 		return;
-	[self addSSHKey];
+	[self addSSHKey:nil];
 }
 
 - (IBAction)removeKeyAction:(id)sender {
@@ -237,9 +240,16 @@
 	return NO;
 }
 
-- (void) addSSHKey {
+- (void) addSSHKey:(NSDictionary*)dev {
 	NSLog(@"will ssh-add -s");
-	NSString *pin = [self getPIN];
+	
+	NSString *label;
+	if(dev)
+		label = [NSString stringWithFormat:@"Key: %@ [SN# %@]",dev[@kUSBProductString],dev[@kUSBSerialNumberString]];
+	else
+		label = @"Unspecified YubiKey";
+	
+	NSString *pin = [self getPIN:label];
 	if (!pin) {
 		NSLog(@"no PIN was supplied");
 		return;
@@ -310,7 +320,7 @@
 
 	if([[[self.prefsController values] valueForKey:kExecSSHAddOnInsertionKey] intValue]){
 		if(![self isSSHKeyAdded])
-			[self addSSHKey];
+			[self addSSHKey:dev];
 		else
 			statusItem.image = [NSImage imageNamed:@"yubikey-ok"];
 	}
