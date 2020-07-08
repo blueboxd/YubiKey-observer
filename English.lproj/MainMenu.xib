@@ -334,21 +334,36 @@
             </items>
             <point key="canvasLocation" x="103" y="13"/>
         </menu>
-        <customObject id="494" customClass="YubiKey_observerAppDelegate">
+        <customObject id="494" userLabel="AppDelegate" customClass="YubiKey_observerAppDelegate">
             <connections>
                 <outlet property="addKeyMenuItem" destination="HJf-zz-hAk" id="wIN-4d-8ON"/>
                 <outlet property="keyIDLabel" destination="n56-XG-Sp6" id="w71-1Y-WOa"/>
                 <outlet property="pinDialog" destination="543" id="583"/>
+                <outlet property="pinManager" destination="PN1-jL-m82" id="4wk-MZ-4wF"/>
                 <outlet property="pinTextField" destination="552" id="582"/>
                 <outlet property="prefWindow" destination="590" id="593"/>
                 <outlet property="prefsController" destination="622" id="632"/>
                 <outlet property="rememberPINCheckbox" destination="549" id="581"/>
                 <outlet property="removeKeyMenuItem" destination="5ao-Cp-pL8" id="gXC-YZ-V9r"/>
+                <outlet property="sshKeyManager" destination="jS3-x6-Gg4" id="LBK-lQ-cHf"/>
                 <outlet property="sshkeysSubMenu" destination="pzj-C8-Z08" id="8Jq-TM-ls2"/>
                 <outlet property="statusMenu" destination="627" id="631"/>
+                <outlet property="yubikeyDeviceManager" destination="P91-QX-n2i" id="FcJ-Ux-ka6"/>
                 <outlet property="yubikeysSubMenu" destination="rac-g7-ufQ" id="UUT-hG-7lX"/>
             </connections>
         </customObject>
+        <customObject id="P91-QX-n2i" userLabel="YubiKey Device Manager" customClass="YubiKeyDeviceManager">
+            <connections>
+                <outlet property="delegate" destination="494" id="J5d-5M-5Cu"/>
+                <outlet property="prefsController" destination="622" id="pQU-oS-Xo7"/>
+            </connections>
+        </customObject>
+        <customObject id="jS3-x6-Gg4" userLabel="SSHKey Manager" customClass="SSHKeyManager">
+            <connections>
+                <outlet property="prefsController" destination="622" id="aup-Ai-S7T"/>
+            </connections>
+        </customObject>
+        <customObject id="PN1-jL-m82" userLabel="PIN Manager" customClass="PINManager"/>
         <customObject id="420" customClass="NSFontManager"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" visibleAtLaunch="NO" animationBehavior="default" id="543" userLabel="PIN">
             <windowStyleMask key="styleMask" titled="YES"/>
@@ -437,7 +452,7 @@ Gw
                     <button imageHugsTitle="YES" id="549">
                         <rect key="frame" x="98" y="55" width="280" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="check" title="Remember PIN for this session" bezelStyle="regularSquare" imagePosition="leading" alignment="left" state="on" inset="2" id="562">
+                        <buttonCell key="cell" type="check" title="Remember PIN for this session" bezelStyle="regularSquare" imagePosition="leading" alignment="center" state="on" inset="2" id="562">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -653,10 +668,9 @@ Gw
                     </box>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="202" y="90"/>
+            <point key="canvasLocation" x="-97" y="-388"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
-        <objectController id="kv6-7n-pSq"/>
         <menu id="627" userLabel="StatusMenu">
             <items>
                 <menuItem title="YubiKeys inserted" id="6Rr-dg-N9X">

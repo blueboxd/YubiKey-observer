@@ -19,6 +19,10 @@
 		FBBB48F42183E30400BFD260 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBB48F32183E30400BFD260 /* IOKit.framework */; };
 		FBBB48FB2183F2B000BFD260 /* Key_Large@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */; };
 		FBDA078021921F0D00AF79EA /* login.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBDA077F21921F0D00AF79EA /* login.framework */; };
+		FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */; };
+		FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9324B5C319001645BD /* SSHKeyManager.m */; };
+		FBF5EB9924B5D3A2001645BD /* PINManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9824B5D3A2001645BD /* PINManager.m */; };
+		FBF5EBE724B5E7A8001645BD /* SystemCommandExecutor.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EBE624B5E7A8001645BD /* SystemCommandExecutor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,12 +39,21 @@
 		8D1107320486CEB800E47090 /* YubiKey-observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "YubiKey-observer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB29E7C7218AC04400F7F216 /* yubikey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yubikey.png; sourceTree = "<group>"; };
 		FB29E7D2218AC08100F7F216 /* yubikey-c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-c.png"; sourceTree = "<group>"; };
+		FB330F3324B6000C001645BD /* PrefKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefKeys.h; sourceTree = "<group>"; };
 		FBAA8EEE218B4B690087A09A /* yubikey-ng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ng.png"; sourceTree = "<group>"; };
 		FBAA8EF2218B4B940087A09A /* yubikey-ok.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ok.png"; sourceTree = "<group>"; };
 		FBB5D75624B4D8B6001645BD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		FBBB48F32183E30400BFD260 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Key_Large@2x.png"; sourceTree = "<group>"; };
 		FBDA077F21921F0D00AF79EA /* login.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = login.framework; path = /System/Library/PrivateFrameworks/login.framework; sourceTree = "<absolute>"; };
+		FBF5EB9124B5C318001645BD /* SSHKeyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHKeyManager.h; sourceTree = "<group>"; };
+		FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YubiKeyDeviceManager.m; sourceTree = "<group>"; };
+		FBF5EB9324B5C319001645BD /* SSHKeyManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHKeyManager.m; sourceTree = "<group>"; };
+		FBF5EB9424B5C319001645BD /* YubiKeyDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YubiKeyDeviceManager.h; sourceTree = "<group>"; };
+		FBF5EB9724B5D3A2001645BD /* PINManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PINManager.h; sourceTree = "<group>"; };
+		FBF5EB9824B5D3A2001645BD /* PINManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PINManager.m; sourceTree = "<group>"; };
+		FBF5EBE524B5E7A8001645BD /* SystemCommandExecutor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemCommandExecutor.h; sourceTree = "<group>"; };
+		FBF5EBE624B5E7A8001645BD /* SystemCommandExecutor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SystemCommandExecutor.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +73,14 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				FBF5EBE524B5E7A8001645BD /* SystemCommandExecutor.h */,
+				FBF5EBE624B5E7A8001645BD /* SystemCommandExecutor.m */,
+				FBF5EB9724B5D3A2001645BD /* PINManager.h */,
+				FBF5EB9824B5D3A2001645BD /* PINManager.m */,
+				FBF5EB9124B5C318001645BD /* SSHKeyManager.h */,
+				FBF5EB9324B5C319001645BD /* SSHKeyManager.m */,
+				FBF5EB9424B5C319001645BD /* YubiKeyDeviceManager.h */,
+				FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */,
 				256AC3D80F4B6AC300CF3369 /* YubiKey_observerAppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m */,
 			);
@@ -109,6 +130,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				FB330F3324B6000C001645BD /* PrefKeys.h */,
 				256AC3F00F4B6AF500CF3369 /* YubiKey_observer_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
@@ -211,8 +233,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
+				FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */,
+				FBF5EB9924B5D3A2001645BD /* PINManager.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m in Sources */,
+				FBF5EBE724B5E7A8001645BD /* SystemCommandExecutor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +294,7 @@
 					"-Wno-missing-variable-declarations",
 					"-Wno-undef",
 					"-Wno-objc-missing-property-synthesis",
+					"-Wno-nullable-to-nonnull-conversion",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "cx.lab.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "YubiKey-observer";
@@ -304,6 +331,7 @@
 					"-Wno-missing-variable-declarations",
 					"-Wno-undef",
 					"-Wno-objc-missing-property-synthesis",
+					"-Wno-nullable-to-nonnull-conversion",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "cx.lab.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "YubiKey-observer";

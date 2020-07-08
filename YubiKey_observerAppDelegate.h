@@ -10,4 +10,6 @@
 
 @interface YubiKey_observerAppDelegate : NSObject <NSApplicationDelegate> {
 }
+
+
 @end
