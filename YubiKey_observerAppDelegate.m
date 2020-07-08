@@ -187,9 +187,10 @@
 		};
 		NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:[newMenuItem title] attributes:attributes];
 		[newMenuItem setAttributedTitle:attributedTitle];
-		if([key[sshKeyOurs] intValue])
-			//[newMenuItem setImage:[NSImage imageNamed:@"yubikey-c"]];
+		if([key[sshKeyOurs] intValue]) {
+			[newMenuItem setOnStateImage:[NSImage imageNamed:@"yubikey-c"]];
 			[newMenuItem setState:NSOnState];
+		}
 		[self.sshkeysSubMenu addItem:newMenuItem];
 	}
 }

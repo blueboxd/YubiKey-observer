@@ -16,7 +16,7 @@
         <menu title="AMainMenu" systemMenu="main" id="29">
             <items>
                 <menuItem title="YubiKey-observer" id="56">
-                    <menu key="submenu" title="YubiKey-observer" systemMenu="apple" id="57">
+                    <menu key="submenu" title="YubiKey-observer" systemMenu="apple" showsStateColumn="NO" id="57">
                         <items>
                             <menuItem title="About YubiKey-observer" id="58">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -27,7 +27,7 @@
                             <menuItem isSeparatorItem="YES" id="236">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Preferences…" keyEquivalent="," id="129">
+                            <menuItem title="Preferences…" state="on" onStateImage="yubikey-c" keyEquivalent="," id="129">
                                 <connections>
                                     <action selector="preferenceAction:" target="494" id="589"/>
                                 </connections>
@@ -332,7 +332,7 @@
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="56" y="32"/>
+            <point key="canvasLocation" x="103" y="13"/>
         </menu>
         <customObject id="494" customClass="YubiKey_observerAppDelegate">
             <connections>
@@ -354,7 +354,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="697" y="715" width="431" height="172"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2880" height="1778"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1578"/>
             <view key="contentView" id="544">
                 <rect key="frame" x="0.0" y="0.0" width="431" height="172"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -459,7 +459,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="1178" y="382" width="437" height="431"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2880" height="1778"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1578"/>
             <view key="contentView" id="591">
                 <rect key="frame" x="0.0" y="0.0" width="437" height="431"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -704,5 +704,6 @@ Gw
     </objects>
     <resources>
         <image name="Key_Large@2x" width="128" height="128"/>
+        <image name="yubikey-c" width="19" height="19"/>
     </resources>
 </document>
