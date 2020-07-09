@@ -60,11 +60,7 @@
                             <menuItem isSeparatorItem="YES" id="149">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Quit YubiKey-observer" keyEquivalent="q" id="136">
-                                <connections>
-                                    <action selector="terminate:" target="-3" id="449"/>
-                                </connections>
-                            </menuItem>
+                            <menuItem title="Quit YubiKey-observer" keyEquivalent="q" id="136"/>
                         </items>
                     </menu>
                 </menuItem>
@@ -338,6 +334,7 @@
             <connections>
                 <outlet property="addKeyMenuItem" destination="HJf-zz-hAk" id="wIN-4d-8ON"/>
                 <outlet property="keyIDLabel" destination="n56-XG-Sp6" id="w71-1Y-WOa"/>
+                <outlet property="menuIconManager" destination="eRN-I1-FGU" id="GVS-Ed-YO5"/>
                 <outlet property="pinDialog" destination="543" id="583"/>
                 <outlet property="pinManager" destination="PN1-jL-m82" id="4wk-MZ-4wF"/>
                 <outlet property="pinTextField" destination="552" id="582"/>
@@ -360,10 +357,17 @@
         </customObject>
         <customObject id="jS3-x6-Gg4" userLabel="SSHKey Manager" customClass="SSHKeyManager">
             <connections>
+                <outlet property="delegate" destination="494" id="EGU-hb-WF5"/>
                 <outlet property="prefsController" destination="622" id="aup-Ai-S7T"/>
             </connections>
         </customObject>
         <customObject id="PN1-jL-m82" userLabel="PIN Manager" customClass="PINManager"/>
+        <customObject id="eRN-I1-FGU" customClass="StatusMenuManager">
+            <connections>
+                <outlet property="sshKeyManager" destination="jS3-x6-Gg4" id="Qfo-DZ-nEf"/>
+                <outlet property="yubikeyDeviceManager" destination="P91-QX-n2i" id="jpg-49-tGy"/>
+            </connections>
+        </customObject>
         <customObject id="420" customClass="NSFontManager"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" visibleAtLaunch="NO" animationBehavior="default" id="543" userLabel="PIN">
             <windowStyleMask key="styleMask" titled="YES"/>
@@ -430,7 +434,7 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="confirmButtonAction:" target="494" id="587"/>
-                            <binding destination="494" name="enabled" keyPath="self.pinText.length" id="679"/>
+                            <binding destination="494" name="enabled" keyPath="self.pinText.length" id="CSn-gY-l2v"/>
                             <outlet property="nextKeyView" destination="552" id="568"/>
                         </connections>
                     </button>
@@ -468,7 +472,7 @@ Gw
                     </textField>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-80.5" y="-312"/>
+            <point key="canvasLocation" x="-24" y="-133"/>
         </window>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="590" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
@@ -684,16 +688,24 @@ Gw
                     <menu key="submenu" title="ssh-keys" id="pzj-C8-Z08"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="ZJe-2e-Gh5"/>
-                <menuItem title="Add keys" id="HJf-zz-hAk">
+                <menuItem title="Add keys" hidden="YES" id="HJf-zz-hAk">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="addKeyAction:" target="494" id="wfX-tJ-FkT"/>
+                        <binding destination="P91-QX-n2i" name="enabled" keyPath="self.isYubiKeyInserted" id="szc-hs-hBj"/>
+                        <binding destination="jS3-x6-Gg4" name="hidden" keyPath="self.isSSHKeyFomYubiKeyAdded" previousBinding="szc-hs-hBj" id="Zdj-hd-knn"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Remove keys" hidden="YES" id="5ao-Cp-pL8">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="removeKeyAction:" target="494" id="tKi-4j-B0b"/>
+                        <binding destination="P91-QX-n2i" name="enabled" keyPath="self.isYubiKeyInserted" id="xrT-yy-pRJ"/>
+                        <binding destination="jS3-x6-Gg4" name="hidden" keyPath="self.isSSHKeyFomYubiKeyAdded" previousBinding="xrT-yy-pRJ" id="54H-Sn-toO">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="HkT-20-7pz"/>
@@ -709,11 +721,11 @@ Gw
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="quitAction:" target="494" id="645"/>
+                        <action selector="terminate:" target="-1" id="P8e-Km-Af6"/>
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="65" y="-57"/>
+            <point key="canvasLocation" x="-155" y="-391"/>
         </menu>
     </objects>
     <resources>

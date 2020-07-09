@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YubiKeyDeviceManager : NSObject
 - (kern_return_t) registerMatchingCallbacks;
 - (NSString*) getUniqueIDFromDev:(NSDictionary*)dev;
-- (NSArray* _Nullable) enumerateYubiKeys;
 
-@property (nonatomic) NSArray<NSDictionary*> *yubiKeys;
+@property (nonatomic) BOOL isYubiKeyInserted;
+@property (nonatomic,readonly) NSMutableDictionary<NSString*,NSDictionary*> *devices;
 @property (strong) IBOutlet NSUserDefaultsController *prefsController;
 
 @property (weak, nonatomic) IBOutlet id <YubiKeyDeviceManagerDelegate> delegate;

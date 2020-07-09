@@ -18,12 +18,14 @@
 
 static YubiKeyDeviceManager *gSelf;
 @implementation YubiKeyDeviceManager {
-	NSArray<NSDictionary*> *yubikeyArray;
+//	NSMutableDictionary<NSString*,NSDictionary*> *yubikeyArray;
+
 }
 
 - (instancetype) init {
 	self = [super init];
 	gSelf = self;
+	_devices = [NSMutableDictionary new];
 	return self;
 }
 
@@ -56,7 +58,9 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	while ((usbDevice=IOIteratorNext(iterator))) {
 		CFDictionaryRef dict = GetKeyInfo(usbDevice);
 		if(dict) {
+			CFRetain(dict);
 			NSLog(@"initial device found:%@",dict);
+			[self addDevice:(__bridge_transfer NSDictionary*)(dict)];
 			[self.delegate deviceAdded:(__bridge_transfer NSDictionary*)dict];
 		}
 	}
@@ -71,6 +75,16 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	return KERN_SUCCESS;
 }
 
+- (void) addDevice:(NSDictionary*)dev {
+	_devices[[self getUniqueIDFromDev:dev]] = dev;
+	self.isYubiKeyInserted = [self.devices count]!=0;
+}
+
+- (void) removeDevice:(NSDictionary*)dev {
+	[_devices removeObjectForKey:[self getUniqueIDFromDev:dev]];
+	self.isYubiKeyInserted = [self.devices count]!=0;
+}
+
 void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 	NSLog(@"IOServiceMatchedCallback");
 	io_service_t usbDevice;
@@ -78,11 +92,14 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 	while ((usbDevice=IOIteratorNext(iterator))) {
 		CFDictionaryRef dict = GetKeyInfo(usbDevice);
 		if(dict) {
+			CFRetain(dict);
 			if(added) {
 				NSLog(@"YubiKey inserted:%@",dict);
+				[gSelf addDevice:(__bridge_transfer NSDictionary*)(dict)];
 				[gSelf.delegate deviceAdded:(__bridge_transfer NSDictionary*)dict];
 			} else {
 				NSLog(@"YubiKey removed:%@",dict);
+				[gSelf removeDevice:(__bridge_transfer NSDictionary*)(dict)];
 				[gSelf.delegate deviceRemoved:(__bridge_transfer NSDictionary*)dict];
 			}
 		}

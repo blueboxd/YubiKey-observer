@@ -26,6 +26,10 @@
 }
 
 - (int32_t) execute {
+	
+	if((!self.execPath) || [self.execPath length]==0)
+		return EINVAL;
+
 	NSPipe *stdoutPipe = [NSPipe pipe];
 	NSFileHandle *stdoutFile = stdoutPipe.fileHandleForReading;
 	NSPipe *stderrPipe = [NSPipe pipe];

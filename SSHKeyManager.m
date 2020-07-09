@@ -12,6 +12,10 @@
 
 @implementation SSHKeyManager
 
+- (void) awakeFromNib {
+	self.isSSHKeyFomYubiKeyAdded = [self hasOurKey];
+}
+
 - (int32_t) addSSHKeyWithPin:(NSString*)pin {
 	NSLog(@"will ssh-add -s");
 	
@@ -30,16 +34,9 @@
 	uint32_t result;
 	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:stdinArgs];
 	result = [exc execute];
-//	if (!result) {
-//		statusItem.image = [NSImage imageNamed:@"yubikey-ok"];
-//		[self.addKeyMenuItem setHidden:YES];
-//		[self.removeKeyMenuItem setHidden:NO];
-//	} else {
-//		statusItem.image = [NSImage imageNamed:@"yubikey-ng"];
-//	}
-//	
-//	NSArray *keys = [self enumerateSSHKeys];
-//	[self updateSSHKeysMenu:keys];
+	if(!result)
+		[self.delegate keyStoreChanged:[self enumerateSSHKeys]]; 
+	self.isSSHKeyFomYubiKeyAdded = [self hasOurKey];
 	return result;
 }
 
@@ -53,13 +50,9 @@
 	uint32_t result;
 	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
 	result = [exc execute];
-//	if(!result) {
-//		statusItem.image = [NSImage imageNamed:@"yubikey-c"];
-//		[self.addKeyMenuItem setHidden:NO];
-//		[self.removeKeyMenuItem setHidden:YES];
-//	}
-//	NSArray *keys = [self enumerateSSHKeys];
-//	[self updateSSHKeysMenu:keys];
+	if(!result)
+		[self.delegate keyStoreChanged:[self enumerateSSHKeys]]; 
+	self.isSSHKeyFomYubiKeyAdded = [self hasOurKey];
 	return result;
 }
 
@@ -100,7 +93,7 @@
 	return keys;
 }
 
-- (BOOL) isSSHKeyFomYubiKeyAdded {
+- (BOOL) hasOurKey {
 	NSArray *keys = [self enumerateSSHKeys];
 	for (NSDictionary *key in keys) {
 		if([key[sshKeyOurs] intValue])

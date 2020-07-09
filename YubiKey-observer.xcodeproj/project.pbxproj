@@ -13,6 +13,7 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		FB29E7C8218AC04400F7F216 /* yubikey.png in Resources */ = {isa = PBXBuildFile; fileRef = FB29E7C7218AC04400F7F216 /* yubikey.png */; };
 		FB29E7D3218AC08100F7F216 /* yubikey-c.png in Resources */ = {isa = PBXBuildFile; fileRef = FB29E7D2218AC08100F7F216 /* yubikey-c.png */; };
+		FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FB43C41F24B7120E001645BD /* StatusMenuManager.m */; };
 		FBAA8EF0218B4B690087A09A /* yubikey-ng.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EEE218B4B690087A09A /* yubikey-ng.png */; };
 		FBAA8EF3218B4B940087A09A /* yubikey-ok.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EF2218B4B940087A09A /* yubikey-ok.png */; };
 		FBB5D75724B4D8B6001645BD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBB5D75524B4D8B6001645BD /* MainMenu.xib */; };
@@ -40,6 +41,8 @@
 		FB29E7C7218AC04400F7F216 /* yubikey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yubikey.png; sourceTree = "<group>"; };
 		FB29E7D2218AC08100F7F216 /* yubikey-c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-c.png"; sourceTree = "<group>"; };
 		FB330F3324B6000C001645BD /* PrefKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefKeys.h; sourceTree = "<group>"; };
+		FB43C41F24B7120E001645BD /* StatusMenuManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusMenuManager.m; sourceTree = "<group>"; };
+		FB43C42024B7120E001645BD /* StatusMenuManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusMenuManager.h; sourceTree = "<group>"; };
 		FBAA8EEE218B4B690087A09A /* yubikey-ng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ng.png"; sourceTree = "<group>"; };
 		FBAA8EF2218B4B940087A09A /* yubikey-ok.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ok.png"; sourceTree = "<group>"; };
 		FBB5D75624B4D8B6001645BD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -73,16 +76,18 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				FBF5EBE524B5E7A8001645BD /* SystemCommandExecutor.h */,
-				FBF5EBE624B5E7A8001645BD /* SystemCommandExecutor.m */,
+				256AC3D80F4B6AC300CF3369 /* YubiKey_observerAppDelegate.h */,
+				256AC3D90F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m */,
+				FB43C42024B7120E001645BD /* StatusMenuManager.h */,
+				FB43C41F24B7120E001645BD /* StatusMenuManager.m */,
 				FBF5EB9724B5D3A2001645BD /* PINManager.h */,
 				FBF5EB9824B5D3A2001645BD /* PINManager.m */,
 				FBF5EB9124B5C318001645BD /* SSHKeyManager.h */,
 				FBF5EB9324B5C319001645BD /* SSHKeyManager.m */,
 				FBF5EB9424B5C319001645BD /* YubiKeyDeviceManager.h */,
 				FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */,
-				256AC3D80F4B6AC300CF3369 /* YubiKey_observerAppDelegate.h */,
-				256AC3D90F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m */,
+				FBF5EBE524B5E7A8001645BD /* SystemCommandExecutor.h */,
+				FBF5EBE624B5E7A8001645BD /* SystemCommandExecutor.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -238,6 +243,7 @@
 				FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */,
 				FBF5EB9924B5D3A2001645BD /* PINManager.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m in Sources */,
+				FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */,
 				FBF5EBE724B5E7A8001645BD /* SystemCommandExecutor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
