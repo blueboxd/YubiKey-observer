@@ -10,23 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol YubiKeyDeviceManagerDelegate <NSObject>
+extern NSNotificationName YubiKeyDeviceManagerKeyInsertedNotificationKey;
+extern NSNotificationName YubiKeyDeviceManagerKeyRemovedNotificationKey;
 
-- (void) deviceAdded:(NSDictionary*)dev;
-- (void) deviceRemoved:(NSDictionary*)dev;
-
-@end
+extern NSString* YubiKeyDeviceDictionaryUSBNameKey;
+extern NSString* YubiKeyDeviceDictionaryUSBSerialNumberKey;
+extern NSString* YubiKeyDeviceDictionaryUSBLocationKey;
+extern NSString* YubiKeyDeviceDictionaryUniqueStringKey;
 
 @interface YubiKeyDeviceManager : NSObject
 - (kern_return_t) registerMatchingCallbacks;
-- (NSString*) getUniqueIDFromDev:(NSDictionary*)dev;
 
-@property (nonatomic) BOOL isYubiKeyInserted;
 @property (nonatomic,readonly) NSMutableDictionary<NSString*,NSDictionary*> *devices;
-@property (strong) IBOutlet NSUserDefaultsController *prefsController;
-
-@property (weak, nonatomic) IBOutlet id <YubiKeyDeviceManagerDelegate> delegate;
-
 @end
 
 NS_ASSUME_NONNULL_END

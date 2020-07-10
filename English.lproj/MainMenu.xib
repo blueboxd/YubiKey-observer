@@ -332,40 +332,29 @@
         </menu>
         <customObject id="494" userLabel="AppDelegate" customClass="YubiKey_observerAppDelegate">
             <connections>
-                <outlet property="addKeyMenuItem" destination="HJf-zz-hAk" id="wIN-4d-8ON"/>
                 <outlet property="keyIDLabel" destination="n56-XG-Sp6" id="w71-1Y-WOa"/>
-                <outlet property="menuIconManager" destination="eRN-I1-FGU" id="GVS-Ed-YO5"/>
                 <outlet property="pinDialog" destination="543" id="583"/>
                 <outlet property="pinManager" destination="PN1-jL-m82" id="4wk-MZ-4wF"/>
                 <outlet property="pinTextField" destination="552" id="582"/>
                 <outlet property="prefWindow" destination="590" id="593"/>
                 <outlet property="prefsController" destination="622" id="632"/>
                 <outlet property="rememberPINCheckbox" destination="549" id="581"/>
-                <outlet property="removeKeyMenuItem" destination="5ao-Cp-pL8" id="gXC-YZ-V9r"/>
                 <outlet property="sshKeyManager" destination="jS3-x6-Gg4" id="LBK-lQ-cHf"/>
-                <outlet property="sshkeysSubMenu" destination="pzj-C8-Z08" id="8Jq-TM-ls2"/>
-                <outlet property="statusMenu" destination="627" id="631"/>
                 <outlet property="yubikeyDeviceManager" destination="P91-QX-n2i" id="FcJ-Ux-ka6"/>
-                <outlet property="yubikeysSubMenu" destination="rac-g7-ufQ" id="UUT-hG-7lX"/>
             </connections>
         </customObject>
-        <customObject id="P91-QX-n2i" userLabel="YubiKey Device Manager" customClass="YubiKeyDeviceManager">
-            <connections>
-                <outlet property="delegate" destination="494" id="J5d-5M-5Cu"/>
-                <outlet property="prefsController" destination="622" id="pQU-oS-Xo7"/>
-            </connections>
-        </customObject>
+        <customObject id="P91-QX-n2i" userLabel="YubiKey Device Manager" customClass="YubiKeyDeviceManager"/>
         <customObject id="jS3-x6-Gg4" userLabel="SSHKey Manager" customClass="SSHKeyManager">
             <connections>
-                <outlet property="delegate" destination="494" id="EGU-hb-WF5"/>
                 <outlet property="prefsController" destination="622" id="aup-Ai-S7T"/>
             </connections>
         </customObject>
         <customObject id="PN1-jL-m82" userLabel="PIN Manager" customClass="PINManager"/>
         <customObject id="eRN-I1-FGU" customClass="StatusMenuManager">
             <connections>
-                <outlet property="sshKeyManager" destination="jS3-x6-Gg4" id="Qfo-DZ-nEf"/>
-                <outlet property="yubikeyDeviceManager" destination="P91-QX-n2i" id="jpg-49-tGy"/>
+                <outlet property="sshkeysSubMenu" destination="pzj-C8-Z08" id="LSs-ax-sE0"/>
+                <outlet property="statusMenu" destination="627" id="Dsv-Fy-q3m"/>
+                <outlet property="yubikeysSubMenu" destination="rac-g7-ufQ" id="p9E-YV-UGz"/>
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
@@ -680,28 +669,28 @@ Gw
                 <menuItem title="YubiKeys inserted" id="6Rr-dg-N9X">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="YubiKeys" id="rac-g7-ufQ"/>
+                    <menu key="submenu" title="YubiKeys" autoenablesItems="NO" id="rac-g7-ufQ"/>
                 </menuItem>
                 <menuItem title="ssh keys added" id="N7U-XZ-LrI">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="ssh-keys" id="pzj-C8-Z08"/>
+                    <menu key="submenu" title="ssh-keys" autoenablesItems="NO" id="pzj-C8-Z08"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="ZJe-2e-Gh5"/>
                 <menuItem title="Add keys" hidden="YES" id="HJf-zz-hAk">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="addKeyAction:" target="494" id="wfX-tJ-FkT"/>
-                        <binding destination="P91-QX-n2i" name="enabled" keyPath="self.isYubiKeyInserted" id="szc-hs-hBj"/>
-                        <binding destination="jS3-x6-Gg4" name="hidden" keyPath="self.isSSHKeyFomYubiKeyAdded" previousBinding="szc-hs-hBj" id="Zdj-hd-knn"/>
+                        <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.deviceInserted" id="lom-6V-Egt"/>
+                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="lom-6V-Egt" id="vqb-mf-Y8u"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Remove keys" hidden="YES" id="5ao-Cp-pL8">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="removeKeyAction:" target="494" id="tKi-4j-B0b"/>
-                        <binding destination="P91-QX-n2i" name="enabled" keyPath="self.isYubiKeyInserted" id="xrT-yy-pRJ"/>
-                        <binding destination="jS3-x6-Gg4" name="hidden" keyPath="self.isSSHKeyFomYubiKeyAdded" previousBinding="xrT-yy-pRJ" id="54H-Sn-toO">
+                        <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.deviceInserted" id="91q-Il-96w"/>
+                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="91q-Il-96w" id="Xid-a8-ePL">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                             </dictionary>

@@ -10,27 +10,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol SSHKeyManagerDelegate <NSObject>
+extern NSString* const SSHKeyManagerSSHKeyDictionaryHashKey;
+extern NSString* const SSHKeyManagerSSHKeyDictionaryNameKey;
+extern NSString* const SSHKeyManagerSSHKeyDictionaryAlgoKey;
+extern NSString* const SSHKeyManagerSSHKeyDictionaryBitsKey;
+extern NSString* const SSHKeyManagerSSHKeyDictionaryOursKey;
 
-- (void) keyStoreChanged:(NSArray<NSDictionary*>*)keys;
-
-@end
-
-#define sshKeyID @"id"
-#define sshKeyBits @"bits"
-#define sshKeyHash @"hash"
-#define sshKeyAlgo @"algo"
-#define sshKeyOurs @"ours"
+extern NSNotificationName SSHKeyManagerKeyStoreDidChangeNotificationKey;
 
 @interface SSHKeyManager : NSObject
+- (void) refreshKeyStore;
 - (int32_t) addSSHKeyWithPin:(NSString*)pin;
 - (int32_t) removeSSHKey;
 - (NSArray* _Nullable) enumerateSSHKeys;
-@property (nonatomic) BOOL isSSHKeyFomYubiKeyAdded;
-
-@property (strong) IBOutlet NSUserDefaultsController *prefsController;
-
-@property (weak, nonatomic) IBOutlet id <SSHKeyManagerDelegate> delegate;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -56,7 +56,7 @@
 	_stderrData = [stderrFile readDataToEndOfFile];
 	[stderrFile closeFile];
 
-	NSLog(@"execSystemCmd(%@):terminationStatus: %d\nstdout: %@\nstderr: %@",self.execPath,task.terminationStatus,self.stdoutData,self.stderrData);
+//	NSLog(@"execSystemCmd(%@):terminationStatus: %d\nstdout: %@\nstderr: %@",self.execPath,task.terminationStatus,self.stdoutData,self.stderrData);
 	return task.terminationStatus;
 }
 

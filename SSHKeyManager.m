@@ -10,15 +10,25 @@
 #import "SystemCommandExecutor.h"
 #import "PrefKeys.h"
 
+NSString* const SSHKeyManagerSSHKeyDictionaryHashKey = @"hash";
+NSString* const SSHKeyManagerSSHKeyDictionaryNameKey = @"name";
+NSString* const SSHKeyManagerSSHKeyDictionaryAlgoKey = @"algo";
+NSString* const SSHKeyManagerSSHKeyDictionaryBitsKey = @"bits";
+NSString* const SSHKeyManagerSSHKeyDictionaryOursKey = @"ours";
+
+NSNotificationName SSHKeyManagerKeyStoreDidChangeNotificationKey = @"SSHKeyManagerNotificationKey";
+
+@interface SSHKeyManager()
+@property (strong) IBOutlet NSUserDefaultsController *prefsController;
+@end
+
 @implementation SSHKeyManager
 
-- (void) awakeFromNib {
-	self.isSSHKeyFomYubiKeyAdded = [self hasOurKey];
+- (void) refreshKeyStore {
+	[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerKeyStoreDidChangeNotificationKey object:self userInfo:@{@"keys":[self enumerateSSHKeys]}];	
 }
 
 - (int32_t) addSSHKeyWithPin:(NSString*)pin {
-	NSLog(@"will ssh-add -s");
-	
 	NSArray *args = @[
 		@"-s",
 		[[self.prefsController values] valueForKey:kPKCSPathKey],
@@ -35,13 +45,11 @@
 	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:stdinArgs];
 	result = [exc execute];
 	if(!result)
-		[self.delegate keyStoreChanged:[self enumerateSSHKeys]]; 
-	self.isSSHKeyFomYubiKeyAdded = [self hasOurKey];
+		[self refreshKeyStore]; 
 	return result;
 }
 
 - (int32_t) removeSSHKey {
-	NSLog(@"will ssh-add -e");
 	NSArray *args = @[
 		@"-e",
 		[[self.prefsController values] valueForKey:kPKCSPathKey],
@@ -51,8 +59,7 @@
 	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
 	result = [exc execute];
 	if(!result)
-		[self.delegate keyStoreChanged:[self enumerateSSHKeys]]; 
-	self.isSSHKeyFomYubiKeyAdded = [self hasOurKey];
+		[self refreshKeyStore];
 	return result;
 }
 
@@ -66,7 +73,7 @@
 	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
 	result = [exc execute];
 	if(result)
-		return nil;
+		return @[];
 	
 	NSArray *lines = [exc.stdoutStr componentsSeparatedByString:@"\n"];
 	NSMutableArray *keys = [NSMutableArray new];
@@ -82,21 +89,20 @@
 			ours = @YES;
 
 		[keys addObject:@{
-			sshKeyID:keyID,
-			sshKeyBits:elements[0],
-			sshKeyHash:elements[1],
-			sshKeyAlgo:[elements[3] substringWithRange:NSMakeRange(1, ([elements[3] length]-2))],
-			sshKeyOurs:ours,
+			SSHKeyManagerSSHKeyDictionaryNameKey:keyID,
+			SSHKeyManagerSSHKeyDictionaryBitsKey:elements[0],
+			SSHKeyManagerSSHKeyDictionaryHashKey:elements[1],
+			SSHKeyManagerSSHKeyDictionaryAlgoKey:[elements[3] substringWithRange:NSMakeRange(1, ([elements[3] length]-2))],
+			SSHKeyManagerSSHKeyDictionaryOursKey:ours,
 		}];
 	}
-	NSLog(@"%@",keys);
 	return keys;
 }
 
 - (BOOL) hasOurKey {
 	NSArray *keys = [self enumerateSSHKeys];
 	for (NSDictionary *key in keys) {
-		if([key[sshKeyOurs] intValue])
+		if([key[SSHKeyManagerSSHKeyDictionaryOursKey] intValue])
 			return YES;
 	}
 	return NO;
