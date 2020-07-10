@@ -18,6 +18,7 @@
 @interface StatusMenuManager()
 @property BOOL deviceInserted;
 @property BOOL keyAdded;
+@property BOOL addCmdFailed;
 @end
 
 @implementation StatusMenuManager {
@@ -27,13 +28,13 @@ IBOutlet	NSMenu *statusMenu;
 			NSStatusItem *statusItem;
 			NSDictionary<NSString*,NSImage*> *statusIcons;
 			NSMutableDictionary<NSString*, NSMenuItem*> *yubikeyMenuItemArray;
-	
 }
 
 -(void) awakeFromNib {
 //	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	self.deviceInserted = NO;
 	self.keyAdded = NO;
+	self.addCmdFailed = NO;
 	
 	statusIcons = @{
 		kStateNone			:	[NSImage imageNamed:kStateNone],
@@ -53,18 +54,25 @@ IBOutlet	NSMenu *statusMenu;
 	self.menuIcon = statusIcons[kStateNone];
 	[self addObserver:self forKeyPath:@"deviceInserted" options:NSKeyValueObservingOptionNew context:nil];
 	[self addObserver:self forKeyPath:@"keyAdded" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"addCmdFailed" options:NSKeyValueObservingOptionNew context:nil];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceAdded:) name:YubiKeyDeviceManagerKeyInsertedNotificationKey object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceRemoved:) name:YubiKeyDeviceManagerKeyRemovedNotificationKey object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyStoreChanged:) name:SSHKeyManagerKeyStoreDidChangeNotificationKey object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyStoreModified:) name:SSHKeyManagerKeyStoreDidChangeNotificationKey object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sshAddFailed:) name:SSHKeyManagerCommandFailedNotificationKey object:nil];
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
 	if(self.deviceInserted) {
-		if(self.keyAdded)
+		if(self.keyAdded) {
 			self.menuIcon = statusIcons[kStateKeyImported];
-		else
-			self.menuIcon = statusIcons[kStateInserted];
+		} else {
+			if(self.addCmdFailed)
+				self.menuIcon = statusIcons[kStateError];
+			else
+				self.menuIcon = statusIcons[kStateInserted];
+		}
 	} else {
 		self.menuIcon = statusIcons[kStateNone];
 	}
@@ -98,7 +106,7 @@ IBOutlet	NSMenu *statusMenu;
 		self.deviceInserted = NO;
 }
 
-- (void) keyStoreChanged:(NSNotification*)notification {
+- (void) keyStoreModified:(NSNotification*)notification {
 	NSDictionary *keys = notification.userInfo[@"keys"];
 	[sshkeysSubMenu removeAllItems];
 	self.keyAdded = NO;
@@ -123,5 +131,9 @@ IBOutlet	NSMenu *statusMenu;
 	}
 }
 
+- (void) sshAddFailed:(NSNotification*)notification {
+	if(notification.userInfo[SSHKeyManagerCommandFailedActionKey]==SSHKeyManagerCommandFailedActionAddKey)
+		self.addCmdFailed = YES;
+}
 
 @end

@@ -52,7 +52,7 @@
 	unsetenv("DISPLAY");
 
 	pin = nil;
-	
+
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceAdded:) name:YubiKeyDeviceManagerKeyInsertedNotificationKey object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceRemoved:) name:YubiKeyDeviceManagerKeyRemovedNotificationKey object:nil];
 
@@ -151,7 +151,8 @@
 	}
 	
 	if([[[prefsController values] valueForKey:kExecSSHAddOnInsertionKey] intValue]){
-		[self addSSHKeyForDev:dev];
+		if(![sshKeyManager hasOurKey])
+			[self addSSHKeyForDev:dev];
 	}
 }
 
@@ -160,7 +161,7 @@
 	NSLog(@"deviceRemoved:%@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]);
 	[NSApp abortModal];
 	if([[[prefsController values] valueForKey:kExecSSHAddOnRemovalKey] intValue]){
-		int32_t result = [sshKeyManager removeSSHKey];
+		[sshKeyManager removeSSHKey];
 	}
 	
 	if([[[prefsController values] valueForKey:kSleepScreenOnRemovalKey] intValue]){

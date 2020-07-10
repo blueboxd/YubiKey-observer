@@ -16,7 +16,13 @@ NSString* const SSHKeyManagerSSHKeyDictionaryAlgoKey = @"algo";
 NSString* const SSHKeyManagerSSHKeyDictionaryBitsKey = @"bits";
 NSString* const SSHKeyManagerSSHKeyDictionaryOursKey = @"ours";
 
-NSNotificationName SSHKeyManagerKeyStoreDidChangeNotificationKey = @"SSHKeyManagerNotificationKey";
+NSNotificationName SSHKeyManagerKeyStoreDidChangeNotificationKey = @"SSHKeyManagerKeyStoreDidChangeNotificationKey";
+NSNotificationName SSHKeyManagerCommandFailedNotificationKey = @"SSHKeyManagerCommandFailedNotificationKey";
+NSString* const SSHKeyManagerCommandFailedActionKey = @"action";
+NSString* const SSHKeyManagerCommandFailedActionAddKey = @"add";
+NSString* const SSHKeyManagerCommandFailedActionRemoveKey = @"remove";
+NSString* const SSHKeyManagerCommandFailedErrorKey = @"err";
+NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 
 @interface SSHKeyManager()
 @property (strong) IBOutlet NSUserDefaultsController *prefsController;
@@ -39,12 +45,18 @@ NSNotificationName SSHKeyManagerKeyStoreDidChangeNotificationKey = @"SSHKeyManag
 		@"\n"
 	];
 
-	usleep(500000);
-
 	uint32_t result;
 	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:stdinArgs];
 	result = [exc execute];
-	if(!result)
+	if(result)
+		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerCommandFailedNotificationKey object:self 
+			userInfo:@{
+				SSHKeyManagerCommandFailedActionKey:SSHKeyManagerCommandFailedActionAddKey,
+				SSHKeyManagerCommandFailedErrorKey:[NSError errorWithDomain:NSPOSIXErrorDomain code:result userInfo:nil],
+				SSHKeyManagerCommandFailedStdErrStrKey:[exc stderrStr]
+			}
+		 ];
+	else
 		[self refreshKeyStore]; 
 	return result;
 }
@@ -58,8 +70,16 @@ NSNotificationName SSHKeyManagerKeyStoreDidChangeNotificationKey = @"SSHKeyManag
 	uint32_t result;
 	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
 	result = [exc execute];
-	if(!result)
-		[self refreshKeyStore];
+	if(result)
+		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerCommandFailedNotificationKey object:self 
+			userInfo:@{
+				SSHKeyManagerCommandFailedActionKey:SSHKeyManagerCommandFailedActionRemoveKey,
+				SSHKeyManagerCommandFailedErrorKey:[NSError errorWithDomain:NSPOSIXErrorDomain code:result userInfo:nil],
+				SSHKeyManagerCommandFailedStdErrStrKey:[exc stderrStr]
+			}
+		];
+	else
+		[self refreshKeyStore]; 
 	return result;
 }
 
