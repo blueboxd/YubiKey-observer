@@ -32,7 +32,7 @@ static YubiKeyDeviceManager *gSelf;
 }
 
 - (NSString*) getUniqueIDFromDev:(NSDictionary*) dev {
-	return [NSString stringWithFormat:@"%@/%@-%@",dev[YubiKeyDeviceDictionaryUSBLocationKey],dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+	return [NSString stringWithFormat:@"%@[%@]@%@",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey],dev[YubiKeyDeviceDictionaryUSBLocationKey]];
 }
 
 void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
@@ -61,7 +61,7 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 		CFDictionaryRef dict = GetKeyInfo(usbDevice);
 		if(dict) {
 			CFRetain(dict);
-//			NSLog(@"initial device found:%@",dict);
+			NSLog(@"initial device found:%@",[self getUniqueIDFromDev:(__bridge NSDictionary*)dict]);
 			[self addDevice:(__bridge_transfer NSDictionary*)(dict)];
 		}
 	}
@@ -69,10 +69,11 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	kr = IOServiceAddMatchingNotification(notifyPort, kIOTerminatedNotification, matchDict, IOServiceMatchedCallback, (void*)NO, &iterator);
 	if(kr!=KERN_SUCCESS) return kr;
 	while ((usbDevice=IOIteratorNext(iterator))) {
-//		CFDictionaryRef dict = GetKeyInfo(usbDevice);
-//		if(dict)
-//			NSLog(@"device found for termination:%@",dict);
+		CFDictionaryRef dict = GetKeyInfo(usbDevice);
+		if(dict)
+			NSLog(@"device found for termination:%@",[self getUniqueIDFromDev:(__bridge NSDictionary*)dict]);
 	}
+	[[NSRunLoop currentRunLoop] run];
 	return KERN_SUCCESS;
 }
 
@@ -94,10 +95,10 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 		if(dict) {
 			CFRetain(dict);
 			if(added) {
-//				NSLog(@"YubiKey inserted:%@",dict);
+				NSLog(@"IOServiceMatchedCallback:YubiKey inserted");
 				[gSelf addDevice:(__bridge_transfer NSDictionary*)(dict)];
 			} else {
-//				NSLog(@"YubiKey removed:%@",dict);
+				NSLog(@"IOServiceMatchedCallback:YubiKey removed");
 				[gSelf removeDevice:(__bridge_transfer NSDictionary*)(dict)];
 			}
 		}

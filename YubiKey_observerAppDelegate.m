@@ -56,15 +56,18 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceAdded:) name:YubiKeyDeviceManagerKeyInsertedNotificationKey object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceRemoved:) name:YubiKeyDeviceManagerKeyRemovedNotificationKey object:nil];
 
-	kern_return_t kr = [yubikeyDeviceManager registerMatchingCallbacks];
-	if(kr!=KERN_SUCCESS) {
-		NSError *cause = [NSError errorWithDomain:NSMachErrorDomain code:kr userInfo:nil];
-		NSAlert *alert = [NSAlert alertWithError:cause];
-		alert.informativeText = @"registerMatchingCallbacks failed";
-		[alert runModal];
-		[NSApp terminate:self];
-	}
 	[sshKeyManager refreshKeyStore];
+	
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		kern_return_t kr = [self->yubikeyDeviceManager registerMatchingCallbacks];
+		if(kr!=KERN_SUCCESS) {
+			NSError *cause = [NSError errorWithDomain:NSMachErrorDomain code:kr userInfo:nil];
+			NSAlert *alert = [NSAlert alertWithError:cause];
+			alert.informativeText = @"registerMatchingCallbacks failed";
+			[alert runModal];
+			[NSApp terminate:self];
+		}
+	});
 }
 
 - (IBAction) confirmButtonAction:(id)sender {
@@ -86,18 +89,17 @@
 
 	[keyIDLabel setStringValue:informativeText];
 	[rememberPINCheckbox setState:NSOnState];
-	NSString *enteredPIN = nil;
-	BOOL rememberPIN = NO;
+	__block NSString *enteredPIN = nil;
 	[[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-	if([[NSApplication sharedApplication] runModalForWindow:pinDialog]) {
-		enteredPIN  = [pinTextField stringValue];
-		rememberPIN = [rememberPINCheckbox state];
+	if([[NSApplication sharedApplication] runModalForWindow:self->pinDialog]==NSModalResponseOK) {
+		BOOL rememberPIN = NO;
+		enteredPIN  = [self->pinTextField stringValue];
+		rememberPIN = [self->rememberPINCheckbox state];
 		if(rememberPIN) {
-			pin = enteredPIN;
+			self->pin = enteredPIN;
 		}
-
-		if ([[[prefsController values] valueForKey:kIsPINExpiresKey] intValue]) {
-			uint32_t timeout = [[[prefsController values] valueForKey:kPINExpiresInKey] intValue];
+		if ([[[self->prefsController values] valueForKey:kIsPINExpiresKey] intValue]) {
+			uint32_t timeout = [[[self->prefsController values] valueForKey:kPINExpiresInKey] intValue];
 			NSLog(@"PIN will expire in %d min",timeout);
 			NSTimer *timer = [NSTimer timerWithTimeInterval:(timeout*60) target:self selector:@selector(forgetPINAction:) userInfo:nil repeats:NO];
 			[[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
@@ -118,32 +120,45 @@
 }
 
 - (IBAction)addKeyAction:(id)sender {
-	[sshKeyManager addSSHKeyWithPin:[self askPIN:@"Unspecified YubiKey"]];
+	[self addSSHKeyForDev:nil];
 }
 
 - (IBAction)removeKeyAction:(id)sender {
 	[sshKeyManager removeSSHKey];
 }
 
+- (void) addSSHKeyForDev:(NSDictionary*)dev {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSString *msg;
+		if(dev)
+			msg = [NSString stringWithFormat:@"for %@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+		else
+			msg = @"Unspecified YubiKey";
+		NSString *enteredPin = [self askPIN:msg];
+		if(enteredPin)
+			[self->sshKeyManager addSSHKeyWithPin:enteredPin];
+	});
+}
+
 - (void) deviceAdded:(NSNotification*)notification {
 	NSDictionary *dev = notification.userInfo;
 	NSLog(@"deviceAdded:%@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]);
-
-	if([[[prefsController values] valueForKey:kExecSSHAddOnInsertionKey] intValue]){
-		[sshKeyManager addSSHKeyWithPin:[self askPIN:@"Unspecified YubiKey"]];
-	}
 
 	if([[[prefsController values] valueForKey:kWakeScreenOnInsertionKey] intValue]){
 		NSLog(@"will wake screen");
 		IOPMAssertionID assertionID;
 		IOPMAssertionDeclareUserActivity(CFSTR(""), kIOPMUserActiveLocal, &assertionID);
 	}
+	
+	if([[[prefsController values] valueForKey:kExecSSHAddOnInsertionKey] intValue]){
+		[self addSSHKeyForDev:dev];
+	}
 }
 
 - (void) deviceRemoved:(NSNotification*)notification {
 	NSDictionary *dev = notification.userInfo;
 	NSLog(@"deviceRemoved:%@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]);
-	
+	[NSApp abortModal];
 	if([[[prefsController values] valueForKey:kExecSSHAddOnRemovalKey] intValue]){
 		int32_t result = [sshKeyManager removeSSHKey];
 	}
