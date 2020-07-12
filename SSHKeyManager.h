@@ -28,7 +28,7 @@ extern NSString* const SSHKeyManagerCommandFailedStdErrStrKey;
 - (void) refreshKeyStore;
 - (int32_t) addSSHKeyWithPin:(NSString*)pin;
 - (int32_t) removeSSHKey;
-- (NSArray* _Nullable) enumerateSSHKeys;
+- (NSDictionary* _Nullable) enumerateSSHKeys;
 - (BOOL) hasOurKey;
 @end
 

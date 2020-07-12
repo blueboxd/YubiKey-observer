@@ -10,6 +10,14 @@
 #import "SystemCommandExecutor.h"
 #import "PrefKeys.h"
 
+#include <sys/un.h>
+#include <sys/socket.h>
+#include <fcntl.h>
+
+#include "openssh/authfd.h"
+#include "openssh/sshkey.h"
+#include "openssh/digest.h"
+
 NSString* const SSHKeyManagerSSHKeyDictionaryHashKey = @"hash";
 NSString* const SSHKeyManagerSSHKeyDictionaryNameKey = @"name";
 NSString* const SSHKeyManagerSSHKeyDictionaryAlgoKey = @"algo";
@@ -30,10 +38,41 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 
 @implementation SSHKeyManager {
 	IBOutlet NSUserDefaultsController *prefsController;
+	NSTimer *refreshTimer;
+	NSDictionary *curKeys;
+}
+
+- (void)awakeFromNib {
+	curKeys = @{};
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[self startTimer];
+	});
+}
+
+- (void)startTimer {
+	refreshTimer = [NSTimer timerWithTimeInterval:5 target:self selector:@selector(refreshKeyStore) userInfo:nil repeats:YES];
+	[[NSRunLoop currentRunLoop] addTimer:refreshTimer forMode:NSDefaultRunLoopMode];
+	[[NSRunLoop currentRunLoop] run];
+}
+
+- (BOOL) isDifferent:(NSDictionary*)newKeys withCurrent:(NSDictionary*)curKeys {
+	BOOL diff = NO;
+	if([newKeys count]!=[curKeys count])
+		return YES;
+
+	for (NSString *key in newKeys) {
+		if(!curKeys[key])
+			return YES;
+	}
+	return NO;
 }
 
 - (void) refreshKeyStore {
-	[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerKeyStoreDidChangeNotificationKey object:self userInfo:@{@"keys":[self enumerateSSHKeys]}];	
+	NSMutableDictionary *newKeys = [[self enumerateSSHKeys] mutableCopy];
+	if([self isDifferent:newKeys withCurrent:curKeys]) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerKeyStoreDidChangeNotificationKey object:self userInfo:@{@"keys":[self enumerateSSHKeys]}];
+	}
+	curKeys = newKeys;
 }
 
 - (int32_t) addSSHKeyWithPin:(NSString*)pin {
@@ -86,7 +125,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	return result;
 }
 
-- (NSArray*) enumerateSSHKeys {
+- (NSDictionary*) enumerateSSHKeys {
 	int32_t result;
 	NSArray *args = @[
 	  @"-l",
@@ -96,10 +135,10 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self->prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
 	result = [exc execute];
 	if(result)
-		return @[];
+		return @{};
 	
 	NSArray *lines = [exc.stdoutStr componentsSeparatedByString:@"\n"];
-	NSMutableArray *keys = [NSMutableArray new];
+	NSMutableDictionary *keys = [NSMutableDictionary new];
 	for (NSString *line in lines) {
 		if(![line length])continue;
 		NSArray *elements = [line componentsSeparatedByString:@" "];
@@ -107,29 +146,29 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 		NSString *pkcsRealPath = [pkcsPath stringByResolvingSymlinksInPath];
 		NSNumber *ours = @NO;
 		NSString *keyID = elements[2];
+		NSString *hash = elements[1];
 		
 		if([keyID isEqualToString:pkcsPath] || [keyID isEqualToString:pkcsRealPath])
 			ours = @YES;
 
-		[keys addObject:@{
+		keys[hash] = @{
 			SSHKeyManagerSSHKeyDictionaryNameKey:keyID,
 			SSHKeyManagerSSHKeyDictionaryBitsKey:elements[0],
-			SSHKeyManagerSSHKeyDictionaryHashKey:elements[1],
+			SSHKeyManagerSSHKeyDictionaryHashKey:hash,
 			SSHKeyManagerSSHKeyDictionaryAlgoKey:[elements[3] substringWithRange:NSMakeRange(1, ([elements[3] length]-2))],
 			SSHKeyManagerSSHKeyDictionaryOursKey:ours,
-		}];
+		};
 	}
 	return keys;
 }
 
 - (BOOL) hasOurKey {
-	NSArray *keys = [self enumerateSSHKeys];
-	for (NSDictionary *key in keys) {
-		if([key[SSHKeyManagerSSHKeyDictionaryOursKey] intValue])
+	NSDictionary *sshKeys = [self enumerateSSHKeys];
+	for (NSString *key in sshKeys) {
+		if([sshKeys[key][SSHKeyManagerSSHKeyDictionaryOursKey] intValue])
 			return YES;
 	}
 	return NO;
 }
-
 
 @end

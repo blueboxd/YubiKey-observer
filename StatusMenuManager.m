@@ -107,11 +107,12 @@ IBOutlet	NSMenu *statusMenu;
 }
 
 - (void) keyStoreModified:(NSNotification*)notification {
-	NSDictionary *keys = notification.userInfo[@"keys"];
+	NSDictionary *sshKeys = notification.userInfo[@"keys"];
 	[sshkeysSubMenu removeAllItems];
 	self.keyAdded = NO;
-	for (NSDictionary *key in keys) {
-		NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t%@\n\t[%@/%@]",key[SSHKeyManagerSSHKeyDictionaryHashKey],key[SSHKeyManagerSSHKeyDictionaryNameKey],key[SSHKeyManagerSSHKeyDictionaryAlgoKey],key[SSHKeyManagerSSHKeyDictionaryBitsKey]];
+	for (NSString *key in sshKeys) {
+		NSDictionary *curSSHKey = sshKeys[key];
+		NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t%@\n\t[%@/%@]",curSSHKey[SSHKeyManagerSSHKeyDictionaryHashKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryNameKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryAlgoKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryBitsKey]];
 		NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:nil keyEquivalent:@""];
 		NSDictionary *attributes = @{
 			NSFontAttributeName: [NSFont userFixedPitchFontOfSize:[NSFont smallSystemFontSize]],
@@ -120,7 +121,7 @@ IBOutlet	NSMenu *statusMenu;
 		newMenuItem.attributedTitle = attributedTitle;
 		newMenuItem.enabled = NO;
 		
-		if([key[SSHKeyManagerSSHKeyDictionaryOursKey] intValue]) {
+		if([curSSHKey[SSHKeyManagerSSHKeyDictionaryOursKey] intValue]) {
 			newMenuItem.onStateImage = [NSImage imageNamed:@"yubikey-c"];
 			newMenuItem.state = NSOnState;
 			newMenuItem.enabled = YES;

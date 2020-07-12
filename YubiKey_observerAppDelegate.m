@@ -58,11 +58,13 @@
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		kern_return_t kr = [self->yubikeyDeviceManager registerMatchingCallbacks];
 		if(kr!=KERN_SUCCESS) {
-			NSError *cause = [NSError errorWithDomain:NSMachErrorDomain code:kr userInfo:nil];
-			NSAlert *alert = [NSAlert alertWithError:cause];
-			alert.informativeText = @"registerMatchingCallbacks failed";
-			[alert runModal];
-			[NSApp terminate:self];
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				NSError *cause = [NSError errorWithDomain:NSMachErrorDomain code:kr userInfo:nil];
+				NSAlert *alert = [NSAlert alertWithError:cause];
+				alert.informativeText = @"registerMatchingCallbacks failed";
+				[alert runModal];
+				[NSApp terminate:self];
+			});
 		}
 	});
 }
@@ -177,6 +179,7 @@
 				CFMessagePortSendRequest(port, 600, NULL, 0, 0, NULL, NULL);
 				CFRelease(port);
 			} else {
+				//-undefined dynamic_lookup
 				extern void SACLockScreenImmediate(void) __attribute__((weak_import, weak));;
 				SACLockScreenImmediate();
 			}
