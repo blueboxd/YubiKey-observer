@@ -11,7 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PINManager : NSObject
-- (NSString*)getPinForKey:(NSString*)key;
+- (NSString* _Nullable)getPinForKey:(NSString*)key;
+- (OSStatus)storePin:(NSString*)pin forKey:(NSString*)key withLabel:(NSString*)label;
+- (void)dump;
 @end
 
 NS_ASSUME_NONNULL_END

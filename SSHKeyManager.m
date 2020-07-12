@@ -25,10 +25,12 @@ NSString* const SSHKeyManagerCommandFailedErrorKey = @"err";
 NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 
 @interface SSHKeyManager()
-@property (strong) IBOutlet NSUserDefaultsController *prefsController;
+
 @end
 
-@implementation SSHKeyManager
+@implementation SSHKeyManager {
+	IBOutlet NSUserDefaultsController *prefsController;
+}
 
 - (void) refreshKeyStore {
 	[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerKeyStoreDidChangeNotificationKey object:self userInfo:@{@"keys":[self enumerateSSHKeys]}];	
@@ -37,7 +39,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 - (int32_t) addSSHKeyWithPin:(NSString*)pin {
 	NSArray *args = @[
 		@"-s",
-		[[self.prefsController values] valueForKey:kPKCSPathKey],
+		[[self->prefsController values] valueForKey:kPKCSPathKey],
 	];
 
 	NSArray *stdinArgs = @[
@@ -46,9 +48,9 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	];
 
 	uint32_t result;
-	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:stdinArgs];
+	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self->prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:stdinArgs];
 	result = [exc execute];
-	if(result)
+	if(result) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerCommandFailedNotificationKey object:self 
 			userInfo:@{
 				SSHKeyManagerCommandFailedActionKey:SSHKeyManagerCommandFailedActionAddKey,
@@ -56,7 +58,8 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 				SSHKeyManagerCommandFailedStdErrStrKey:[exc stderrStr]
 			}
 		 ];
-	else
+		 NSLog(@"%@",[exc stderrStr]);
+	} else
 		[self refreshKeyStore]; 
 	return result;
 }
@@ -64,11 +67,11 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 - (int32_t) removeSSHKey {
 	NSArray *args = @[
 		@"-e",
-		[[self.prefsController values] valueForKey:kPKCSPathKey],
+		[[self->prefsController values] valueForKey:kPKCSPathKey],
 	];
 
 	uint32_t result;
-	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
+	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self->prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
 	result = [exc execute];
 	if(result)
 		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerCommandFailedNotificationKey object:self 
@@ -90,7 +93,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	  @"-E",
 	  @"md5"
 	];
-	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self.prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
+	SystemCommandExecutor *exc = [SystemCommandExecutor initWithCmd:[[self->prefsController values] valueForKey:kSSHAddPathKey] withArgs:args withStdIn:nil];
 	result = [exc execute];
 	if(result)
 		return @[];
@@ -100,7 +103,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	for (NSString *line in lines) {
 		if(![line length])continue;
 		NSArray *elements = [line componentsSeparatedByString:@" "];
-		NSString *pkcsPath = [[self.prefsController values] valueForKey:kPKCSPathKey];
+		NSString *pkcsPath = [[self->prefsController values] valueForKey:kPKCSPathKey];
 		NSString *pkcsRealPath = [pkcsPath stringByResolvingSymlinksInPath];
 		NSNumber *ours = @NO;
 		NSString *keyID = elements[2];

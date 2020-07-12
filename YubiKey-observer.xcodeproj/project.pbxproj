@@ -302,7 +302,7 @@
 					"-Wno-objc-missing-property-synthesis",
 					"-Wno-nullable-to-nonnull-conversion",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "cx.lab.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.b5x.YubiKey-observer";
 				PRODUCT_NAME = "YubiKey-observer";
 				SDKROOT = macosx10.14;
 			};
@@ -339,7 +339,7 @@
 					"-Wno-objc-missing-property-synthesis",
 					"-Wno-nullable-to-nonnull-conversion",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "cx.lab.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.b5x.YubiKey-observer";
 				PRODUCT_NAME = "YubiKey-observer";
 				SDKROOT = macosx10.14;
 			};

@@ -20,7 +20,7 @@ extern NSString* YubiKeyDeviceDictionaryUniqueStringKey;
 
 @interface YubiKeyDeviceManager : NSObject
 - (kern_return_t) registerMatchingCallbacks;
-
+- (NSDictionary*) getAnySingleDevice;
 @property (nonatomic,readonly) NSMutableDictionary<NSString*,NSDictionary*> *devices;
 @end
 

@@ -38,7 +38,6 @@
 	IBOutlet	PINManager *pinManager;
 
 				NSString *pinText;
-				NSString *pin;
 }
 
 + (void)initialize {
@@ -50,8 +49,6 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	unsetenv("DISPLAY");
-
-	pin = nil;
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceAdded:) name:YubiKeyDeviceManagerKeyInsertedNotificationKey object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceRemoved:) name:YubiKeyDeviceManagerKeyRemovedNotificationKey object:nil];
@@ -83,20 +80,28 @@
 	[prefWindow makeKeyAndOrderFront:self];
 }
 
-- (NSString*) askPIN:(NSString*)informativeText {
-	if(pin)
-		return pin;
+- (NSString*) getPINFor:(NSDictionary*)dev {
+	NSString *storedPIN = [pinManager getPinForKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+	if(storedPIN)
+		return storedPIN;
 
-	[keyIDLabel setStringValue:informativeText];
+	NSString *msg;
+	if(dev)
+		msg = [NSString stringWithFormat:@"for %@ SN#%@",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+	else
+		msg = @"Unspecified YubiKey";
+
+	[keyIDLabel setStringValue:msg];
 	[rememberPINCheckbox setState:NSOnState];
-	__block NSString *enteredPIN = nil;
+	NSString *enteredPIN = nil;
 	[[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
 	if([[NSApplication sharedApplication] runModalForWindow:self->pinDialog]==NSModalResponseOK) {
 		BOOL rememberPIN = NO;
 		enteredPIN  = [self->pinTextField stringValue];
 		rememberPIN = [self->rememberPINCheckbox state];
 		if(rememberPIN) {
-			self->pin = enteredPIN;
+			NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+			[self->pinManager storePin:enteredPIN forKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey] withLabel:labelStr];
 		}
 		if ([[[self->prefsController values] valueForKey:kIsPINExpiresKey] intValue]) {
 			uint32_t timeout = [[[self->prefsController values] valueForKey:kPINExpiresInKey] intValue];
@@ -116,11 +121,10 @@
 
 - (IBAction) forgetPINAction:(id)sender {
 	NSLog(@"forgetting PIN");
-	pin = nil;
 }
 
 - (IBAction)addKeyAction:(id)sender {
-	[self addSSHKeyForDev:nil];
+	[self addSSHKeyForDev:[yubikeyDeviceManager getAnySingleDevice]];
 }
 
 - (IBAction)removeKeyAction:(id)sender {
@@ -129,14 +133,9 @@
 
 - (void) addSSHKeyForDev:(NSDictionary*)dev {
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString *msg;
-		if(dev)
-			msg = [NSString stringWithFormat:@"for %@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
-		else
-			msg = @"Unspecified YubiKey";
-		NSString *enteredPin = [self askPIN:msg];
-		if(enteredPin)
-			[self->sshKeyManager addSSHKeyWithPin:enteredPin];
+		NSString *pin = [self getPINFor:dev];
+		if(pin)
+			[self->sshKeyManager addSSHKeyWithPin:pin];
 	});
 }
 

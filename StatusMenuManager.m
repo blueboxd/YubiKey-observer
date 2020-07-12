@@ -126,6 +126,7 @@ IBOutlet	NSMenu *statusMenu;
 			newMenuItem.enabled = YES;
 			
 			self.keyAdded = YES;
+			self.addCmdFailed = NO;
 		}
 		[sshkeysSubMenu addItem:newMenuItem];
 	}

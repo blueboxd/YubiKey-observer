@@ -31,7 +31,11 @@ static YubiKeyDeviceManager *gSelf;
 	return self;
 }
 
-- (NSString*) getUniqueIDFromDev:(NSDictionary*) dev {
+- (NSDictionary*)getAnySingleDevice {
+	return self.devices[[[self.devices allKeys] objectAtIndex:0]];
+}
+
+- (NSString*) getUniqueIDFromDev:(NSDictionary*)dev {
 	return [NSString stringWithFormat:@"%@[%@]@%@",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey],dev[YubiKeyDeviceDictionaryUSBLocationKey]];
 }
 
