@@ -11,6 +11,7 @@
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/hid/IOHIDKeys.h>
+#include <PCSC/winscard.h>
 
 NSNotificationName YubiKeyDeviceManagerKeyInsertedNotificationKey = @"YubiKeyDeviceManagerKeyInsertedNotificationKey";
 NSNotificationName YubiKeyDeviceManagerKeyRemovedNotificationKey = @"YubiKeyDeviceManagerKeyRemovedNotificationKey";
@@ -83,6 +84,7 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 
 - (void) addDevice:(NSDictionary*)dev {
 	_devices[[self getUniqueIDFromDev:dev]] = dev;
+	
 	[[NSNotificationCenter defaultCenter] postNotificationName:YubiKeyDeviceManagerKeyInsertedNotificationKey object:self userInfo:dev];
 }
 

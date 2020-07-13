@@ -14,6 +14,8 @@
 #define kSleepScreenOnRemovalKey @"sleepScreen"
 #define kLockScreenOnRemovalKey @"lockScreen"
 #define kWakeScreenOnInsertionKey @"wakeScreen"
+#define kLockKeychainOnRemovalKey @"lockKeychain"
+#define kUnlockKeychainOnInsertionKey @"unlockKeychain"
 #define kIsPINExpiresKey @"pinExpires"
 #define kPINExpiresInKey @"expiresIn"
 #define kPKCSPathKey @"pkcsPath"

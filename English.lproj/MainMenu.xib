@@ -328,7 +328,7 @@
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="103" y="13"/>
+            <point key="canvasLocation" x="168" y="23"/>
         </menu>
         <customObject id="494" userLabel="AppDelegate" customClass="YubiKey_observerAppDelegate">
             <connections>
@@ -339,16 +339,10 @@
                 <outlet property="prefWindow" destination="590" id="593"/>
                 <outlet property="prefsController" destination="622" id="632"/>
                 <outlet property="rememberPINCheckbox" destination="549" id="581"/>
-                <outlet property="sshKeyManager" destination="jS3-x6-Gg4" id="LBK-lQ-cHf"/>
                 <outlet property="yubikeyDeviceManager" destination="P91-QX-n2i" id="FcJ-Ux-ka6"/>
             </connections>
         </customObject>
         <customObject id="P91-QX-n2i" userLabel="YubiKey Device Manager" customClass="YubiKeyDeviceManager"/>
-        <customObject id="jS3-x6-Gg4" userLabel="SSHKey Manager" customClass="SSHKeyManager">
-            <connections>
-                <outlet property="prefsController" destination="622" id="aup-Ai-S7T"/>
-            </connections>
-        </customObject>
         <customObject id="PN1-jL-m82" userLabel="PIN Manager" customClass="PINManager"/>
         <customObject id="eRN-I1-FGU" customClass="StatusMenuManager">
             <connections>
@@ -461,28 +455,28 @@ Gw
                     </textField>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-24" y="-133"/>
+            <point key="canvasLocation" x="95" y="-111"/>
         </window>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="590" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="1178" y="382" width="437" height="431"/>
+            <rect key="contentRect" x="1178" y="382" width="437" height="419"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1578"/>
             <view key="contentView" id="591">
-                <rect key="frame" x="0.0" y="0.0" width="437" height="431"/>
+                <rect key="frame" x="0.0" y="0.0" width="437" height="419"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box autoresizesSubviews="NO" borderType="line" title="Actions on device insertion" id="592">
-                        <rect key="frame" x="17" y="337" width="403" height="74"/>
+                        <rect key="frame" x="17" y="304" width="403" height="95"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="7Ow-22-Txh">
-                            <rect key="frame" x="1" y="1" width="401" height="58"/>
+                            <rect key="frame" x="1" y="1" width="401" height="79"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <button id="594">
-                                    <rect key="frame" x="16" y="32" width="322" height="18"/>
+                                    <rect key="frame" x="16" y="53" width="189" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Execute &quot;ssh-add -s&quot; for add key(s) on YubiKey" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="595">
+                                    <buttonCell key="cell" type="check" title="Add identities from YubiKey" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="595">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>
@@ -491,7 +485,7 @@ Gw
                                     </connections>
                                 </button>
                                 <button id="596">
-                                    <rect key="frame" x="16" y="12" width="101" height="18"/>
+                                    <rect key="frame" x="16" y="33" width="101" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Wake Screen" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="597">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -501,20 +495,31 @@ Gw
                                         <binding destination="622" name="value" keyPath="values.wakeScreen" id="634"/>
                                     </connections>
                                 </button>
+                                <button verticalHuggingPriority="750" id="Q17-TK-fFk">
+                                    <rect key="frame" x="16" y="13" width="121" height="18"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <buttonCell key="cell" type="check" title="Unlock keychain" bezelStyle="regularSquare" imagePosition="left" inset="2" id="vBe-Nq-4yS">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <binding destination="622" name="value" keyPath="values.unlockKeychain" id="Mdg-6I-bpJ"/>
+                                    </connections>
+                                </button>
                             </subviews>
                         </view>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="Actions on device removal" id="598">
-                        <rect key="frame" x="17" y="237" width="403" height="96"/>
+                        <rect key="frame" x="17" y="184" width="403" height="116"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="UA2-uN-Wvs">
-                            <rect key="frame" x="1" y="1" width="401" height="80"/>
+                            <rect key="frame" x="1" y="1" width="401" height="100"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <button id="599">
-                                    <rect key="frame" x="16" y="54" width="359" height="18"/>
+                                    <rect key="frame" x="16" y="74" width="214" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Execute &quot;ssh-add -e&quot; for remove key(s) from YubiKey" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="600">
+                                    <buttonCell key="cell" type="check" title="Remove identities from YubiKey" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="600">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>
@@ -523,7 +528,7 @@ Gw
                                     </connections>
                                 </button>
                                 <button id="601">
-                                    <rect key="frame" x="16" y="34" width="102" height="18"/>
+                                    <rect key="frame" x="16" y="54" width="102" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Sleep Screen" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="602">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -534,9 +539,9 @@ Gw
                                     </connections>
                                 </button>
                                 <button id="680">
-                                    <rect key="frame" x="35" y="14" width="168" height="18"/>
+                                    <rect key="frame" x="35" y="34" width="174" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Immediate Lock Screen" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="681">
+                                    <buttonCell key="cell" type="check" title="Lock Screen immediately" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="681">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>
@@ -545,11 +550,22 @@ Gw
                                         <binding destination="622" name="enabled" keyPath="values.sleepScreen" id="683"/>
                                     </connections>
                                 </button>
+                                <button verticalHuggingPriority="750" id="xn9-rm-3qo">
+                                    <rect key="frame" x="18" y="14" width="108" height="18"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <buttonCell key="cell" type="check" title="Lock keychain" bezelStyle="regularSquare" imagePosition="left" inset="2" id="O50-0G-fwK">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <binding destination="622" name="value" keyPath="values.lockKeychain" id="2aC-Sl-TJT"/>
+                                    </connections>
+                                </button>
                             </subviews>
                         </view>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="PIN cache policy" id="603">
-                        <rect key="frame" x="17" y="149" width="403" height="84"/>
+                        <rect key="frame" x="17" y="96" width="403" height="84"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="JLh-T4-Lw1">
                             <rect key="frame" x="1" y="1" width="401" height="68"/>
@@ -608,14 +624,14 @@ Gw
                         </view>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="ssh custom paths" id="614">
-                        <rect key="frame" x="17" y="16" width="403" height="129"/>
+                        <rect key="frame" x="17" y="16" width="403" height="76"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="Ttp-6s-PlT">
-                            <rect key="frame" x="1" y="1" width="401" height="113"/>
+                            <rect key="frame" x="1" y="1" width="401" height="60"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textField verticalHuggingPriority="750" id="612" userLabel="PKCSPath">
-                                    <rect key="frame" x="18" y="66" width="365" height="19"/>
+                                    <rect key="frame" x="18" y="13" width="339" height="19"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="/usr/local/lib/libykcs11.dylib" drawsBackground="YES" id="613">
                                         <font key="font" metaFont="smallSystem"/>
@@ -623,45 +639,37 @@ Gw
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                     <connections>
-                                        <binding destination="622" name="value" keyPath="values.pkcsPath" id="641"/>
+                                        <binding destination="622" name="value" keyPath="values.pkcsPath" id="aGp-ic-1FN">
+                                            <dictionary key="options">
+                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                <bool key="NSValidatesImmediately" value="YES"/>
+                                            </dictionary>
+                                        </binding>
                                     </connections>
                                 </textField>
                                 <textField verticalHuggingPriority="750" id="615">
-                                    <rect key="frame" x="15" y="87" width="147" height="16"/>
+                                    <rect key="frame" x="15" y="34" width="147" height="16"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="PKCS#11 libyrary path:" id="616">
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="PKCS#11 provider path:" id="616">
                                         <font key="font" metaFont="cellTitle"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField verticalHuggingPriority="750" id="617">
-                                    <rect key="frame" x="15" y="42" width="147" height="16"/>
+                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="mUg-1K-EaP">
+                                    <rect key="frame" x="365" y="15" width="16" height="16"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ssh-add path:" id="618">
-                                        <font key="font" metaFont="cellTitle"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <textField verticalHuggingPriority="750" id="619" userLabel="ssh-addPath">
-                                    <rect key="frame" x="18" y="21" width="365" height="19"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="/usr/local/bin/ssh-add" drawsBackground="YES" id="620">
-                                        <font key="font" metaFont="smallSystem"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
+                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSCaution" id="Bgi-6Y-nNo"/>
                                     <connections>
-                                        <binding destination="622" name="value" keyPath="values.sshAddPath" id="642"/>
+                                        <binding destination="494" name="hidden" keyPath="self.pkcsProviderExists" id="DGs-3v-pmH"/>
                                     </connections>
-                                </textField>
+                                </imageView>
                             </subviews>
                         </view>
                     </box>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-97" y="-388"/>
+            <point key="canvasLocation" x="-66.5" y="-379.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
         <menu id="627" userLabel="StatusMenu">
@@ -681,20 +689,31 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="addKeyAction:" target="494" id="wfX-tJ-FkT"/>
+                        <binding destination="494" name="enabled2" keyPath="self.pkcsProviderExists" previousBinding="lom-6V-Egt" id="UYo-6M-uDn">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                <integer key="NSNullPlaceholder" value="-1"/>
+                            </dictionary>
+                        </binding>
+                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="UYo-6M-uDn" id="wHZ-PK-ZdT"/>
                         <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.deviceInserted" id="lom-6V-Egt"/>
-                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="lom-6V-Egt" id="vqb-mf-Y8u"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Remove keys" hidden="YES" id="5ao-Cp-pL8">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="removeKeyAction:" target="494" id="tKi-4j-B0b"/>
-                        <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.deviceInserted" id="91q-Il-96w"/>
-                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="91q-Il-96w" id="Xid-a8-ePL">
+                        <binding destination="494" name="enabled" keyPath="self.pkcsProviderExists" previousBinding="nwX-t2-FkX" id="Hsx-0a-YMh">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                <integer key="NSNullPlaceholder" value="-1"/>
                             </dictionary>
                         </binding>
+                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" id="nwX-t2-FkX"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="HkT-20-7pz"/>
@@ -719,6 +738,7 @@ Gw
     </objects>
     <resources>
         <image name="Key_Large@2x" width="128" height="128"/>
+        <image name="NSCaution" width="32" height="32"/>
         <image name="yubikey-c" width="19" height="19"/>
     </resources>
 </document>

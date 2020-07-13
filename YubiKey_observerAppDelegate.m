@@ -18,42 +18,44 @@
 @interface YubiKey_observerAppDelegate() {
 }
 
-- (IBAction) confirmButtonAction:(id)sender;
-- (IBAction) cancelButtonAction:(id)sender;
-- (IBAction) forgetPINAction:(id)sender;
-- (IBAction) preferenceAction:(id)sender;
-
+//- (IBAction) confirmButtonAction:(id)sender;
+//- (IBAction) cancelButtonAction:(id)sender;
+//- (IBAction) forgetPINAction:(id)sender;
+//- (IBAction) preferenceAction:(id)sender;
+@property BOOL pkcsProviderExists;
 @end
 
 @implementation YubiKey_observerAppDelegate {
-	IBOutlet	NSUserDefaultsController *prefsController;
-	IBOutlet	NSWindow *pinDialog;
-	IBOutlet	NSButton *rememberPINCheckbox;
-	IBOutlet	NSTextField *pinTextField;
-	IBOutlet	NSTextField *keyIDLabel;
-	IBOutlet	NSWindow *prefWindow;
+IBOutlet NSUserDefaultsController *prefsController;
+IBOutlet NSWindow *pinDialog;
+IBOutlet NSButton *rememberPINCheckbox;
+IBOutlet NSTextField *pinTextField;
+IBOutlet NSTextField *keyIDLabel;
+IBOutlet NSWindow *prefWindow;
 
-	IBOutlet	YubiKeyDeviceManager *yubikeyDeviceManager;
-	IBOutlet	SSHKeyManager *sshKeyManager;
-	IBOutlet	PINManager *pinManager;
+IBOutlet YubiKeyDeviceManager *yubikeyDeviceManager;
+IBOutlet PINManager *pinManager;
 
-				NSString *pinText;
+SSHKeyManager *sshKeyManager;
+NSString *pinText;
 }
 
-+ (void)initialize {
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
 		kPKCSPathKey:@"/usr/local/lib/libykcs11.dylib",
 		kSSHAddPathKey:@"/usr/local/bin/ssh-add"
 	}];
-}
+	NSString *pkcsPath = [[prefsController values] valueForKey:kPKCSPathKey];
+	self.pkcsProviderExists = [[NSURL fileURLWithPath:pkcsPath] checkResourceIsReachableAndReturnError:nil];
+	if(self.pkcsProviderExists)
+		sshKeyManager = [[SSHKeyManager alloc] initWithProvider:pkcsPath];
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-	unsetenv("DISPLAY");
-
+	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kPKCSPathKey options:NSKeyValueObservingOptionNew context:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceAdded:) name:YubiKeyDeviceManagerKeyInsertedNotificationKey object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceRemoved:) name:YubiKeyDeviceManagerKeyRemovedNotificationKey object:nil];
 
-	[sshKeyManager refreshKeyStore];
+	[sshKeyManager startObserver];
 	
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		kern_return_t kr = [self->yubikeyDeviceManager registerMatchingCallbacks];
@@ -67,6 +69,19 @@
 			});
 		}
 	});
+}
+
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+	if([keyPath isEqualToString:kPKCSPathKey]) {
+		NSURL *pkcsPath = [NSURL fileURLWithPath:change[NSKeyValueChangeNewKey]];
+		NSError *err;
+		if((self.pkcsProviderExists = [pkcsPath checkResourceIsReachableAndReturnError:&err])) {
+			sshKeyManager = nil;
+			sshKeyManager = [[SSHKeyManager alloc]initWithProvider:change[NSKeyValueChangeNewKey]];
+		}
+		if(err)
+			NSLog(@"%@",err);
+	}
 }
 
 - (IBAction) confirmButtonAction:(id)sender {
@@ -130,15 +145,28 @@
 }
 
 - (IBAction)removeKeyAction:(id)sender {
-	[self->sshKeyManager updateCardWithProvider:([[self->prefsController values] valueForKey:kPKCSPathKey] ) add:NO pin:nil];
+	[self removeSSHKey];
 }
 
 - (void) addSSHKeyForDev:(NSDictionary*)dev {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString *pin = [self getPINFor:dev];
-		if(pin)
-			[self->sshKeyManager updateCardWithProvider:([[self->prefsController values] valueForKey:kPKCSPathKey] ) add:YES pin:pin];
-	});
+	if(self.pkcsProviderExists && (![sshKeyManager hasOurKey])) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			NSString *pin = [self getPINFor:dev];
+			if(pin) {
+				NSError *err = [self->sshKeyManager updateCardAdd:YES pin:pin];
+				if(err) {
+					NSAlert *alert = [NSAlert alertWithError:err];
+					alert.informativeText = err.userInfo[NSLocalizedFailureReasonErrorKey];
+					[alert runModal];
+				}
+			}
+		});
+	}
+}
+
+- (void) removeSSHKey {
+	if(self.pkcsProviderExists)
+		[self->sshKeyManager updateCardAdd:NO pin:nil];
 }
 
 - (void) deviceAdded:(NSNotification*)notification {
@@ -151,9 +179,12 @@
 		IOPMAssertionDeclareUserActivity(CFSTR(""), kIOPMUserActiveLocal, &assertionID);
 	}
 	
+	if([[[prefsController values] valueForKey:kUnlockKeychainOnInsertionKey] intValue]){
+		SecKeychainUnlock(nil, 0, nil, NO);
+	}
+	
 	if([[[prefsController values] valueForKey:kExecSSHAddOnInsertionKey] intValue]){
-		if(![sshKeyManager hasOurKey])
-			[self addSSHKeyForDev:dev];
+		[self addSSHKeyForDev:dev];
 	}
 }
 
@@ -162,7 +193,11 @@
 	NSLog(@"deviceRemoved:%@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]);
 	[NSApp abortModal];
 	if([[[prefsController values] valueForKey:kExecSSHAddOnRemovalKey] intValue]){
-		[self removeKeyAction:self];
+		[self removeSSHKey];
+	}
+	
+	if([[[prefsController values] valueForKey:kLockKeychainOnRemovalKey] intValue]){
+		SecKeychainLock(nil);
 	}
 	
 	if([[[prefsController values] valueForKey:kSleepScreenOnRemovalKey] intValue]){

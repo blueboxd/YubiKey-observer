@@ -25,13 +25,15 @@ extern NSString* const SSHKeyManagerCommandFailedErrorKey;
 extern NSString* const SSHKeyManagerCommandFailedStdErrStrKey;
 
 @interface SSHKeyManager : NSObject
+
+- (instancetype)initWithProvider:(NSString*)provider;
+- (void)startObserver;
 - (void) refreshKeyStore;
-- (int32_t) addSSHKeyWithPin:(NSString*)pin;
-- (int32_t) removeSSHKey;
-- (NSDictionary* _Nullable) enumerateSSHKeys;
 - (BOOL) hasOurKey;
 - (NSDictionary*) listIdentities;
-- (NSError* _Nullable) updateCardWithProvider:(NSString*)provider add:(BOOL)add pin:(NSString* _Nullable)pin;
+- (NSError* _Nullable) updateCardAdd:(BOOL)add pin:(NSString* _Nullable)pin;
+
+@property NSString *provider;
 @end
 
 NS_ASSUME_NONNULL_END
