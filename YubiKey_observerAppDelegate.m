@@ -130,14 +130,14 @@
 }
 
 - (IBAction)removeKeyAction:(id)sender {
-	[sshKeyManager removeSSHKey];
+	[self->sshKeyManager updateCardWithProvider:([[self->prefsController values] valueForKey:kPKCSPathKey] ) add:NO pin:nil];
 }
 
 - (void) addSSHKeyForDev:(NSDictionary*)dev {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSString *pin = [self getPINFor:dev];
 		if(pin)
-			[self->sshKeyManager addSSHKeyWithPin:pin];
+			[self->sshKeyManager updateCardWithProvider:([[self->prefsController values] valueForKey:kPKCSPathKey] ) add:YES pin:pin];
 	});
 }
 
@@ -162,7 +162,7 @@
 	NSLog(@"deviceRemoved:%@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]);
 	[NSApp abortModal];
 	if([[[prefsController values] valueForKey:kExecSSHAddOnRemovalKey] intValue]){
-		[sshKeyManager removeSSHKey];
+		[self removeKeyAction:self];
 	}
 	
 	if([[[prefsController values] valueForKey:kSleepScreenOnRemovalKey] intValue]){

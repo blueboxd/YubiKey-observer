@@ -30,6 +30,8 @@ extern NSString* const SSHKeyManagerCommandFailedStdErrStrKey;
 - (int32_t) removeSSHKey;
 - (NSDictionary* _Nullable) enumerateSSHKeys;
 - (BOOL) hasOurKey;
+- (NSDictionary*) listIdentities;
+- (NSError* _Nullable) updateCardWithProvider:(NSString*)provider add:(BOOL)add pin:(NSString* _Nullable)pin;
 @end
 
 NS_ASSUME_NONNULL_END

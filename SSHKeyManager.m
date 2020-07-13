@@ -17,6 +17,7 @@
 #include "openssh/authfd.h"
 #include "openssh/sshkey.h"
 #include "openssh/digest.h"
+#include "openssh/ssherr.h"
 
 NSString* const SSHKeyManagerSSHKeyDictionaryHashKey = @"hash";
 NSString* const SSHKeyManagerSSHKeyDictionaryNameKey = @"name";
@@ -56,7 +57,6 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 }
 
 - (BOOL) isDifferent:(NSDictionary*)newKeys withCurrent:(NSDictionary*)curKeys {
-	BOOL diff = NO;
 	if([newKeys count]!=[curKeys count])
 		return YES;
 
@@ -68,9 +68,9 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 }
 
 - (void) refreshKeyStore {
-	NSMutableDictionary *newKeys = [[self enumerateSSHKeys] mutableCopy];
+	NSDictionary *newKeys = [self listIdentities];
 	if([self isDifferent:newKeys withCurrent:curKeys]) {
-		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerKeyStoreDidChangeNotificationKey object:self userInfo:@{@"keys":[self enumerateSSHKeys]}];
+		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerKeyStoreDidChangeNotificationKey object:self userInfo:@{@"keys":newKeys}];
 	}
 	curKeys = newKeys;
 }
@@ -163,12 +163,111 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 }
 
 - (BOOL) hasOurKey {
-	NSDictionary *sshKeys = [self enumerateSSHKeys];
+	NSDictionary *sshKeys = [self listIdentities];
 	for (NSString *key in sshKeys) {
 		if([sshKeys[key][SSHKeyManagerSSHKeyDictionaryOursKey] intValue])
 			return YES;
 	}
 	return NO;
+}
+
+- (NSDictionary*) listIdentities {
+//	char *authsocket = getenv("SSH_AUTH_SOCK");
+//
+//	int sock, oerrno;
+//	struct sockaddr_un sunaddr;
+//
+//	memset(&sunaddr, 0, sizeof(sunaddr));
+//	sunaddr.sun_family = AF_UNIX;
+//	strlcpy(sunaddr.sun_path, authsocket, sizeof(sunaddr.sun_path));
+//	if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+//		return @{};
+//
+//	/* close on exec */
+//	if (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
+//		connect(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+//		oerrno = errno;
+//		close(sock);
+//		errno = oerrno;
+//		return @{};
+//	}
+	
+	int sock;
+	ssh_get_authentication_socket(&sock);
+	
+	struct ssh_identitylist *idlist;
+	char *fp;
+	int r = ssh_fetch_identitylist(sock, &idlist);
+	if(r)
+		return @{};
+
+	NSMutableDictionary *dict = [NSMutableDictionary new];
+	for (size_t i = 0; i < idlist->nkeys; i++) {
+		struct sshkey *k = idlist->keys[i];
+
+		fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT, SSH_FP_HEX);
+//		NSLog(@"%s",fp);
+
+//		u_char *blob = NULL;
+//		size_t blob_len = 0;
+//		r = sshkey_to_blob(k, &blob, &blob_len);
+//		NSData *rawKey = [NSData dataWithBytes:blob length:blob_len];
+//		NSLog(@"%@",[rawKey description]);
+		
+//		char * name,*name_plain;
+//		name = sshkey_ssh_name(k);
+//		name_plain = sshkey_ssh_name_plain(k);
+		
+		NSString *fingerprint = [NSString stringWithCString:fp encoding:NSUTF8StringEncoding];
+		NSString *comment = [NSString stringWithCString:idlist->comments[i] encoding:NSUTF8StringEncoding];
+		NSString *keyType = [NSString stringWithCString:sshkey_type(k) encoding:NSUTF8StringEncoding];
+		NSNumber *keySize = [NSNumber numberWithInt:sshkey_size(k)];
+
+		NSString *pkcsPath = [[self->prefsController values] valueForKey:kPKCSPathKey];
+		NSString *pkcsRealPath = [pkcsPath stringByResolvingSymlinksInPath];
+		NSNumber *ours = @NO;
+		
+		if([comment isEqualToString:pkcsPath] || [comment isEqualToString:pkcsRealPath])
+			ours = @YES;
+
+		dict[fingerprint] = @{
+			SSHKeyManagerSSHKeyDictionaryNameKey:comment,
+			SSHKeyManagerSSHKeyDictionaryBitsKey:keySize,
+			SSHKeyManagerSSHKeyDictionaryHashKey:fingerprint,
+			SSHKeyManagerSSHKeyDictionaryAlgoKey:keyType,
+			SSHKeyManagerSSHKeyDictionaryOursKey:ours,
+		};
+		
+		free(fp);
+	}
+	close(sock);
+	ssh_free_identitylist(idlist);
+	return dict;
+}
+
+- (NSError* _Nullable) updateCardWithProvider:(NSString*)provider add:(BOOL)add pin:(NSString* _Nullable)pin {
+	int sock;
+	ssh_get_authentication_socket(&sock);
+		
+	u_int lifetime = 0;
+	bool confirm = 0;
+	if(!pin)
+		pin = @"";
+	int r = ssh_update_card(sock, add, [provider cStringUsingEncoding:NSUTF8StringEncoding],
+					 [pin cStringUsingEncoding:NSUTF8StringEncoding], lifetime, confirm);
+	if(r) {
+		NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:r userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithCString:ssh_err(r) encoding:NSUTF8StringEncoding]}];
+		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerCommandFailedNotificationKey object:self 
+			userInfo:@{
+				SSHKeyManagerCommandFailedActionKey:add?SSHKeyManagerCommandFailedActionAddKey:SSHKeyManagerCommandFailedActionRemoveKey,
+				SSHKeyManagerCommandFailedErrorKey:err,
+//				SSHKeyManagerCommandFailedStdErrStrKey:[exc stderrStr]
+			}
+		 ];
+	
+		return err;
+	}
+	return nil;
 }
 
 @end
