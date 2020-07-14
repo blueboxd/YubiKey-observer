@@ -11,17 +11,23 @@
 #import "SSHKeyManager.h"
 #import "PINManager.h"
 #import "StatusMenuManager.h"
-#import "PrefKeys.h"
 
 #include <IOKit/pwr_mgt/IOPMLib.h>
 
+#define kExecSSHAddOnInsertionKey @"execSSHAddOnInsertion"
+#define kExecSSHAddOnRemovalKey @"execSSHAddOnRemoval"
+#define kSleepScreenOnRemovalKey @"sleepScreen"
+#define kLockScreenOnRemovalKey @"lockScreen"
+#define kWakeScreenOnInsertionKey @"wakeScreen"
+#define kLockKeychainOnRemovalKey @"lockKeychain"
+#define kUnlockKeychainOnInsertionKey @"unlockKeychain"
+#define kIsPINExpiresKey @"pinExpires"
+#define kPINExpiresInKey @"expiresIn"
+#define kPKCSPathKey @"pkcsPath"
+#define kSSHAddPathKey @"sshAddPath"
+
 @interface YubiKey_observerAppDelegate() {
 }
-
-//- (IBAction) confirmButtonAction:(id)sender;
-//- (IBAction) cancelButtonAction:(id)sender;
-//- (IBAction) forgetPINAction:(id)sender;
-//- (IBAction) preferenceAction:(id)sender;
 @property BOOL pkcsProviderExists;
 @end
 
@@ -32,6 +38,7 @@ IBOutlet NSButton *rememberPINCheckbox;
 IBOutlet NSTextField *pinTextField;
 IBOutlet NSTextField *keyIDLabel;
 IBOutlet NSWindow *prefWindow;
+IBOutlet NSImageView *alertIcon;
 
 IBOutlet YubiKeyDeviceManager *yubikeyDeviceManager;
 IBOutlet PINManager *pinManager;
@@ -56,6 +63,7 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceRemoved:) name:YubiKeyDeviceManagerKeyRemovedNotificationKey object:nil];
 
 	[sshKeyManager startObserver];
+	[sshKeyManager refreshKeyStore];
 	
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		kern_return_t kr = [self->yubikeyDeviceManager registerMatchingCallbacks];
@@ -75,12 +83,24 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	if([keyPath isEqualToString:kPKCSPathKey]) {
 		NSURL *pkcsPath = [NSURL fileURLWithPath:change[NSKeyValueChangeNewKey]];
 		NSError *err;
-		if((self.pkcsProviderExists = [pkcsPath checkResourceIsReachableAndReturnError:&err])) {
-			sshKeyManager = nil;
-			sshKeyManager = [[SSHKeyManager alloc]initWithProvider:change[NSKeyValueChangeNewKey]];
+		self.pkcsProviderExists = NO;
+		if([pkcsPath checkResourceIsReachableAndReturnError:&err]) {
+			NSNumber *isDir;
+			[pkcsPath getResourceValue:&isDir forKey:NSURLIsDirectoryKey error:&err];
+			if(![isDir intValue]) {
+				self.pkcsProviderExists = YES;
+				sshKeyManager.provider = change[NSKeyValueChangeNewKey];
+			} else {
+				alertIcon.toolTip = @"Path is not file";
+			}
+			if(err)
+				NSLog(@"%@",err);
 		}
-		if(err)
-			NSLog(@"%@",err);
+		if(err) {
+			alertIcon.toolTip = [err localizedFailureReason];
+			 if(err.code!=260)
+				NSLog(@"%@",err);
+		}
 	}
 }
 

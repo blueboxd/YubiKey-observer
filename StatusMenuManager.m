@@ -81,7 +81,7 @@ IBOutlet	NSMenu *statusMenu;
 - (void) deviceAdded:(NSNotification*)notification {
 	NSDictionary *dev = notification.userInfo;
 	self.deviceInserted = YES;
-	NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t[SN#%@] at %@",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey],dev[YubiKeyDeviceDictionaryUSBLocationKey]];
+	NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t[SN#%@] location %08x",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey],[dev[YubiKeyDeviceDictionaryUSBLocationKey] intValue]];
 	NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:nil keyEquivalent:@""];
 	NSDictionary *attributes = @{
 		NSFontAttributeName: [NSFont userFixedPitchFontOfSize:[NSFont smallSystemFontSize]],

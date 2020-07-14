@@ -8,7 +8,6 @@
 
 #import "SSHKeyManager.h"
 #import "SystemCommandExecutor.h"
-#import "PrefKeys.h"
 
 #include <sys/un.h>
 #include <sys/socket.h>
@@ -60,7 +59,12 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 - (void)dealloc {
 	NSLog(@"%@::%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	[refreshTimer invalidate];
-	//[super dealloc];
+}
+
+- (void) setProvider:(NSString *)provider {
+	_provider = provider;
+	curKeys = @{};						
+	[self refreshKeyStore];
 }
 
 - (void)startObserver {
@@ -71,7 +75,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	});
 }
 
-- (BOOL) isDifferent:(NSDictionary*)newKeys fromCurrent:(NSDictionary*)curKeys {
+- (BOOL) isDifferent:(NSDictionary*)newKeys from:(NSDictionary*)curKeys {
 	if([newKeys count]!=[curKeys count])
 		return YES;
 
@@ -84,7 +88,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 
 - (void) refreshKeyStore {
 	NSDictionary *newKeys = [self listIdentities];
-	if([self isDifferent:newKeys fromCurrent:curKeys]) {
+	if([self isDifferent:newKeys from:curKeys]) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:SSHKeyManagerKeyStoreDidChangeNotificationKey object:self userInfo:@{@"keys":newKeys}];
 	}
 	curKeys = newKeys;
@@ -151,6 +155,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 		pin = @"";
 	int r = ssh_update_card(sock, add, [self.provider cStringUsingEncoding:NSUTF8StringEncoding],
 					 [pin cStringUsingEncoding:NSUTF8StringEncoding], lifetime, confirm);
+	close(sock);
 	if(r) {
 		NSString *action = add?@"Add ssh-key failed":@"Remove ssh-key failed";
 		NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:r userInfo:@{NSLocalizedDescriptionKey:action,NSLocalizedFailureReasonErrorKey:[NSString stringWithCString:ssh_err(r) encoding:NSUTF8StringEncoding]}];

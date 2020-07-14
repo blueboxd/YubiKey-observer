@@ -16,20 +16,18 @@
 		FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FB43C41F24B7120E001645BD /* StatusMenuManager.m */; };
 		FB591F5324BB36C0001645BD /* authfd.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F5224BB36C0001645BD /* authfd.c */; };
 		FB591F6324BB3987001645BD /* sshbuf-io.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F5E24BB3987001645BD /* sshbuf-io.c */; };
-		FB591F6424BB3987001645BD /* sshbuf-getput-crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F5F24BB3987001645BD /* sshbuf-getput-crypto.c */; };
 		FB591F6524BB3987001645BD /* sshbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6024BB3987001645BD /* sshbuf.c */; };
 		FB591F6624BB3987001645BD /* sshbuf-getput-basic.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6124BB3987001645BD /* sshbuf-getput-basic.c */; };
-		FB591F6724BB3987001645BD /* sshbuf-misc.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6224BB3987001645BD /* sshbuf-misc.c */; };
 		FB591F6B24BB3A60001645BD /* sshkey.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6A24BB3A60001645BD /* sshkey.c */; };
 		FB591F6D24BB3B7C001645BD /* atomicio.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6C24BB3B7C001645BD /* atomicio.c */; };
 		FB591F6F24BB3CAF001645BD /* explicit_bzero.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6E24BB3CAF001645BD /* explicit_bzero.c */; };
 		FB591F7124BB3CDF001645BD /* freezero.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F7024BB3CDF001645BD /* freezero.c */; };
 		FB591F7524BB45F6001645BD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB591F7424BB45F6001645BD /* Security.framework */; };
-		FB591F7724BB5130001645BD /* digest-libc.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F7624BB5130001645BD /* digest-libc.c */; };
 		FB591F7B24BB53B3001645BD /* digest-openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F7A24BB53B3001645BD /* digest-openssl.c */; };
 		FB591F8624BB88B2001645BD /* recallocarray.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F8524BB88B2001645BD /* recallocarray.c */; };
 		FB591F8A24BB8A5C001645BD /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB591F8924BB8A5C001645BD /* libcrypto.a */; };
 		FB591F8C24BCB428001645BD /* ssherr.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F8B24BCB428001645BD /* ssherr.c */; };
+		FB591F8E24BDF067001645BD /* sshbuf-getput-crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F8D24BDF067001645BD /* sshbuf-getput-crypto.c */; };
 		FBAA8EF0218B4B690087A09A /* yubikey-ng.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EEE218B4B690087A09A /* yubikey-ng.png */; };
 		FBAA8EF3218B4B940087A09A /* yubikey-ok.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EF2218B4B940087A09A /* yubikey-ok.png */; };
 		FBB5D75724B4D8B6001645BD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBB5D75524B4D8B6001645BD /* MainMenu.xib */; };
@@ -39,7 +37,6 @@
 		FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */; };
 		FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9324B5C319001645BD /* SSHKeyManager.m */; };
 		FBF5EB9924B5D3A2001645BD /* PINManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9824B5D3A2001645BD /* PINManager.m */; };
-		FBF5EBE724B5E7A8001645BD /* SystemCommandExecutor.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EBE624B5E7A8001645BD /* SystemCommandExecutor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,25 +53,22 @@
 		8D1107320486CEB800E47090 /* YubiKey-observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "YubiKey-observer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB29E7C7218AC04400F7F216 /* yubikey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yubikey.png; sourceTree = "<group>"; };
 		FB29E7D2218AC08100F7F216 /* yubikey-c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-c.png"; sourceTree = "<group>"; };
-		FB330F3324B6000C001645BD /* PrefKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefKeys.h; sourceTree = "<group>"; };
 		FB43C41F24B7120E001645BD /* StatusMenuManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusMenuManager.m; sourceTree = "<group>"; };
 		FB43C42024B7120E001645BD /* StatusMenuManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusMenuManager.h; sourceTree = "<group>"; };
 		FB591F5224BB36C0001645BD /* authfd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = authfd.c; sourceTree = "<group>"; };
 		FB591F5E24BB3987001645BD /* sshbuf-io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sshbuf-io.c"; sourceTree = "<group>"; };
-		FB591F5F24BB3987001645BD /* sshbuf-getput-crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sshbuf-getput-crypto.c"; sourceTree = "<group>"; };
 		FB591F6024BB3987001645BD /* sshbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sshbuf.c; sourceTree = "<group>"; };
 		FB591F6124BB3987001645BD /* sshbuf-getput-basic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sshbuf-getput-basic.c"; sourceTree = "<group>"; };
-		FB591F6224BB3987001645BD /* sshbuf-misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sshbuf-misc.c"; sourceTree = "<group>"; };
 		FB591F6A24BB3A60001645BD /* sshkey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sshkey.c; sourceTree = "<group>"; };
 		FB591F6C24BB3B7C001645BD /* atomicio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atomicio.c; sourceTree = "<group>"; };
 		FB591F6E24BB3CAF001645BD /* explicit_bzero.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = explicit_bzero.c; sourceTree = "<group>"; };
 		FB591F7024BB3CDF001645BD /* freezero.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = freezero.c; sourceTree = "<group>"; };
 		FB591F7424BB45F6001645BD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = ../../../../System/Library/Frameworks/Security.framework; sourceTree = "<group>"; };
-		FB591F7624BB5130001645BD /* digest-libc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "digest-libc.c"; sourceTree = "<group>"; };
 		FB591F7A24BB53B3001645BD /* digest-openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "digest-openssl.c"; sourceTree = "<group>"; };
 		FB591F8524BB88B2001645BD /* recallocarray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recallocarray.c; sourceTree = "<group>"; };
 		FB591F8924BB8A5C001645BD /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../../../../usr/local/lib/libcrypto.a; sourceTree = "<group>"; };
 		FB591F8B24BCB428001645BD /* ssherr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssherr.c; sourceTree = "<group>"; };
+		FB591F8D24BDF067001645BD /* sshbuf-getput-crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sshbuf-getput-crypto.c"; sourceTree = "<group>"; };
 		FBAA8EEE218B4B690087A09A /* yubikey-ng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ng.png"; sourceTree = "<group>"; };
 		FBAA8EF2218B4B940087A09A /* yubikey-ok.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ok.png"; sourceTree = "<group>"; };
 		FBB5D75624B4D8B6001645BD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -87,8 +81,6 @@
 		FBF5EB9424B5C319001645BD /* YubiKeyDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YubiKeyDeviceManager.h; sourceTree = "<group>"; };
 		FBF5EB9724B5D3A2001645BD /* PINManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PINManager.h; sourceTree = "<group>"; };
 		FBF5EB9824B5D3A2001645BD /* PINManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PINManager.m; sourceTree = "<group>"; };
-		FBF5EBE524B5E7A8001645BD /* SystemCommandExecutor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemCommandExecutor.h; sourceTree = "<group>"; };
-		FBF5EBE624B5E7A8001645BD /* SystemCommandExecutor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SystemCommandExecutor.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,8 +112,6 @@
 				FBF5EB9324B5C319001645BD /* SSHKeyManager.m */,
 				FBF5EB9424B5C319001645BD /* YubiKeyDeviceManager.h */,
 				FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */,
-				FBF5EBE524B5E7A8001645BD /* SystemCommandExecutor.h */,
-				FBF5EBE624B5E7A8001645BD /* SystemCommandExecutor.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -171,7 +161,6 @@
 			isa = PBXGroup;
 			children = (
 				FB591F5124BB3606001645BD /* openssh */,
-				FB330F3324B6000C001645BD /* PrefKeys.h */,
 				256AC3F00F4B6AF500CF3369 /* YubiKey_observer_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
@@ -206,20 +195,18 @@
 		FB591F5124BB3606001645BD /* openssh */ = {
 			isa = PBXGroup;
 			children = (
-				FB591F7A24BB53B3001645BD /* digest-openssl.c */,
+				FB591F6C24BB3B7C001645BD /* atomicio.c */,
 				FB591F5224BB36C0001645BD /* authfd.c */,
-				FB591F8524BB88B2001645BD /* recallocarray.c */,
-				FB591F6124BB3987001645BD /* sshbuf-getput-basic.c */,
-				FB591F5F24BB3987001645BD /* sshbuf-getput-crypto.c */,
-				FB591F8B24BCB428001645BD /* ssherr.c */,
-				FB591F5E24BB3987001645BD /* sshbuf-io.c */,
-				FB591F6224BB3987001645BD /* sshbuf-misc.c */,
-				FB591F6A24BB3A60001645BD /* sshkey.c */,
-				FB591F6024BB3987001645BD /* sshbuf.c */,
+				FB591F7A24BB53B3001645BD /* digest-openssl.c */,
 				FB591F6E24BB3CAF001645BD /* explicit_bzero.c */,
 				FB591F7024BB3CDF001645BD /* freezero.c */,
-				FB591F6C24BB3B7C001645BD /* atomicio.c */,
-				FB591F7624BB5130001645BD /* digest-libc.c */,
+				FB591F8524BB88B2001645BD /* recallocarray.c */,
+				FB591F6124BB3987001645BD /* sshbuf-getput-basic.c */,
+				FB591F8D24BDF067001645BD /* sshbuf-getput-crypto.c */,
+				FB591F5E24BB3987001645BD /* sshbuf-io.c */,
+				FB591F6024BB3987001645BD /* sshbuf.c */,
+				FB591F8B24BCB428001645BD /* ssherr.c */,
+				FB591F6A24BB3A60001645BD /* sshkey.c */,
 			);
 			path = openssh;
 			sourceTree = "<group>";
@@ -298,23 +285,20 @@
 			files = (
 				FB591F6F24BB3CAF001645BD /* explicit_bzero.c in Sources */,
 				FB591F6D24BB3B7C001645BD /* atomicio.c in Sources */,
-				FB591F6424BB3987001645BD /* sshbuf-getput-crypto.c in Sources */,
 				FB591F7B24BB53B3001645BD /* digest-openssl.c in Sources */,
 				FB591F8624BB88B2001645BD /* recallocarray.c in Sources */,
 				FB591F6324BB3987001645BD /* sshbuf-io.c in Sources */,
 				FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */,
 				FB591F7124BB3CDF001645BD /* freezero.c in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				FB591F7724BB5130001645BD /* digest-libc.c in Sources */,
 				FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */,
 				FB591F8C24BCB428001645BD /* ssherr.c in Sources */,
+				FB591F8E24BDF067001645BD /* sshbuf-getput-crypto.c in Sources */,
 				FBF5EB9924B5D3A2001645BD /* PINManager.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m in Sources */,
 				FB591F5324BB36C0001645BD /* authfd.c in Sources */,
 				FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */,
 				FB591F6B24BB3A60001645BD /* sshkey.c in Sources */,
-				FBF5EBE724B5E7A8001645BD /* SystemCommandExecutor.m in Sources */,
-				FB591F6724BB3987001645BD /* sshbuf-misc.c in Sources */,
 				FB591F6624BB3987001645BD /* sshbuf-getput-basic.c in Sources */,
 				FB591F6524BB3987001645BD /* sshbuf.c in Sources */,
 			);

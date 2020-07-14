@@ -7,7 +7,6 @@
 //
 
 #import "YubiKeyDeviceManager.h"
-#import "PrefKeys.h"
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/hid/IOHIDKeys.h>
@@ -36,8 +35,12 @@ static YubiKeyDeviceManager *gSelf;
 	return self.devices[[[self.devices allKeys] objectAtIndex:0]];
 }
 
-- (NSString*) getUniqueIDFromDev:(NSDictionary*)dev {
-	return [NSString stringWithFormat:@"%@[%@]@%@",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey],dev[YubiKeyDeviceDictionaryUSBLocationKey]];
+- (NSString*) getUniqueStringForDev:(NSDictionary*)dev {
+	return [NSString stringWithFormat:@"%@[%@]@0x%08x",
+		dev[YubiKeyDeviceDictionaryUSBNameKey],
+		dev[YubiKeyDeviceDictionaryUSBSerialNumberKey],
+		[dev[YubiKeyDeviceDictionaryUSBLocationKey] intValue]
+	];
 }
 
 void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
@@ -63,10 +66,10 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	kr = IOServiceAddMatchingNotification(notifyPort, kIOFirstMatchNotification, matchDict, IOServiceMatchedCallback, (void*)YES, &iterator);
 	if(kr!=KERN_SUCCESS) return kr;
 	while ((usbDevice=IOIteratorNext(iterator))) {
-		CFDictionaryRef dict = GetKeyInfo(usbDevice);
+		CFDictionaryRef dict = GetDeviceInfo(usbDevice);
 		if(dict) {
 			CFRetain(dict);
-			NSLog(@"initial device found:%@",[self getUniqueIDFromDev:(__bridge NSDictionary*)dict]);
+			NSLog(@"initial device found:%@",[self getUniqueStringForDev:(__bridge NSDictionary*)dict]);
 			[self addDevice:(__bridge_transfer NSDictionary*)(dict)];
 		}
 	}
@@ -74,22 +77,21 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	kr = IOServiceAddMatchingNotification(notifyPort, kIOTerminatedNotification, matchDict, IOServiceMatchedCallback, (void*)NO, &iterator);
 	if(kr!=KERN_SUCCESS) return kr;
 	while ((usbDevice=IOIteratorNext(iterator))) {
-		CFDictionaryRef dict = GetKeyInfo(usbDevice);
+		CFDictionaryRef dict = GetDeviceInfo(usbDevice);
 		if(dict)
-			NSLog(@"device found for termination:%@",[self getUniqueIDFromDev:(__bridge NSDictionary*)dict]);
+			NSLog(@"device found for termination:%@",[self getUniqueStringForDev:(__bridge NSDictionary*)dict]);
 	}
 	[[NSRunLoop currentRunLoop] run];
 	return KERN_SUCCESS;
 }
 
 - (void) addDevice:(NSDictionary*)dev {
-	_devices[[self getUniqueIDFromDev:dev]] = dev;
-	
+	_devices[[self getUniqueStringForDev:dev]] = dev;
 	[[NSNotificationCenter defaultCenter] postNotificationName:YubiKeyDeviceManagerKeyInsertedNotificationKey object:self userInfo:dev];
 }
 
 - (void) removeDevice:(NSDictionary*)dev {
-	[_devices removeObjectForKey:[self getUniqueIDFromDev:dev]];
+	[_devices removeObjectForKey:[self getUniqueStringForDev:dev]];
 	[[NSNotificationCenter defaultCenter] postNotificationName:YubiKeyDeviceManagerKeyRemovedNotificationKey object:self userInfo:dev];
 }
 
@@ -97,7 +99,7 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 	io_service_t usbDevice;
 
 	while ((usbDevice=IOIteratorNext(iterator))) {
-		CFDictionaryRef dict = GetKeyInfo(usbDevice);
+		CFDictionaryRef dict = GetDeviceInfo(usbDevice);
 		if(dict) {
 			CFRetain(dict);
 			if(added) {
@@ -111,13 +113,12 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 	}
 }
 
-CFDictionaryRef GetKeyInfo(io_service_t usbDevice) {
+CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 	kern_return_t kr;
 	CFMutableDictionaryRef devDict = nil;
 
 	kr = IORegistryEntryCreateCFProperties(usbDevice, &devDict, kCFAllocatorDefault, kNilOptions);
 	if(kr!=KERN_SUCCESS) return nil;
-//	NSLog(@"Yubico device (idVendor:0x1050) found:%@",devDict);
 
 	io_name_t devName;
 	IORegistryEntryGetName(usbDevice, devName);
@@ -126,7 +127,7 @@ CFDictionaryRef GetKeyInfo(io_service_t usbDevice) {
 	
 	if(!CFDictionaryContainsKey(devDict, CFSTR(kUSBSerialNumberString)))
 		CFDictionarySetValue(devDict, CFSTR(kUSBSerialNumberString), CFSTR("unknown"));
-	CFDictionarySetValue(devDict, (__bridge_retained CFStringRef)YubiKeyDeviceDictionaryUniqueStringKey,(__bridge CFStringRef)[gSelf getUniqueIDFromDev:(__bridge NSDictionary*)devDict]);
+	CFDictionarySetValue(devDict, (__bridge_retained CFStringRef)YubiKeyDeviceDictionaryUniqueStringKey,(__bridge CFStringRef)[gSelf getUniqueStringForDev:(__bridge NSDictionary*)devDict]);
 	
 	return devDict;
 }

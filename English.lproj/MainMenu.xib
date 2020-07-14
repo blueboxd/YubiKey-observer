@@ -332,6 +332,7 @@
         </menu>
         <customObject id="494" userLabel="AppDelegate" customClass="YubiKey_observerAppDelegate">
             <connections>
+                <outlet property="alertIcon" destination="mUg-1K-EaP" id="TLB-Bb-6W9"/>
                 <outlet property="keyIDLabel" destination="n56-XG-Sp6" id="w71-1Y-WOa"/>
                 <outlet property="pinDialog" destination="543" id="583"/>
                 <outlet property="pinManager" destination="PN1-jL-m82" id="4wk-MZ-4wF"/>
@@ -656,10 +657,11 @@ Gw
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="mUg-1K-EaP">
+                                <imageView toolTip="Invalid path" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="mUg-1K-EaP">
                                     <rect key="frame" x="365" y="15" width="16" height="16"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSCaution" id="Bgi-6Y-nNo"/>
+                                    <accessibility description="Please specify valid path"/>
                                     <connections>
                                         <binding destination="494" name="hidden" keyPath="self.pkcsProviderExists" id="DGs-3v-pmH"/>
                                     </connections>
@@ -672,7 +674,7 @@ Gw
             <point key="canvasLocation" x="-66.5" y="-379.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
-        <menu id="627" userLabel="StatusMenu">
+        <menu autoenablesItems="NO" id="627" userLabel="StatusMenu">
             <items>
                 <menuItem title="YubiKeys inserted" id="6Rr-dg-N9X">
                     <attributedString key="attributedTitle"/>
@@ -685,10 +687,12 @@ Gw
                     <menu key="submenu" title="ssh-keys" autoenablesItems="NO" id="pzj-C8-Z08"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="ZJe-2e-Gh5"/>
-                <menuItem title="Add keys" hidden="YES" id="HJf-zz-hAk">
+                <menuItem title="Add keys" hidden="YES" enabled="NO" id="HJf-zz-hAk">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="addKeyAction:" target="494" id="wfX-tJ-FkT"/>
+                        <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.deviceInserted" id="lom-6V-Egt"/>
+                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="UYo-6M-uDn" id="GWM-a4-qBU"/>
                         <binding destination="494" name="enabled2" keyPath="self.pkcsProviderExists" previousBinding="lom-6V-Egt" id="UYo-6M-uDn">
                             <dictionary key="options">
                                 <integer key="NSMultipleValuesPlaceholder" value="-1"/>
@@ -697,15 +701,18 @@ Gw
                                 <integer key="NSNullPlaceholder" value="-1"/>
                             </dictionary>
                         </binding>
-                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="UYo-6M-uDn" id="wHZ-PK-ZdT"/>
-                        <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.deviceInserted" id="lom-6V-Egt"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Remove keys" hidden="YES" id="5ao-Cp-pL8">
+                <menuItem title="Remove keys" hidden="YES" enabled="NO" id="5ao-Cp-pL8">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="removeKeyAction:" target="494" id="tKi-4j-B0b"/>
-                        <binding destination="494" name="enabled" keyPath="self.pkcsProviderExists" previousBinding="nwX-t2-FkX" id="Hsx-0a-YMh">
+                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="hZg-LY-965" id="Raf-WJ-cdE">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="494" name="enabled" keyPath="self.pkcsProviderExists" id="hZg-LY-965">
                             <dictionary key="options">
                                 <integer key="NSMultipleValuesPlaceholder" value="-1"/>
                                 <integer key="NSNoSelectionPlaceholder" value="-1"/>
@@ -713,7 +720,6 @@ Gw
                                 <integer key="NSNullPlaceholder" value="-1"/>
                             </dictionary>
                         </binding>
-                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" id="nwX-t2-FkX"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="HkT-20-7pz"/>
