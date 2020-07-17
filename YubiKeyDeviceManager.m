@@ -383,9 +383,13 @@ BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 	rv = SCardReleaseContext(hContext);
 	
 	if (res[0]==0x90)
-		return -1;
+		return kYubiKeyDeviceManagerVerifyPINSuccess;
 	else if (res[0]==0x63 && (res[1]&0xf0)==0xc0)
 		return (res[1]&0x0f);
+	else if (res[0]==0x69 && (res[1]==0x83))
+		return kYubiKeyDeviceManagerVerifyPINBlockedErr;
+		
+	return kYubiKeyDeviceManagerVerifyPINUnknownErr;
 }
 
 - (NSDictionary*)getAnySingleDevice {

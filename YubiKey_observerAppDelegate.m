@@ -12,6 +12,8 @@
 #import "PINManager.h"
 #import "StatusMenuManager.h"
 
+#import <Quartz/Quartz.h>
+
 #include <IOKit/pwr_mgt/IOPMLib.h>
 
 #define kExecSSHAddOnInsertionKey @"execSSHAddOnInsertion"
@@ -117,43 +119,95 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	[prefWindow makeKeyAndOrderFront:self];
 }
 
-- (NSString*) getPINFor:(NSDictionary*)dev {
+-(void)shakeWindow:(NSWindow*)target {
+
+    static int numberOfShakes = 3;
+    static float durationOfShake = 0.5f;
+    static float vigourOfShake = 0.05f;
+
+    CGRect frame=[target frame];
+    CAKeyframeAnimation *shakeAnimation = [CAKeyframeAnimation animation];
+
+    CGMutablePathRef shakePath = CGPathCreateMutable();
+    CGPathMoveToPoint(shakePath, NULL, NSMinX(frame), NSMinY(frame));
+    for (NSInteger index = 0; index < numberOfShakes; index++){
+        CGPathAddLineToPoint(shakePath, NULL, NSMinX(frame) - frame.size.width * vigourOfShake, NSMinY(frame));
+        CGPathAddLineToPoint(shakePath, NULL, NSMinX(frame) + frame.size.width * vigourOfShake, NSMinY(frame));
+    }
+    CGPathCloseSubpath(shakePath);
+    shakeAnimation.path = shakePath;
+    shakeAnimation.duration = durationOfShake;
+
+    [target setAnimations:[NSDictionary dictionaryWithObject: shakeAnimation forKey:@"frameOrigin"]];
+    [[target animator] setFrameOrigin:[target frame].origin];
+
+}
+
+- (void) addSSHKeyForDev:(NSDictionary*)dev {
+	__block BOOL doAdd=NO;
+	__block NSString *pin;
+	
 	NSString *storedPIN = [pinManager getPinForKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
-	if(storedPIN)
-		return storedPIN;
+	if(storedPIN && ([self->yubikeyDeviceManager verifyPIN:storedPIN forDeviceSerial:dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertySerialKey]]==kYubiKeyDeviceManagerVerifyPINSuccess)) {
+		doAdd=YES;
+		pin = storedPIN;
+	} else {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			NSString *msg;
+			if(dev)
+				msg = [NSString stringWithFormat:@"for %@ SN#%@",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+			else
+				msg = @"Unspecified YubiKey";
 
-	NSString *msg;
-	if(dev)
-		msg = [NSString stringWithFormat:@"for %@ SN#%@",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
-	else
-		msg = @"Unspecified YubiKey";
-
-	[keyIDLabel setStringValue:msg];
-	[rememberPINCheckbox setState:NSOnState];
-	NSString *enteredPIN = nil;
-	[[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-	if([[NSApplication sharedApplication] runModalForWindow:self->pinDialog]==NSModalResponseOK) {
-		BOOL rememberPIN = NO;
-		enteredPIN  = [self->pinTextField stringValue];
-		rememberPIN = [self->rememberPINCheckbox state];
-		if(rememberPIN) {
-			NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
-			[self->pinManager storePin:enteredPIN forKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey] withLabel:labelStr];
-		}
-		if ([[[self->prefsController values] valueForKey:kIsPINExpiresKey] intValue]) {
-			uint32_t timeout = [[[self->prefsController values] valueForKey:kPINExpiresInKey] intValue];
-			NSLog(@"PIN will expire in %d min",timeout);
-			NSTimer *timer = [NSTimer timerWithTimeInterval:(timeout*60) target:self selector:@selector(forgetPINAction:) userInfo:nil repeats:NO];
-			[[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+			[self->keyIDLabel setStringValue:msg];
+			[self->rememberPINCheckbox setState:NSOnState];
+			NSString *enteredPIN = nil;
+			[[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+			BOOL done=NO;
+			while(!done) {
+				NSModalResponse res = [[NSApplication sharedApplication] runModalForWindow:self->pinDialog];
+				if(res==NSModalResponseOK) {
+					BOOL rememberPIN = NO;
+					enteredPIN  = [self->pinTextField stringValue];
+					rememberPIN = [self->rememberPINCheckbox state];
+					NSInteger verifyResult = [self->yubikeyDeviceManager verifyPIN:enteredPIN forDeviceSerial:dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertySerialKey]];
+					if(verifyResult!=kYubiKeyDeviceManagerVerifyPINSuccess) {
+						[self shakeWindow:self->pinDialog];
+						continue;
+					} else if (verifyResult==kYubiKeyDeviceManagerVerifyPINBlockedErr) {
+						done = YES;
+						doAdd = NO;
+					} else if (verifyResult==kYubiKeyDeviceManagerVerifyPINSuccess) {
+						done = YES;
+						doAdd = YES;
+						pin = enteredPIN;
+						if(rememberPIN) {
+							NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+							[self->pinManager storePin:enteredPIN forKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey] withLabel:labelStr];
+						}
+					} else {
+						done = YES;
+						doAdd = NO;
+					}
+				} else if (res==NSModalResponseCancel) {
+					done = YES;
+				}
+			}
+			[self->pinDialog orderOut:self];
+			[self->pinTextField setStringValue:@""];
+			[self->pinTextField becomeFirstResponder];
+			[self->keyIDLabel setStringValue:@""];
+		});
+	}
+	
+	if(doAdd) {
+		NSError *err = [self->sshKeyManager updateCardAdd:YES pin:pin];
+		if(err) {
+			NSAlert *alert = [NSAlert alertWithError:err];
+			alert.informativeText = err.userInfo[NSLocalizedFailureReasonErrorKey];
+			[alert runModal];
 		}
 	}
-
-	[pinDialog orderOut:self];
-	[pinTextField setStringValue:@""];
-	[pinTextField becomeFirstResponder];
-	[keyIDLabel setStringValue:@""];
-
-	return enteredPIN;
 }
 
 - (IBAction) forgetPINAction:(id)sender {
@@ -166,22 +220,6 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 
 - (IBAction)removeKeyAction:(id)sender {
 	[self removeSSHKey];
-}
-
-- (void) addSSHKeyForDev:(NSDictionary*)dev {
-	if(self.pkcsProviderExists && (![sshKeyManager hasOurKey])) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			NSString *pin = [self getPINFor:dev];
-			if(pin) {
-				NSError *err = [self->sshKeyManager updateCardAdd:YES pin:pin];
-				if(err) {
-					NSAlert *alert = [NSAlert alertWithError:err];
-					alert.informativeText = err.userInfo[NSLocalizedFailureReasonErrorKey];
-					[alert runModal];
-				}
-			}
-		});
-	}
 }
 
 - (void) removeSSHKey {

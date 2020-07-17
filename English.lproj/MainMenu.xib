@@ -369,16 +369,16 @@
                     </imageView>
                     <textField verticalHuggingPriority="750" id="554">
                         <rect key="frame" x="97" y="132" width="316" height="20"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" state="on" title="Input PIN for ssh-add" id="557">
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" state="on" title="Enter PIN to add identities from YubiKey" id="557">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" id="553">
-                        <rect key="frame" x="97" y="82" width="29" height="17"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <rect key="frame" x="97" y="89" width="29" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="PIN:" id="558">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -386,8 +386,8 @@
                         </textFieldCell>
                     </textField>
                     <secureTextField verticalHuggingPriority="750" id="552">
-                        <rect key="frame" x="131" y="79" width="279" height="22"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <rect key="frame" x="131" y="86" width="279" height="22"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="559">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -408,7 +408,7 @@
                     </secureTextField>
                     <button verticalHuggingPriority="750" imageHugsTitle="YES" id="551">
                         <rect key="frame" x="320" y="13" width="96" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="560">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -424,7 +424,7 @@ DQ
                     </button>
                     <button verticalHuggingPriority="750" imageHugsTitle="YES" id="550">
                         <rect key="frame" x="224" y="13" width="96" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="561">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -438,17 +438,17 @@ Gw
                         </connections>
                     </button>
                     <button imageHugsTitle="YES" id="549">
-                        <rect key="frame" x="98" y="55" width="280" height="18"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="check" title="Remember this PIN in keychain" bezelStyle="regularSquare" imagePosition="leading" alignment="center" state="on" inset="2" id="562">
+                        <rect key="frame" x="129" y="62" width="249" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="Remember this PIN in keychain" bezelStyle="regularSquare" imagePosition="leading" alignment="left" state="on" inset="2" id="562">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="n56-XG-Sp6">
-                        <rect key="frame" x="109" y="110" width="304" height="17"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" id="g1S-sM-TwO">
+                        <rect key="frame" x="97" y="111" width="304" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="for YubiKey 5 NFC SN#1234567890" id="g1S-sM-TwO">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -456,7 +456,7 @@ Gw
                     </textField>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="95" y="-111"/>
+            <point key="canvasLocation" x="-48" y="-417"/>
         </window>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="590" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
@@ -475,7 +475,7 @@ Gw
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <button id="594">
-                                    <rect key="frame" x="16" y="53" width="189" height="18"/>
+                                    <rect key="frame" x="16" y="53" width="226" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Add identities from YubiKey" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="595">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -486,7 +486,7 @@ Gw
                                     </connections>
                                 </button>
                                 <button id="596">
-                                    <rect key="frame" x="16" y="33" width="101" height="18"/>
+                                    <rect key="frame" x="16" y="33" width="140" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Wake Screen" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="597">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -497,7 +497,7 @@ Gw
                                     </connections>
                                 </button>
                                 <button verticalHuggingPriority="750" id="Q17-TK-fFk">
-                                    <rect key="frame" x="16" y="13" width="121" height="18"/>
+                                    <rect key="frame" x="16" y="13" width="163" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Unlock keychain" bezelStyle="regularSquare" imagePosition="left" inset="2" id="vBe-Nq-4yS">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -518,7 +518,7 @@ Gw
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <button id="599">
-                                    <rect key="frame" x="16" y="74" width="214" height="18"/>
+                                    <rect key="frame" x="16" y="74" width="263" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Remove identities from YubiKey" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="600">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -529,7 +529,7 @@ Gw
                                     </connections>
                                 </button>
                                 <button id="601">
-                                    <rect key="frame" x="16" y="54" width="102" height="18"/>
+                                    <rect key="frame" x="16" y="54" width="163" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Sleep Screen" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="602">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -540,7 +540,7 @@ Gw
                                     </connections>
                                 </button>
                                 <button id="680">
-                                    <rect key="frame" x="35" y="34" width="174" height="18"/>
+                                    <rect key="frame" x="35" y="34" width="237" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Lock Screen immediately" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="681">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -552,7 +552,7 @@ Gw
                                     </connections>
                                 </button>
                                 <button verticalHuggingPriority="750" id="xn9-rm-3qo">
-                                    <rect key="frame" x="18" y="14" width="108" height="18"/>
+                                    <rect key="frame" x="18" y="14" width="161" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Lock keychain" bezelStyle="regularSquare" imagePosition="left" inset="2" id="O50-0G-fwK">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -613,7 +613,7 @@ Gw
                                     </connections>
                                 </textField>
                                 <textField verticalHuggingPriority="750" id="610">
-                                    <rect key="frame" x="268" y="43" width="38" height="17"/>
+                                    <rect key="frame" x="268" y="43" width="56" height="17"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="min." id="611">
                                         <font key="font" metaFont="system"/>
@@ -624,7 +624,7 @@ Gw
                             </subviews>
                         </view>
                     </box>
-                    <box autoresizesSubviews="NO" borderType="line" title="ssh custom paths" id="614">
+                    <box autoresizesSubviews="NO" borderType="line" title="PKCS#11 provider" id="614">
                         <rect key="frame" x="17" y="16" width="403" height="76"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="Ttp-6s-PlT">
@@ -649,7 +649,7 @@ Gw
                                     </connections>
                                 </textField>
                                 <textField verticalHuggingPriority="750" id="615">
-                                    <rect key="frame" x="15" y="34" width="147" height="16"/>
+                                    <rect key="frame" x="15" y="34" width="171" height="16"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="PKCS#11 provider path:" id="616">
                                         <font key="font" metaFont="cellTitle"/>

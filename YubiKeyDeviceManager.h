@@ -10,6 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define kYubiKeyDeviceManagerVerifyPINSuccess 0
+#define kYubiKeyDeviceManagerVerifyPINBlockedErr -1
+#define kYubiKeyDeviceManagerVerifyPINUnknownErr -127
+
 extern NSNotificationName YubiKeyDeviceManagerKeyInsertedNotificationKey;
 extern NSNotificationName YubiKeyDeviceManagerKeyRemovedNotificationKey;
 
@@ -31,6 +35,7 @@ extern NSString *const YubiKeyDevicePropertyModelKey;
 @interface YubiKeyDeviceManager : NSObject
 - (kern_return_t) registerMatchingCallbacks;
 - (NSDictionary*) getAnySingleDevice;
+- (NSInteger) verifyPIN:(NSString*)pin forDeviceSerial:(NSNumber*)serial;
 @property (nonatomic,readonly) NSMutableDictionary<NSString*,NSDictionary*> *devices;
 @end
 
