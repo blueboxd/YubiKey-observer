@@ -18,10 +18,19 @@
 NSNotificationName YubiKeyDeviceManagerKeyInsertedNotificationKey = @"YubiKeyDeviceManagerKeyInsertedNotificationKey";
 NSNotificationName YubiKeyDeviceManagerKeyRemovedNotificationKey = @"YubiKeyDeviceManagerKeyRemovedNotificationKey";
 
-const NSString* YubiKeyDeviceDictionaryUSBNameKey = @kIOHIDProductKey;
-const NSString* YubiKeyDeviceDictionaryUSBSerialNumberKey = @kIOHIDSerialNumberKey;
-const NSString* YubiKeyDeviceDictionaryUSBLocationKey = @kIOHIDLocationIDKey;
-const NSString* YubiKeyDeviceDictionaryUniqueStringKey = @"UniqueString";
+NSString *const YubiKeyDeviceDictionaryUSBNameKey = @kIOHIDProductKey;
+NSString *const YubiKeyDeviceDictionaryUSBSerialNumberKey = @kIOHIDSerialNumberKey;
+NSString *const YubiKeyDeviceDictionaryUSBLocationKey = @kIOHIDLocationIDKey;
+NSString *const YubiKeyDeviceDictionaryUniqueStringKey = @"UniqueString";
+
+NSString *const YubiKeyDevicePropertySerialKey = @"Serial";
+NSString *const YubiKeyDevicePropertyVersionKey = @"Version";
+NSString *const YubiKeyDevicePropertyFormfactorKey = @"Formfactor";
+NSString *const YubiKeyDevicePropertyNFCSupportedKey = @"NFCSupported";
+NSString *const YubiKeyDevicePropertyNFCEnabledKey = @"NFCEnabled";
+NSString *const YubiKeyDevicePropertyUSBSupportedKey = @"USBSupported";
+NSString *const YubiKeyDevicePropertyUSBEnabledKey = @"USBEnabled";
+NSString *const YubiKeyDevicePropertyModelKey = @"Model";
 
 static YubiKeyDeviceManager *gSelf;
 @implementation YubiKeyDeviceManager {
@@ -39,7 +48,7 @@ LONG sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD
 	DWORD dwRecvLength;
 	BYTE pbRecvBuffer[258];
 	
-	printf("request: ");
+	printf("req: ");
 	for(unsigned int i=0; i<size; i++)
 		printf("%02X ", apdu[i]);
 	printf("\n");
@@ -50,7 +59,7 @@ LONG sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD
 	if(rv)
 		return rv;
 	
-	printf("response: ");
+	printf("res: ");
 	for(unsigned int i=0; i<dwRecvLength; i++)
 		printf("%02X ", pbRecvBuffer[i]);
 	printf("\n");
@@ -123,40 +132,64 @@ enum ConfigApplications {
 	return dict;
 }
 
-NSString *const YubiKeyDevicePropertySerialKey = @"Serial";
-NSString *const YubiKeyDevicePropertyVersionKey = @"Version";
-NSString *const YubiKeyDevicePropertyFormfactorKey = @"Formfactor";
-NSString *const YubiKeyDevicePropertyModelKey = @"Model";
 
 - (NSDictionary<NSString*,id>*) parseConfig:(NSDictionary<NSNumber*,NSData*>*)dict {
 	NSMutableDictionary<NSString*,id> *result = [NSMutableDictionary new];
 	for(NSNumber *key in dict) {
+		NSData *curValue = dict[key];
+		NSUInteger curLen = [curValue length];
 		switch((ConfigTags)[key intValue]) {
-			case SERIAL:
-				NSLog(@"SN#:%@",dict[key]);
-				int rawSerial;
-				[dict[key] getBytes:&rawSerial];
-				result[YubiKeyDevicePropertySerialKey] = [NSNumber numberWithInt:ntohl(rawSerial)];
+			case SERIAL: {
+				int rawValue;
+				[curValue getBytes:&rawValue];
+				result[YubiKeyDevicePropertySerialKey] = [NSNumber numberWithInt:ntohl(rawValue)];
 			break;
-			
-			case VERSION:
-				NSLog(@"Ver#:%@",dict[key]);
-				char rawVer;
-				[dict[key] getBytes:&rawVer];
-				result[YubiKeyDevicePropertyVersionKey] = [NSString stringWithFormat:@"%d.%d.%d",((char*)&rawVer)[0],((char*)&rawVer)[1],((char*)&rawVer)[2]];
+			}
+
+			case VERSION:{
+				uint32_t rawValue;
+				[curValue getBytes:&rawValue];
+				result[YubiKeyDevicePropertyVersionKey] = [NSString stringWithFormat:@"%d.%d.%d",((char*)&rawValue)[0],((char*)&rawValue)[1],((char*)&rawValue)[2]];
 			break;
-			
-			case FORMFACTOR:
-				NSLog(@"fctr:%@",dict[key]);
-				int rawFactor;
-				[dict[key] getBytes:&rawFactor];
-				result[YubiKeyDevicePropertyFormfactorKey] = [NSNumber numberWithInt:ntohl(rawFactor)]; 
+			}
+
+			case FORMFACTOR:{
+				int rawValue;
+				[curValue getBytes:&rawValue];
+				result[YubiKeyDevicePropertyFormfactorKey] = [NSNumber numberWithInt:(rawValue&0xff)]; 
 			break;
+			}
+
+			case NFC_SUPPORTED:{
+				short rawValue=0;
+				[curValue getBytes:&rawValue];
+				result[YubiKeyDevicePropertyNFCSupportedKey] = [NSNumber numberWithInt:curLen==1?rawValue:ntohs(rawValue)]; 
+			break;
+			}
+
+			case NFC_ENABLED:{
+				short rawValue=0;
+				[curValue getBytes:&rawValue];
+				result[YubiKeyDevicePropertyNFCEnabledKey] = [NSNumber numberWithInt:curLen==1?rawValue:ntohs(rawValue)]; 
+			break;
+			}
+
+			case USB_SUPPORTED:{
+				short rawValue=0;
+				[curValue getBytes:&rawValue];
+				result[YubiKeyDevicePropertyUSBSupportedKey] = [NSNumber numberWithInt:curLen==1?rawValue:ntohs(rawValue)]; 
+			break;
+			}
+
+			case USB_ENABLED:{
+				short rawValue=0;
+				[curValue getBytes:&rawValue];
+				result[YubiKeyDevicePropertyUSBEnabledKey] = [NSNumber numberWithInt:curLen==1?rawValue:ntohs(rawValue)]; 
+			break;
+			}
 		} 
 	}
-	
-	
-	
+
 	return result;
 }
 
@@ -166,7 +199,7 @@ NSString *const YubiKeyDevicePropertyModelKey = @"Model";
   printf(f ": %s\n", pcsc_stringify_error(rv)); \
   return nil; \
  }
-- (NSDictionary*)getYubKeyDeviceProperty:(NSNumber*)serial {
+- (NSDictionary*)getYubKeyDevicePropertyViaCCIDForSerial:(NSNumber*)serial {
 	LONG rv;
 	
 	SCARDCONTEXT hContext;
@@ -228,17 +261,25 @@ NSString *const YubiKeyDevicePropertyModelKey = @"Model";
 		NSLog(@"%@",config);
 		NSMutableDictionary<NSString*,id> *devInfo = [[self parseConfig:config] mutableCopy];
 
-		if(!devInfo[YubiKeyDevicePropertyVersionKey]) {
-			sendAPDU(hCard, pioSendPci, cmdSelectPIV, sizeof(cmdSelectPIV),&res,&len);
-			if(res[len-2]==0x90) {
-				sendAPDU(hCard, pioSendPci, cmdPIVGetVersion, sizeof(cmdPIVGetVersion),&res,&len);
-				if(res[len-2]==0x90)
-					devInfo[YubiKeyDevicePropertyVersionKey] = [NSString stringWithFormat:@"%d.%d.%d",res[0],res[1],res[2]];
-			}
-		}
-
-
 		if([devInfo[YubiKeyDevicePropertySerialKey] intValue] == [serial intValue]) {
+			if(!devInfo[YubiKeyDevicePropertyVersionKey]) {
+				sendAPDU(hCard, pioSendPci, cmdSelectPIV, sizeof(cmdSelectPIV),&res,&len);
+				if(res[len-2]==0x90) {
+					sendAPDU(hCard, pioSendPci, cmdPIVGetVersion, sizeof(cmdPIVGetVersion),&res,&len);
+					if(res[len-2]==0x90)
+						devInfo[YubiKeyDevicePropertyVersionKey] = [NSString stringWithFormat:@"%d.%d.%d",res[0],res[1],res[2]];
+				}
+			}
+			NSString *verString = [devInfo[YubiKeyDevicePropertyVersionKey] substringToIndex:1];
+			NSString *formString;
+			if([devInfo[YubiKeyDevicePropertyFormfactorKey] intValue]==2)
+				formString = @" Nano";
+			else if([devInfo[YubiKeyDevicePropertyNFCSupportedKey] intValue]!=0)
+				formString = @" NFC";	
+			else
+				formString = @"";
+			NSString *deviceName = [NSString stringWithFormat:@"YubiKey %@%@", verString, formString];
+			devInfo[YubiKeyDevicePropertyModelKey] = deviceName;
 			result = devInfo;
 			break;
 		}
@@ -348,12 +389,6 @@ CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 		IOReturn r = IOHIDDeviceOpen(hid, kIOHIDOptionsTypeNone);
 		r = IOHIDDeviceClose(hid, kIOHIDOptionsTypeNone);
 	}
-
-	
-//	io_name_t devName;
-//	IORegistryEntryGetName(usbDevice, devName);
-//	if(!strstr(devName,"CCID"))
-//		return nil;
 	
 	if(CFDictionaryContainsKey(devDict, CFSTR(kIOHIDSerialNumberKey))) {
 		CFStringRef version = CFDictionaryGetValue(devDict, CFSTR(kIOHIDSerialNumberKey));
@@ -361,13 +396,13 @@ CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 		CFDictionaryRemoveValue(devDict, CFSTR(kIOHIDSerialNumberKey));
 		CFNumberRef versionNumberRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &versionNumber);
 		CFDictionaryAddValue(devDict, CFSTR(kIOHIDSerialNumberKey), versionNumberRef);
-		CFDictionaryRef yubikeyProperty = (__bridge_retained CFDictionaryRef)[gSelf getYubKeyDeviceProperty:(__bridge NSNumber*)versionNumberRef];
+		CFDictionaryRef yubikeyProperty = (__bridge_retained CFDictionaryRef)[gSelf getYubKeyDevicePropertyViaCCIDForSerial:(__bridge NSNumber*)versionNumberRef];
+		NSLog(@"%@",yubikeyProperty);
 		CFDictionaryAddValue(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryPropertyKey, yubikeyProperty);
 	} else {
 //		CFDictionarySetValue(devDict, CFSTR(kIOHIDSerialNumberKey), );
 	}
 	CFDictionarySetValue(devDict, (__bridge_retained CFStringRef)YubiKeyDeviceDictionaryUniqueStringKey,(__bridge CFStringRef)[gSelf getUniqueStringForDev:(__bridge NSDictionary*)devDict]);
-	
 	
 	return devDict;
 }

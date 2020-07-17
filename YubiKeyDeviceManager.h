@@ -13,10 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSNotificationName YubiKeyDeviceManagerKeyInsertedNotificationKey;
 extern NSNotificationName YubiKeyDeviceManagerKeyRemovedNotificationKey;
 
-extern NSString* YubiKeyDeviceDictionaryUSBNameKey;
-extern NSString* YubiKeyDeviceDictionaryUSBSerialNumberKey;
-extern NSString* YubiKeyDeviceDictionaryUSBLocationKey;
-extern NSString* YubiKeyDeviceDictionaryUniqueStringKey;
+extern NSString* const YubiKeyDeviceDictionaryUSBNameKey;
+extern NSString* const YubiKeyDeviceDictionaryUSBSerialNumberKey;
+extern NSString* const YubiKeyDeviceDictionaryUSBLocationKey;
+extern NSString* const YubiKeyDeviceDictionaryUniqueStringKey;
 
 @interface YubiKeyDeviceManager : NSObject
 - (kern_return_t) registerMatchingCallbacks;
