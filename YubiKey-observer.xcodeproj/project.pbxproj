@@ -34,6 +34,9 @@
 		FBB5D75724B4D8B6001645BD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBB5D75524B4D8B6001645BD /* MainMenu.xib */; };
 		FBBB48F42183E30400BFD260 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBB48F32183E30400BFD260 /* IOKit.framework */; };
 		FBBB48FB2183F2B000BFD260 /* Key_Large@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */; };
+		FBBEFE3024C2600A001645BD /* ykcore_osx.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2D24C2600A001645BD /* ykcore_osx.c */; };
+		FBBEFE3124C2600A001645BD /* ykcore.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2E24C2600A001645BD /* ykcore.c */; };
+		FBBEFE3224C2600A001645BD /* ykcrc.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2F24C2600A001645BD /* ykcrc.c */; };
 		FBDA078021921F0D00AF79EA /* login.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBDA077F21921F0D00AF79EA /* login.framework */; };
 		FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */; };
 		FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9324B5C319001645BD /* SSHKeyManager.m */; };
@@ -77,6 +80,9 @@
 		FBB5D75624B4D8B6001645BD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		FBBB48F32183E30400BFD260 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Key_Large@2x.png"; sourceTree = "<group>"; };
+		FBBEFE2D24C2600A001645BD /* ykcore_osx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcore_osx.c; path = ykcore/ykcore_osx.c; sourceTree = SOURCE_ROOT; };
+		FBBEFE2E24C2600A001645BD /* ykcore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcore.c; path = ykcore/ykcore.c; sourceTree = SOURCE_ROOT; };
+		FBBEFE2F24C2600A001645BD /* ykcrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcrc.c; path = ykcore/ykcrc.c; sourceTree = SOURCE_ROOT; };
 		FBDA077F21921F0D00AF79EA /* login.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = login.framework; path = /System/Library/PrivateFrameworks/login.framework; sourceTree = "<absolute>"; };
 		FBF5EB9124B5C318001645BD /* SSHKeyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHKeyManager.h; sourceTree = "<group>"; };
 		FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YubiKeyDeviceManager.m; sourceTree = "<group>"; };
@@ -165,6 +171,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				FBBEFE2C24C25FF8001645BD /* ykcore */,
 				FB591F5124BB3606001645BD /* openssh */,
 				256AC3F00F4B6AF500CF3369 /* YubiKey_observer_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
@@ -215,6 +222,17 @@
 				FB591F6A24BB3A60001645BD /* sshkey.c */,
 			);
 			path = openssh;
+			sourceTree = "<group>";
+		};
+		FBBEFE2C24C25FF8001645BD /* ykcore */ = {
+			isa = PBXGroup;
+			children = (
+				FBBEFE2D24C2600A001645BD /* ykcore_osx.c */,
+				FBBEFE2E24C2600A001645BD /* ykcore.c */,
+				FBBEFE2F24C2600A001645BD /* ykcrc.c */,
+			);
+			name = ykcore;
+			path = "New Group";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -291,6 +309,7 @@
 			files = (
 				FB591F6F24BB3CAF001645BD /* explicit_bzero.c in Sources */,
 				FB591F6D24BB3B7C001645BD /* atomicio.c in Sources */,
+				FBBEFE3124C2600A001645BD /* ykcore.c in Sources */,
 				FB591F7B24BB53B3001645BD /* digest-openssl.c in Sources */,
 				FB591F8624BB88B2001645BD /* recallocarray.c in Sources */,
 				FB591F6324BB3987001645BD /* sshbuf-io.c in Sources */,
@@ -303,6 +322,8 @@
 				FBF5EB9924B5D3A2001645BD /* PINManager.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m in Sources */,
 				FB591F5324BB36C0001645BD /* authfd.c in Sources */,
+				FBBEFE3224C2600A001645BD /* ykcrc.c in Sources */,
+				FBBEFE3024C2600A001645BD /* ykcore_osx.c in Sources */,
 				FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */,
 				FB591F6B24BB3A60001645BD /* sshkey.c in Sources */,
 				FB591F6624BB3987001645BD /* sshbuf-getput-basic.c in Sources */,
