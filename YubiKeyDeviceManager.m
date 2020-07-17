@@ -18,9 +18,9 @@
 NSNotificationName YubiKeyDeviceManagerKeyInsertedNotificationKey = @"YubiKeyDeviceManagerKeyInsertedNotificationKey";
 NSNotificationName YubiKeyDeviceManagerKeyRemovedNotificationKey = @"YubiKeyDeviceManagerKeyRemovedNotificationKey";
 
-const NSString* YubiKeyDeviceDictionaryUSBNameKey = @kUSBProductString;
-const NSString* YubiKeyDeviceDictionaryUSBSerialNumberKey = @kUSBSerialNumberString;
-const NSString* YubiKeyDeviceDictionaryUSBLocationKey = @kUSBDevicePropertyLocationID;
+const NSString* YubiKeyDeviceDictionaryUSBNameKey = @kIOHIDProductKey;
+const NSString* YubiKeyDeviceDictionaryUSBSerialNumberKey = @kIOHIDSerialNumberKey;
+const NSString* YubiKeyDeviceDictionaryUSBLocationKey = @kIOHIDLocationIDKey;
 const NSString* YubiKeyDeviceDictionaryUniqueStringKey = @"UniqueString";
 
 static YubiKeyDeviceManager *gSelf;
@@ -41,7 +41,7 @@ static YubiKeyDeviceManager *gSelf;
   return; \
  }
 
-void sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD size) {
+LONG sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD size, BYTE **result, DWORD *resultLen) {
 	LONG rv;
 	DWORD dwRecvLength;
 	BYTE pbRecvBuffer[258];
@@ -54,13 +54,80 @@ void sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD
 	dwRecvLength = sizeof(pbRecvBuffer);
 	rv = SCardTransmit(hCard, &pioSendPci, apdu, size,
 					   NULL, pbRecvBuffer, &dwRecvLength);
-	CHECK("SCardTransmit", rv)
+	if(rv)
+		return rv;
 	
 	printf("response: ");
 	for(unsigned int i=0; i<dwRecvLength; i++)
 		printf("%02X ", pbRecvBuffer[i]);
 	printf("\n");
+	if(result) {
+		BYTE *res = calloc(dwRecvLength,sizeof(char));
+		memcpy(res, pbRecvBuffer, dwRecvLength);
+		*result = res;
+		*resultLen = dwRecvLength;
+	}
+	return rv;
+}
 
+enum ConfigTags {
+    USB_SUPPORTED = 0x01,
+    SERIAL = 0x02,
+    USB_ENABLED = 0x03,
+    FORMFACTOR = 0x04,
+    VERSION = 0x05,
+    AUTO_EJECT_TIMEOUT = 0x06,
+    CHALRESP_TIMEOUT = 0x07,
+    DEVICE_FLAGS = 0x08,
+    APP_VERSIONS = 0x09,
+    CONFIG_LOCK = 0x0a,
+    USE_LOCK_KEY = 0x0b,
+    REBOOT = 0x0c,
+    NFC_SUPPORTED = 0x0d,
+    NFC_ENABLED = 0x0e,
+};
+
+enum ConfigFormfactor {
+    UNKNOWN = 0x00,
+    USB_A_KEYCHAIN = 0x01,
+    USB_A_NANO = 0x02,
+    USB_C_KEYCHAIN = 0x03,
+    USB_C_NANO = 0x04,
+    USB_C_LIGHTNING = 0x05
+};
+
+enum ConfigApplications {
+    OTP = 0x01,
+    U2F = 0x02,
+    OPGP = 0x08,
+    PIV = 0x10,
+    OATH = 0x20,
+    FIDO2 = 0x200,
+};
+
+- (NSDictionary*) parseTLV:(NSData*)data {
+	size_t length = [data length];
+	char *buf = calloc(length,sizeof(char));
+
+	[data getBytes:buf];
+	if(buf[0]!=(length-3))
+		return nil;
+
+	unsigned char sw1 = buf[length-2];
+	unsigned char sw2 = buf[length-1];
+	if(sw1!=0x90 || sw2!=0x00)
+		return nil;
+
+	NSMutableDictionary *dict = [NSMutableDictionary new];
+	for(unsigned int i=1; i<length-2;) {
+		unsigned char tag = buf[i];
+		unsigned char size = buf[i+1];
+		char body[256];
+		memcpy(body,buf+(i+2),size);
+		dict[[NSNumber numberWithInteger:tag]] = [NSData dataWithBytes:body length:size];
+		i+=2+size;
+	}
+	return dict;
 }
 
 - (void) awakeFromNib {
@@ -107,15 +174,16 @@ void sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD
 					  SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwActiveProtocol);
 	CHECK("SCardConnect", rv)
 
-//#define 	SCARD_CLASS_VENDOR_INFO   1
-//#define 	SCARD_ATTR_VALUE(Class, Tag)   ((((ULONG)(Class)) << 16) | ((ULONG)(Tag)))
-//#define 	SCARD_ATTR_VENDOR_IFD_SERIAL_NO   SCARD_ATTR_VALUE(SCARD_CLASS_VENDOR_INFO, 0x0103)
-//#define 	SCARD_ATTR_VENDOR_IFD_TYPE   SCARD_ATTR_VALUE(SCARD_CLASS_VENDOR_INFO, 0x0101)
-//#define 	SCARD_ATTR_VENDOR_IFD_VERSION   SCARD_ATTR_VALUE(SCARD_CLASS_VENDOR_INFO, 0x0102)
-//	DWORD len;
-//	rv = SCardGetAttrib(hCard, SCARD_ATTR_VENDOR_IFD_SERIAL_NO, nil, &len);
-//	BYTE *buf = calloc(1,len);
-//	rv = SCardGetAttrib(hCard, SCARD_ATTR_VENDOR_IFD_SERIAL_NO, buf, &len);
+#define 	SCARD_CLASS_VENDOR_INFO   1
+#define 	SCARD_ATTR_VALUE(Class, Tag)   ((((ULONG)(Class)) << 16) | ((ULONG)(Tag)))
+#define 	SCARD_ATTR_VENDOR_IFD_SERIAL_NO   SCARD_ATTR_VALUE(SCARD_CLASS_VENDOR_INFO, 0x0103)
+#define 	SCARD_ATTR_VENDOR_IFD_TYPE   SCARD_ATTR_VALUE(SCARD_CLASS_VENDOR_INFO, 0x0101)
+#define 	SCARD_ATTR_VENDOR_IFD_VERSION   SCARD_ATTR_VALUE(SCARD_CLASS_VENDOR_INFO, 0x0102)
+	DWORD len;
+	rv = SCardGetAttrib(hCard, SCARD_ATTR_VENDOR_IFD_SERIAL_NO, nil, &len);
+	BYTE *buf = calloc(1,len);
+	rv = SCardGetAttrib(hCard, SCARD_ATTR_VENDOR_IFD_SERIAL_NO, buf, &len);
+	printf("SN#:%s\n",buf);
 	
 	switch(dwActiveProtocol)
 	{
@@ -128,8 +196,11 @@ void sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD
 			break;
 	}
 	
-	sendAPDU(hCard, pioSendPci, cmdSelectMGR, sizeof(cmdSelectMGR));
-	sendAPDU(hCard, pioSendPci, cmdGetConfig, sizeof(cmdGetConfig));	
+	char *res;
+//	size_t len;
+	sendAPDU(hCard, pioSendPci, cmdSelectMGR, sizeof(cmdSelectMGR),nil,nil);
+	sendAPDU(hCard, pioSendPci, cmdGetConfig, sizeof(cmdGetConfig),&res,&len);
+	NSDictionary *config = [self parseTLV:[NSData dataWithBytes:res length:len]];	
 
 //	sendAPDU(hCard, pioSendPci, cmdPIVGetSerial, sizeof(cmdPIVGetSerial));
 
@@ -166,9 +237,9 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	CFRunLoopAddSource(runLoop, loopSource, kCFRunLoopDefaultMode);
 
 	CFMutableDictionaryRef matchDict = (__bridge_retained CFMutableDictionaryRef)@{
-		@kIOProviderClassKey : @"IOUSBHostDevice",//@kIOUSBDeviceClassName,
-		@kUSBProductID : @"*",
-		@kUSBVendorID : @0x1050
+		@kIOProviderClassKey : @kIOHIDDeviceKey,//@kIOUSBDeviceClassName,
+//		@kIOHIDProductIDKey : @"*",
+		@kIOHIDVendorIDKey : @0x1050
 	};
 
 	CFRetain(matchDict);
@@ -230,28 +301,31 @@ CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 	kern_return_t kr;
 	CFMutableDictionaryRef devDict = nil;
 
-	io_registry_entry_t child;
-	CFMutableDictionaryRef dict = nil;
-	kr = IORegistryEntryGetChildEntry(usbDevice, kIOServicePlane, &child);
-	kr = IORegistryEntryCreateCFProperties(child, &dict, kCFAllocatorDefault, kNilOptions);
-
 	kr = IORegistryEntryCreateCFProperties(usbDevice, &devDict, kCFAllocatorDefault, kNilOptions);
 	if(kr!=KERN_SUCCESS) return nil;
-
-	io_name_t devName;
-	IORegistryEntryGetName(usbDevice, devName);
-	if(!strstr(devName,"CCID"))
+	NSLog(@"GetDeviceInfo:%@",devDict);
+	CFStringRef devName = CFDictionaryGetValue(devDict, CFSTR(kIOHIDProductKey));
+	CFRange range = CFStringFind(devName, CFSTR("CCID"), kCFCompareCaseInsensitive);
+	if(range.location==kCFNotFound)
 		return nil;
-	
-	if(!CFDictionaryContainsKey(devDict, CFSTR(kUSBSerialNumberString)))
-		CFDictionarySetValue(devDict, CFSTR(kUSBSerialNumberString), CFSTR("unknown"));
-	CFDictionarySetValue(devDict, (__bridge_retained CFStringRef)YubiKeyDeviceDictionaryUniqueStringKey,(__bridge CFStringRef)[gSelf getUniqueStringForDev:(__bridge NSDictionary*)devDict]);
-	
+
 	IOHIDDeviceRef hid = IOHIDDeviceCreate(kCFAllocatorDefault,usbDevice);
 	if(hid) {
 		IOReturn r = IOHIDDeviceOpen(hid, kIOHIDOptionsTypeNone);
 		r = IOHIDDeviceClose(hid, kIOHIDOptionsTypeNone);
 	}
+
+	
+//	io_name_t devName;
+//	IORegistryEntryGetName(usbDevice, devName);
+//	if(!strstr(devName,"CCID"))
+//		return nil;
+
+	if(!CFDictionaryContainsKey(devDict, CFSTR(kIOHIDSerialNumberKey))) {
+		CFDictionarySetValue(devDict, CFSTR(kIOHIDSerialNumberKey), CFSTR("unknown"));
+	}
+	CFDictionarySetValue(devDict, (__bridge_retained CFStringRef)YubiKeyDeviceDictionaryUniqueStringKey,(__bridge CFStringRef)[gSelf getUniqueStringForDev:(__bridge NSDictionary*)devDict]);
+	
 	return devDict;
 }
 
