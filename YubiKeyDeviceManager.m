@@ -20,9 +20,11 @@ NSNotificationName YubiKeyDeviceManagerKeyRemovedNotificationKey = @"YubiKeyDevi
 
 NSString *const YubiKeyDeviceDictionaryUSBNameKey = @kIOHIDProductKey;
 NSString *const YubiKeyDeviceDictionaryUSBSerialNumberKey = @kIOHIDSerialNumberKey;
+NSString *const YubiKeyDeviceDictionaryUSBSerialNumberIntegerKey = @"IntegerSerialNumber";
 NSString *const YubiKeyDeviceDictionaryUSBLocationKey = @kIOHIDLocationIDKey;
 NSString *const YubiKeyDeviceDictionaryUniqueStringKey = @"UniqueString";
 
+NSString *const YubiKeyDeviceDictionaryPropertyKey = @"YubiKeyDeviceDictionaryPropertyKey";
 NSString *const YubiKeyDevicePropertySerialKey = @"Serial";
 NSString *const YubiKeyDevicePropertyVersionKey = @"Version";
 NSString *const YubiKeyDevicePropertyFormfactorKey = @"Formfactor";
@@ -56,8 +58,10 @@ LONG sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD
 	dwRecvLength = sizeof(pbRecvBuffer);
 	rv = SCardTransmit(hCard, &pioSendPci, apdu, size,
 					   NULL, pbRecvBuffer, &dwRecvLength);
-	if(rv)
+	if(rv) {
+		NSLog(@"%d",rv);
 		return rv;
+	}
 	
 	printf("res: ");
 	for(unsigned int i=0; i<dwRecvLength; i++)
@@ -218,10 +222,12 @@ enum ConfigApplications {
 	CHECK("SCardEstablishContext", rv)
 	if(rv)return nil;
 	rv = SCardListReaders(hContext, NULL, NULL, &dwReaders);
+	CHECK("SCardListReaders", rv)
 	if(rv)return nil;
 	
 	mszReaders = calloc(dwReaders, sizeof(char));
 	rv = SCardListReaders(hContext, NULL, mszReaders, &dwReaders);
+	CHECK("SCardListReaders2", rv)
 	if(rv)return nil;
 
 	NSMutableArray *readers = [NSMutableArray new];
@@ -235,8 +241,6 @@ enum ConfigApplications {
 	NSDictionary *result=nil;
 	for(NSString*reader in readers)
 	{
-		NSLog(@"reader: %@", reader);
-		
 		rv = SCardConnect(hContext, [reader cStringUsingEncoding:NSUTF8StringEncoding], SCARD_SHARE_SHARED, SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwActiveProtocol);
 		CHECK("SCardConnect", rv)
 		if(rv)return nil;
@@ -258,7 +262,6 @@ enum ConfigApplications {
 		sendAPDU(hCard, pioSendPci, cmdSelectMGR, sizeof(cmdSelectMGR),nil,nil);
 		sendAPDU(hCard, pioSendPci, cmdGetConfig, sizeof(cmdGetConfig),&res,&len);
 		NSDictionary<NSNumber*,NSData*> *config = [self parseTLV:[NSData dataWithBytes:res length:len]];
-		NSLog(@"%@",config);
 		NSMutableDictionary<NSString*,id> *devInfo = [[self parseConfig:config] mutableCopy];
 
 		if([devInfo[YubiKeyDevicePropertySerialKey] intValue] == [serial intValue]) {
@@ -270,7 +273,7 @@ enum ConfigApplications {
 						devInfo[YubiKeyDevicePropertyVersionKey] = [NSString stringWithFormat:@"%d.%d.%d",res[0],res[1],res[2]];
 				}
 			}
-			NSString *verString = [devInfo[YubiKeyDevicePropertyVersionKey] substringToIndex:1];
+			NSString *verString = (devInfo[YubiKeyDevicePropertyVersionKey])?[devInfo[YubiKeyDevicePropertyVersionKey] substringToIndex:1]:@"";
 			NSString *formString;
 			if([devInfo[YubiKeyDevicePropertyFormfactorKey] intValue]==2)
 				formString = @" Nano";
@@ -281,8 +284,10 @@ enum ConfigApplications {
 			NSString *deviceName = [NSString stringWithFormat:@"YubiKey %@%@", verString, formString];
 			devInfo[YubiKeyDevicePropertyModelKey] = deviceName;
 			result = devInfo;
+			rv = SCardDisconnect(hCard, SCARD_LEAVE_CARD);
 			break;
 		}
+		rv = SCardDisconnect(hCard, SCARD_LEAVE_CARD);
 	}
 	
 	rv = SCardReleaseContext(hContext);
@@ -313,7 +318,8 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	CFMutableDictionaryRef matchDict = (__bridge_retained CFMutableDictionaryRef)@{
 		@kIOProviderClassKey : @kIOHIDDeviceKey,//@kIOUSBDeviceClassName,
 //		@kIOHIDProductIDKey : @"*",
-		@kIOHIDVendorIDKey : @0x1050
+		@kIOHIDVendorIDKey : @0x1050,
+		@kIOHIDPrimaryUsagePageKey : @0x1
 	};
 
 	CFRetain(matchDict);
@@ -371,7 +377,7 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 	}
 }
 
-NSString *const YubiKeyDeviceDictionaryPropertyKey = @"YubiKeyDeviceDictionaryPropertyKey";
+
 CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 	kern_return_t kr;
 	CFMutableDictionaryRef devDict = nil;
@@ -390,15 +396,17 @@ CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 		r = IOHIDDeviceClose(hid, kIOHIDOptionsTypeNone);
 	}
 	
-	if(CFDictionaryContainsKey(devDict, CFSTR(kIOHIDSerialNumberKey))) {
-		CFStringRef version = CFDictionaryGetValue(devDict, CFSTR(kIOHIDSerialNumberKey));
+	if(CFDictionaryContainsKey(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryUSBSerialNumberKey)) {
+		CFStringRef version = CFDictionaryGetValue(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryUSBSerialNumberKey);
 		SInt32 versionNumber = CFStringGetIntValue(version);
-		CFDictionaryRemoveValue(devDict, CFSTR(kIOHIDSerialNumberKey));
+//		CFDictionaryRemoveValue(devDict, CFSTR(kIOHIDSerialNumberKey));
 		CFNumberRef versionNumberRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &versionNumber);
-		CFDictionaryAddValue(devDict, CFSTR(kIOHIDSerialNumberKey), versionNumberRef);
+		//CFDictionaryAddValue(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryUSBSerialNumberIntegerKey, versionNumberRef);
 		CFDictionaryRef yubikeyProperty = (__bridge_retained CFDictionaryRef)[gSelf getYubKeyDevicePropertyViaCCIDForSerial:(__bridge NSNumber*)versionNumberRef];
-		NSLog(@"%@",yubikeyProperty);
-		CFDictionaryAddValue(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryPropertyKey, yubikeyProperty);
+		if(yubikeyProperty) {
+			NSLog(@"%@",yubikeyProperty);
+			CFDictionaryAddValue(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryPropertyKey, yubikeyProperty);
+		}
 	} else {
 //		CFDictionarySetValue(devDict, CFSTR(kIOHIDSerialNumberKey), );
 	}

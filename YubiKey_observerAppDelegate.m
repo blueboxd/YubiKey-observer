@@ -124,7 +124,7 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 
 	NSString *msg;
 	if(dev)
-		msg = [NSString stringWithFormat:@"for %@ SN#%@",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+		msg = [NSString stringWithFormat:@"for %@ SN#%@",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
 	else
 		msg = @"Unspecified YubiKey";
 
@@ -137,7 +137,7 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 		enteredPIN  = [self->pinTextField stringValue];
 		rememberPIN = [self->rememberPINCheckbox state];
 		if(rememberPIN) {
-			NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+			NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
 			[self->pinManager storePin:enteredPIN forKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey] withLabel:labelStr];
 		}
 		if ([[[self->prefsController values] valueForKey:kIsPINExpiresKey] intValue]) {
@@ -191,7 +191,7 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 
 - (void) deviceAdded:(NSNotification*)notification {
 	NSDictionary *dev = notification.userInfo;
-	NSLog(@"deviceAdded:%@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]);
+	NSLog(@"deviceAdded:%@",dev[YubiKeyDeviceDictionaryUniqueStringKey]);
 
 	if([[[prefsController values] valueForKey:kWakeScreenOnInsertionKey] intValue]){
 		NSLog(@"will wake screen");
@@ -210,7 +210,7 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 
 - (void) deviceRemoved:(NSNotification*)notification {
 	NSDictionary *dev = notification.userInfo;
-	NSLog(@"deviceRemoved:%@(SN#%@)",dev[YubiKeyDeviceDictionaryUSBNameKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]);
+	NSLog(@"deviceRemoved:%@",dev[YubiKeyDeviceDictionaryUniqueStringKey]);
 	[NSApp abortModal];
 	if([[[prefsController values] valueForKey:kExecSSHAddOnRemovalKey] intValue]){
 		[self removeSSHKey];

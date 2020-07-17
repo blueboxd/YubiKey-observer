@@ -18,6 +18,16 @@ extern NSString* const YubiKeyDeviceDictionaryUSBSerialNumberKey;
 extern NSString* const YubiKeyDeviceDictionaryUSBLocationKey;
 extern NSString* const YubiKeyDeviceDictionaryUniqueStringKey;
 
+extern NSString *const YubiKeyDeviceDictionaryPropertyKey;
+extern NSString *const YubiKeyDevicePropertySerialKey; 
+extern NSString *const YubiKeyDevicePropertyVersionKey;
+extern NSString *const YubiKeyDevicePropertyFormfactorKey;
+extern NSString *const YubiKeyDevicePropertyNFCSupportedKey;
+extern NSString *const YubiKeyDevicePropertyNFCEnabledKey;
+extern NSString *const YubiKeyDevicePropertyUSBSupportedKey;
+extern NSString *const YubiKeyDevicePropertyUSBEnabledKey;
+extern NSString *const YubiKeyDevicePropertyModelKey;
+
 @interface YubiKeyDeviceManager : NSObject
 - (kern_return_t) registerMatchingCallbacks;
 - (NSDictionary*) getAnySingleDevice;
