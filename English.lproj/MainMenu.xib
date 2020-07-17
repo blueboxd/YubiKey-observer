@@ -332,13 +332,16 @@
         </menu>
         <customObject id="494" userLabel="AppDelegate" customClass="YubiKey_observerAppDelegate">
             <connections>
-                <outlet property="alertIcon" destination="mUg-1K-EaP" id="TLB-Bb-6W9"/>
+                <outlet property="_providerPathAlertIcon" destination="mUg-1K-EaP" id="TLB-Bb-6W9"/>
                 <outlet property="keyIDLabel" destination="n56-XG-Sp6" id="w71-1Y-WOa"/>
+                <outlet property="pinAlertIcon" destination="bzE-BC-0yA" id="8gk-Xz-ftC"/>
+                <outlet property="pinAlertLabel" destination="H8a-43-PA9" id="Tko-Dv-LOC"/>
                 <outlet property="pinDialog" destination="543" id="583"/>
                 <outlet property="pinManager" destination="PN1-jL-m82" id="4wk-MZ-4wF"/>
                 <outlet property="pinTextField" destination="552" id="582"/>
                 <outlet property="prefWindow" destination="590" id="593"/>
                 <outlet property="prefsController" destination="622" id="632"/>
+                <outlet property="providerPathAlertIcon" destination="mUg-1K-EaP" id="jiy-c2-V1g"/>
                 <outlet property="rememberPINCheckbox" destination="549" id="581"/>
                 <outlet property="yubikeyDeviceManager" destination="P91-QX-n2i" id="FcJ-Ux-ka6"/>
             </connections>
@@ -356,19 +359,19 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" visibleAtLaunch="NO" animationBehavior="default" id="543" userLabel="PIN">
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="697" y="715" width="431" height="172"/>
+            <rect key="contentRect" x="697" y="715" width="431" height="188"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1578"/>
             <view key="contentView" id="544">
-                <rect key="frame" x="0.0" y="0.0" width="431" height="172"/>
+                <rect key="frame" x="0.0" y="0.0" width="431" height="188"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView id="555">
-                        <rect key="frame" x="20" y="88" width="64" height="64"/>
+                        <rect key="frame" x="20" y="104" width="64" height="64"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="Key_Large@2x" id="556"/>
                     </imageView>
                     <textField verticalHuggingPriority="750" id="554">
-                        <rect key="frame" x="97" y="132" width="316" height="20"/>
+                        <rect key="frame" x="97" y="148" width="316" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" state="on" title="Enter PIN to add identities from YubiKey" id="557">
                             <font key="font" metaFont="systemBold"/>
@@ -377,7 +380,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" id="553">
-                        <rect key="frame" x="97" y="89" width="29" height="17"/>
+                        <rect key="frame" x="97" y="105" width="29" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="PIN:" id="558">
                             <font key="font" metaFont="system"/>
@@ -386,7 +389,7 @@
                         </textFieldCell>
                     </textField>
                     <secureTextField verticalHuggingPriority="750" id="552">
-                        <rect key="frame" x="131" y="86" width="279" height="22"/>
+                        <rect key="frame" x="131" y="102" width="279" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="559">
                             <font key="font" metaFont="system"/>
@@ -438,7 +441,7 @@ Gw
                         </connections>
                     </button>
                     <button imageHugsTitle="YES" id="549">
-                        <rect key="frame" x="129" y="62" width="249" height="18"/>
+                        <rect key="frame" x="97" y="59" width="249" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Remember this PIN in keychain" bezelStyle="regularSquare" imagePosition="leading" alignment="left" state="on" inset="2" id="562">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -446,7 +449,7 @@ Gw
                         </buttonCell>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="n56-XG-Sp6">
-                        <rect key="frame" x="97" y="111" width="304" height="17"/>
+                        <rect key="frame" x="97" y="127" width="304" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="for YubiKey 5 NFC SN#1234567890" id="g1S-sM-TwO">
                             <font key="font" metaFont="smallSystem"/>
@@ -454,9 +457,23 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <imageView id="bzE-BC-0yA">
+                        <rect key="frame" x="131" y="81" width="16" height="16"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="NSCaution" id="sAa-m0-uxk"/>
+                    </imageView>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="H8a-43-PA9">
+                        <rect key="frame" x="148" y="81" width="263" height="14"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Invalid PIN. 3 tries left." id="r9t-mu-rxg">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-48" y="-417"/>
+            <point key="canvasLocation" x="-383" y="-491"/>
         </window>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="590" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
@@ -671,20 +688,20 @@ Gw
                     </box>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-66.5" y="-379.5"/>
+            <point key="canvasLocation" x="158" y="-392"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
         <menu autoenablesItems="NO" id="627" userLabel="StatusMenu">
             <items>
-                <menuItem title="YubiKeys inserted" id="6Rr-dg-N9X">
+                <menuItem title="YubiKeys" id="6Rr-dg-N9X">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="YubiKeys" autoenablesItems="NO" id="rac-g7-ufQ"/>
                 </menuItem>
-                <menuItem title="ssh keys added" id="N7U-XZ-LrI">
+                <menuItem title="identities" id="N7U-XZ-LrI">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="ssh-keys" autoenablesItems="NO" id="pzj-C8-Z08"/>
+                    <menu key="submenu" title="identities" autoenablesItems="NO" id="pzj-C8-Z08"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="ZJe-2e-Gh5"/>
                 <menuItem title="Add keys" hidden="YES" enabled="NO" id="HJf-zz-hAk">
@@ -731,6 +748,13 @@ Gw
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="644"/>
+                <menuItem title="About..." id="dVt-xo-7Nd">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="orderFrontStandardAboutPanel:" target="-1" id="uqm-Wk-WMl"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="oso-KC-tY4"/>
                 <menuItem title="Quit" id="630" userLabel="Quit">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -739,7 +763,7 @@ Gw
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-155" y="-391"/>
+            <point key="canvasLocation" x="-300" y="-270"/>
         </menu>
     </objects>
     <resources>

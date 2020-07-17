@@ -343,7 +343,7 @@ BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 	return result;
 }
 
-- (NSInteger) verifyPIN:(NSString*)pin forDeviceSerial:(NSNumber*)serial {
+- (int8_t) verifyPIN:(NSString*)pin forDeviceSerial:(NSNumber*)serial {
 	if([pin length]>8)
 		return -EINVAL;
 
@@ -375,7 +375,7 @@ BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 	BYTE *res, rawPIN[8];
 	DWORD len;
 	
-	[pin getCString:rawPIN maxLength:8 encoding:NSUTF8StringEncoding];
+	[pin getCString:rawPIN maxLength:8+1 encoding:NSUTF8StringEncoding];
 	memcpy(verifyPINCmd+5, rawPIN, [pin length]);
 	sendAPDU(hCard, pioSendPci, cmdSelectPIV, sizeof(cmdSelectPIV),nil,nil);
 	sendAPDU(hCard, pioSendPci, verifyPINCmd, sizeof(verifyPINCmd),&res,&len);
@@ -505,7 +505,6 @@ CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 			NSLog(@"%@",yubikeyProperty);
 			CFDictionaryAddValue(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryPropertyKey, yubikeyProperty);
 		}
-		[gSelf verifyPIN:@"654321" forDeviceSerial:(__bridge NSNumber*)serialNumberRef];
 	} else {
 //		CFDictionarySetValue(devDict, CFSTR(kIOHIDSerialNumberKey), );
 	}

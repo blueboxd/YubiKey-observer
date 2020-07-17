@@ -156,6 +156,10 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	int r = ssh_update_card(sock, add, [self.provider cStringUsingEncoding:NSUTF8StringEncoding],
 					 [pin cStringUsingEncoding:NSUTF8StringEncoding], lifetime, confirm);
 	close(sock);
+	unsigned char *buf = (unsigned char *)CFStringGetCStringPtr((CFStringRef)pin, CFStringGetSystemEncoding());
+	if(buf)
+		memset(buf, 0, [pin length]);
+	pin = nil;
 	if(r) {
 		NSString *action = add?@"Add ssh-key failed":@"Remove ssh-key failed";
 		NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:r userInfo:@{NSLocalizedDescriptionKey:action,NSLocalizedFailureReasonErrorKey:[NSString stringWithCString:ssh_err(r) encoding:NSUTF8StringEncoding]}];
@@ -169,6 +173,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	
 		return err;
 	}
+	[self refreshKeyStore];
 	return nil;
 }
 

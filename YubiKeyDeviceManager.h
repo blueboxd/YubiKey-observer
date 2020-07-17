@@ -35,7 +35,7 @@ extern NSString *const YubiKeyDevicePropertyModelKey;
 @interface YubiKeyDeviceManager : NSObject
 - (kern_return_t) registerMatchingCallbacks;
 - (NSDictionary*) getAnySingleDevice;
-- (NSInteger) verifyPIN:(NSString*)pin forDeviceSerial:(NSNumber*)serial;
+- (int8_t) verifyPIN:(NSString*)pin forDeviceSerial:(NSNumber*)serial;
 @property (nonatomic,readonly) NSMutableDictionary<NSString*,NSDictionary*> *devices;
 @end
 

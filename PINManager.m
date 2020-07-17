@@ -37,6 +37,24 @@ static NSString *keychainServiceName;
 	return passwd;
 }
 
+- (OSStatus)removePinForKey:(NSString*)key {
+	if(![key length]) return paramErr;
+	NSDictionary *query = @{
+		(__bridge id)kSecClass:(__bridge id)kSecClassGenericPassword,
+		(__bridge id)kSecAttrService:keychainServiceName,
+		(__bridge id)kSecAttrAccount:key,
+	};
+
+	OSStatus err = SecItemDelete((__bridge CFDictionaryRef)query);
+	if(err) {
+		CFStringRef description = SecCopyErrorMessageString(err, nil);
+		NSLog(@"err:%d (%@)",err,description);
+		CFRelease(description);
+		return err;
+	}
+	return err;
+}
+
 - (OSStatus)storePin:(NSString*)pin forKey:(NSString*)key withLabel:(NSString*)label{
 	if(![key length]) return paramErr;
 	OSStatus err = noErr;
