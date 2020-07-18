@@ -341,7 +341,8 @@ BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 		}
 	}
 	NSString *verString = (devInfo[YubiKeyDevicePropertyVersionKey])?[devInfo[YubiKeyDevicePropertyVersionKey] substringToIndex:1]:@"";
-	NSMutableString *formString = [yubiKeyFormfactors[[YubiKeyDevicePropertyFormfactorKey intValue]] mutableCopy];
+	NSMutableString *formString = [yubiKeyFormfactors[[devInfo[YubiKeyDevicePropertyFormfactorKey] intValue]] mutableCopy];
+	
 	
 	if([devInfo[YubiKeyDevicePropertyNFCSupportedKey] intValue]!=0)
 		[formString appendString:@" NFC"];	

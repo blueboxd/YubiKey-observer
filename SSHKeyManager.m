@@ -118,6 +118,9 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 }
 
 - (NSDictionary*) listIdentities {
+	if(!self.provider)
+		return nil;
+
 	int sock;
 	ssh_get_authentication_socket(&sock);
 	

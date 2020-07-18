@@ -62,9 +62,10 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	}];
 	NSString *pkcsPath = [[prefsController values] valueForKey:kPKCSPathKey];
 	self.pkcsProviderExists = [[NSURL fileURLWithPath:pkcsPath] checkResourceIsReachableAndReturnError:nil];
-	sshKeyManager = [[SSHKeyManager alloc] initWithProvider:pkcsPath];
+	sshKeyManager = [SSHKeyManager new];
 	sshKeyManager.fpDigest = [[[prefsController values] valueForKey:kFingerprintDigestKey] intValue]; 
 	sshKeyManager.fpRepresentation = [[[prefsController values] valueForKey:kFingerprintRepresentationKey] intValue];
+	sshKeyManager.provider = pkcsPath;
 
 	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kPKCSPathKey options:NSKeyValueObservingOptionNew context:nil];
 
