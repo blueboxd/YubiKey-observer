@@ -27,6 +27,8 @@
 #define kPINExpiresInKey @"expiresIn"
 #define kPKCSPathKey @"pkcsPath"
 #define kSSHAddPathKey @"sshAddPath"
+#define kFingerprintDigestKey @"digest"
+#define kFingerprintRepresentationKey @"representation"
 
 @interface YubiKey_observerAppDelegate() {
 }
@@ -60,10 +62,15 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	}];
 	NSString *pkcsPath = [[prefsController values] valueForKey:kPKCSPathKey];
 	self.pkcsProviderExists = [[NSURL fileURLWithPath:pkcsPath] checkResourceIsReachableAndReturnError:nil];
-	if(self.pkcsProviderExists)
-		sshKeyManager = [[SSHKeyManager alloc] initWithProvider:pkcsPath];
+	sshKeyManager = [[SSHKeyManager alloc] initWithProvider:pkcsPath];
+	sshKeyManager.fpDigest = [[[prefsController values] valueForKey:kFingerprintDigestKey] intValue]; 
+	sshKeyManager.fpRepresentation = [[[prefsController values] valueForKey:kFingerprintRepresentationKey] intValue];
 
 	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kPKCSPathKey options:NSKeyValueObservingOptionNew context:nil];
+
+	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kFingerprintDigestKey options:NSKeyValueObservingOptionNew context:nil];
+	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kFingerprintRepresentationKey options:NSKeyValueObservingOptionNew context:nil];
+
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceAdded:) name:YubiKeyDeviceManagerKeyInsertedNotificationKey object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceRemoved:) name:YubiKeyDeviceManagerKeyRemovedNotificationKey object:nil];
 
@@ -106,6 +113,10 @@ NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 			 if(err.code!=260)
 				NSLog(@"%@",err);
 		}
+	} else if([keyPath isEqualToString:kFingerprintDigestKey]) { 
+		sshKeyManager.fpDigest = [change[NSKeyValueChangeNewKey] intValue];
+	} else if([keyPath isEqualToString:kFingerprintRepresentationKey]) {
+		sshKeyManager.fpRepresentation = [change[NSKeyValueChangeNewKey] intValue];
 	}
 }
 

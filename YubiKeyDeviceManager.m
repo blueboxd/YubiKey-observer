@@ -429,7 +429,7 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 		@kIOProviderClassKey : @kIOHIDDeviceKey,//@kIOUSBDeviceClassName,
 //		@kIOHIDProductIDKey : @"*",
 		@kIOHIDVendorIDKey : @0x1050,
-//		@kIOHIDPrimaryUsagePageKey : @0x1
+		@kIOHIDPrimaryUsagePageKey : @0x1
 	};
 
 	CFRetain(matchDict);
@@ -490,24 +490,6 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 
 CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 	kern_return_t kr;
-	
-	IOHIDDeviceRef hid = IOHIDDeviceCreate(kCFAllocatorDefault,usbDevice);
-	if(hid) {
-		IOReturn r = IOHIDDeviceOpen(hid, kIOHIDOptionsTypeNone);
-		yk_init();
-		YK_STATUS status;
-		unsigned int serial;
-		unsigned char buf[0xff];
-		unsigned int len = 0xff;
-		
-		yk_get_status(hid, &status);
-		yk_get_serial(hid, 1, 0, &serial);
-		yk_get_capabilities(hid, 1, 0, buf, &len);
-		yk_release();	
-
-		r = IOHIDDeviceClose(hid, kIOHIDOptionsTypeNone);
-	}	
-	
 	CFMutableDictionaryRef devDict = nil;
 	kr = IORegistryEntryCreateCFProperties(usbDevice, &devDict, kCFAllocatorDefault, kNilOptions);
 	if(kr!=KERN_SUCCESS) return nil;
@@ -516,6 +498,23 @@ CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 	CFRange range = CFStringFind(devName, CFSTR("CCID"), kCFCompareCaseInsensitive);
 	if(range.location==kCFNotFound)
 		return nil;
+	
+//	IOHIDDeviceRef hid = IOHIDDeviceCreate(kCFAllocatorDefault,usbDevice);
+//	if(hid) {
+//		IOReturn r = IOHIDDeviceOpen(hid, kIOHIDOptionsTypeNone);
+//		yk_init();
+//		YK_STATUS status;
+//		unsigned int serial;
+//		unsigned char buf[0xff];
+//		unsigned int len = 0xff;
+//		
+//		yk_get_status(hid, &status);
+//		yk_get_serial(hid, 1, 0, &serial);
+//		yk_get_capabilities(hid, 1, 0, buf, &len);
+//		yk_release();	
+//
+//		r = IOHIDDeviceClose(hid, kIOHIDOptionsTypeNone);
+//	}	
 	
 	if(CFDictionaryContainsKey(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryUSBSerialNumberKey)) {
 		CFStringRef serialStr = CFDictionaryGetValue(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryUSBSerialNumberKey);

@@ -63,8 +63,17 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 
 - (void) setProvider:(NSString *)provider {
 	_provider = provider;
-	curKeys = @{};						
-	[self refreshKeyStore];
+	[self rebuildKeyStore];
+}
+
+-(void) setFpDigest:(NSUInteger)fpDigest {
+	_fpDigest = fpDigest;
+	[self rebuildKeyStore];
+}
+
+-(void) setFpRepresentation:(NSUInteger)fpRepresentation {
+	_fpRepresentation = fpRepresentation;
+	[self rebuildKeyStore];
 }
 
 - (void)startObserver {
@@ -84,6 +93,11 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 			return YES;
 	}
 	return NO;
+}
+
+- (void) rebuildKeyStore {
+	curKeys = @{};
+	[self refreshKeyStore];
 }
 
 - (void) refreshKeyStore {
@@ -117,7 +131,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 	for (size_t i = 0; i < idlist->nkeys; i++) {
 		struct sshkey *k = idlist->keys[i];
 
-		fp = sshkey_fingerprint(k, SSH_DIGEST_SHA1, SSH_FP_HEX);		
+		fp = sshkey_fingerprint(k, self.fpDigest, self.fpRepresentation);		
 		NSString *fingerprint = [NSString stringWithCString:fp encoding:NSUTF8StringEncoding];
 		NSString *comment = [NSString stringWithCString:idlist->comments[i] encoding:NSUTF8StringEncoding];
 		NSString *keyType = [NSString stringWithCString:sshkey_type(k) encoding:NSUTF8StringEncoding];

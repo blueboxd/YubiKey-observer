@@ -34,6 +34,8 @@ extern NSString* const SSHKeyManagerCommandFailedStdErrStrKey;
 - (NSError* _Nullable) updateCardAdd:(BOOL)add pin:(NSString* _Nullable)pin;
 
 @property (nonatomic) NSString *provider;
+@property (nonatomic) NSUInteger fpDigest;
+@property (nonatomic) NSUInteger fpRepresentation;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -478,14 +478,14 @@ Gw
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="590" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="1178" y="382" width="437" height="419"/>
+            <rect key="contentRect" x="1178" y="382" width="437" height="530"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1578"/>
             <view key="contentView" id="591">
-                <rect key="frame" x="0.0" y="0.0" width="437" height="419"/>
+                <rect key="frame" x="0.0" y="0.0" width="437" height="530"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box autoresizesSubviews="NO" borderType="line" title="Actions on device insertion" id="592">
-                        <rect key="frame" x="17" y="304" width="403" height="95"/>
+                        <rect key="frame" x="17" y="415" width="403" height="95"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="7Ow-22-Txh">
                             <rect key="frame" x="1" y="1" width="401" height="79"/>
@@ -528,7 +528,7 @@ Gw
                         </view>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="Actions on device removal" id="598">
-                        <rect key="frame" x="17" y="184" width="403" height="116"/>
+                        <rect key="frame" x="17" y="295" width="403" height="116"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="UA2-uN-Wvs">
                             <rect key="frame" x="1" y="1" width="401" height="100"/>
@@ -583,7 +583,7 @@ Gw
                         </view>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="PIN cache policy" id="603">
-                        <rect key="frame" x="17" y="96" width="403" height="84"/>
+                        <rect key="frame" x="17" y="207" width="403" height="84"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="JLh-T4-Lw1">
                             <rect key="frame" x="1" y="1" width="401" height="68"/>
@@ -642,7 +642,7 @@ Gw
                         </view>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="PKCS#11 provider" id="614">
-                        <rect key="frame" x="17" y="16" width="403" height="76"/>
+                        <rect key="frame" x="17" y="127" width="403" height="76"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="Ttp-6s-PlT">
                             <rect key="frame" x="1" y="1" width="401" height="60"/>
@@ -686,9 +686,77 @@ Gw
                             </subviews>
                         </view>
                     </box>
+                    <box title="Identity Fingerprint" id="LEa-l1-F0D">
+                        <rect key="frame" x="17" y="16" width="403" height="107"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <view key="contentView" id="Vtx-oL-KQ4">
+                            <rect key="frame" x="2" y="2" width="399" height="90"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <popUpButton verticalHuggingPriority="750" id="t0z-IX-cpq" userLabel="Digest">
+                                    <rect key="frame" x="120" y="48" width="89" height="26"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <popUpButtonCell key="cell" type="push" title="MD5" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="b3e-F7-1rp" id="0bX-wy-2Oz">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="menu"/>
+                                        <menu key="menu" id="RJa-Rt-81o">
+                                            <items>
+                                                <menuItem title="MD5" state="on" id="b3e-F7-1rp" userLabel="MD5"/>
+                                                <menuItem title="SHA1" id="BlM-Z2-iUR"/>
+                                                <menuItem title="SHA256" id="fWl-jQ-P1L"/>
+                                                <menuItem title="SHA384" id="rMI-qk-ee5"/>
+                                                <menuItem title="SHA512" id="yK7-bl-i6B"/>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                    <connections>
+                                        <binding destination="622" name="selectedIndex" keyPath="values.digest" id="iuk-ej-A3z"/>
+                                    </connections>
+                                </popUpButton>
+                                <popUpButton verticalHuggingPriority="750" id="fwl-Ow-I5q" userLabel="Fingerprint">
+                                    <rect key="frame" x="120" y="19" width="137" height="26"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <popUpButtonCell key="cell" type="push" title="Default" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="VyO-2I-ieH" id="Ma9-XW-feD">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="menu"/>
+                                        <menu key="menu" id="PRG-ro-Rzf">
+                                            <items>
+                                                <menuItem title="Default" state="on" id="VyO-2I-ieH"/>
+                                                <menuItem title="HEX" id="qHl-Sy-v5x"/>
+                                                <menuItem title="BASE64" id="EKs-8u-Bh3"/>
+                                                <menuItem title="BUBBLEBABBLE" id="zI8-sL-Kig"/>
+                                                <menuItem title="RANDOMART" id="WYW-pm-2n0"/>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                    <connections>
+                                        <binding destination="622" name="selectedIndex" keyPath="values.representation" id="IAn-en-cKP"/>
+                                    </connections>
+                                </popUpButton>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="WQd-sD-l9z">
+                                    <rect key="frame" x="18" y="24" width="98" height="17"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Representasion" id="kHf-0E-6Im">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="lz6-nL-DOV">
+                                    <rect key="frame" x="73" y="53" width="43" height="17"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Digest" id="2u2-9C-bue">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                        </view>
+                    </box>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="158" y="-392"/>
+            <point key="canvasLocation" x="-290" y="-298"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
         <menu autoenablesItems="NO" id="627" userLabel="StatusMenu">
@@ -698,13 +766,13 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="YubiKeys" autoenablesItems="NO" id="rac-g7-ufQ"/>
                 </menuItem>
-                <menuItem title="identities" id="N7U-XZ-LrI">
+                <menuItem title="Identities" id="N7U-XZ-LrI">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="identities" autoenablesItems="NO" id="pzj-C8-Z08"/>
+                    <menu key="submenu" title="Identities" autoenablesItems="NO" id="pzj-C8-Z08"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="ZJe-2e-Gh5"/>
-                <menuItem title="Add keys" hidden="YES" enabled="NO" id="HJf-zz-hAk">
+                <menuItem title="Add Identities" hidden="YES" enabled="NO" id="HJf-zz-hAk">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="addKeyAction:" target="494" id="wfX-tJ-FkT"/>
@@ -720,7 +788,7 @@ Gw
                         </binding>
                     </connections>
                 </menuItem>
-                <menuItem title="Remove keys" hidden="YES" enabled="NO" id="5ao-Cp-pL8">
+                <menuItem title="Remove Identities" hidden="YES" enabled="NO" id="5ao-Cp-pL8">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="removeKeyAction:" target="494" id="tKi-4j-B0b"/>
