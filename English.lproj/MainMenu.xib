@@ -332,7 +332,6 @@
         </menu>
         <customObject id="494" userLabel="AppDelegate" customClass="YubiKey_observerAppDelegate">
             <connections>
-                <outlet property="_providerPathAlertIcon" destination="mUg-1K-EaP" id="TLB-Bb-6W9"/>
                 <outlet property="keyIDLabel" destination="n56-XG-Sp6" id="w71-1Y-WOa"/>
                 <outlet property="pinAlertIcon" destination="bzE-BC-0yA" id="8gk-Xz-ftC"/>
                 <outlet property="pinAlertLabel" destination="H8a-43-PA9" id="Tko-Dv-LOC"/>

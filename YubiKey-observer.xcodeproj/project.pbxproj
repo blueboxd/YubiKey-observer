@@ -14,21 +14,8 @@
 		FB29E7C8218AC04400F7F216 /* yubikey.png in Resources */ = {isa = PBXBuildFile; fileRef = FB29E7C7218AC04400F7F216 /* yubikey.png */; };
 		FB29E7D3218AC08100F7F216 /* yubikey-c.png in Resources */ = {isa = PBXBuildFile; fileRef = FB29E7D2218AC08100F7F216 /* yubikey-c.png */; };
 		FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FB43C41F24B7120E001645BD /* StatusMenuManager.m */; };
-		FB591F5324BB36C0001645BD /* authfd.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F5224BB36C0001645BD /* authfd.c */; };
-		FB591F6324BB3987001645BD /* sshbuf-io.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F5E24BB3987001645BD /* sshbuf-io.c */; };
-		FB591F6524BB3987001645BD /* sshbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6024BB3987001645BD /* sshbuf.c */; };
-		FB591F6624BB3987001645BD /* sshbuf-getput-basic.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6124BB3987001645BD /* sshbuf-getput-basic.c */; };
-		FB591F6B24BB3A60001645BD /* sshkey.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6A24BB3A60001645BD /* sshkey.c */; };
-		FB591F6D24BB3B7C001645BD /* atomicio.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6C24BB3B7C001645BD /* atomicio.c */; };
-		FB591F6F24BB3CAF001645BD /* explicit_bzero.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F6E24BB3CAF001645BD /* explicit_bzero.c */; };
-		FB591F7124BB3CDF001645BD /* freezero.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F7024BB3CDF001645BD /* freezero.c */; };
 		FB591F7524BB45F6001645BD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB591F7424BB45F6001645BD /* Security.framework */; };
-		FB591F7B24BB53B3001645BD /* digest-openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F7A24BB53B3001645BD /* digest-openssl.c */; };
-		FB591F8624BB88B2001645BD /* recallocarray.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F8524BB88B2001645BD /* recallocarray.c */; };
-		FB591F8C24BCB428001645BD /* ssherr.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F8B24BCB428001645BD /* ssherr.c */; };
-		FB591F8E24BDF067001645BD /* sshbuf-getput-crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = FB591F8D24BDF067001645BD /* sshbuf-getput-crypto.c */; };
 		FB8D982D24BE5A73001645BD /* PCSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB8D982C24BE5A73001645BD /* PCSC.framework */; };
-		FB8D983024BF8ED8001645BD /* libcrypto.0.9.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB8D982F24BF8ED8001645BD /* libcrypto.0.9.8.dylib */; };
 		FBAA8EF0218B4B690087A09A /* yubikey-ng.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EEE218B4B690087A09A /* yubikey-ng.png */; };
 		FBAA8EF3218B4B940087A09A /* yubikey-ok.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EF2218B4B940087A09A /* yubikey-ok.png */; };
 		FBB5D75724B4D8B6001645BD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBB5D75524B4D8B6001645BD /* MainMenu.xib */; };
@@ -37,6 +24,10 @@
 		FBBEFE3024C2600A001645BD /* ykcore_osx.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2D24C2600A001645BD /* ykcore_osx.c */; };
 		FBBEFE3124C2600A001645BD /* ykcore.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2E24C2600A001645BD /* ykcore.c */; };
 		FBBEFE3224C2600A001645BD /* ykcrc.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2F24C2600A001645BD /* ykcrc.c */; };
+		FBBEFE4D24C36985001645BD /* libssh.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE4C24C36985001645BD /* libssh.a */; };
+		FBBEFE5124C3698D001645BD /* libcompat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE4F24C3698D001645BD /* libcompat.a */; };
+		FBBEFE5324C3699A001645BD /* libcompatnoopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE5224C3699A001645BD /* libcompatnoopt.a */; };
+		FBBEFE5524C369BE001645BD /* crypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE5424C369BE001645BD /* crypto.a */; };
 		FBDA078021921F0D00AF79EA /* login.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBDA077F21921F0D00AF79EA /* login.framework */; };
 		FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */; };
 		FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9324B5C319001645BD /* SSHKeyManager.m */; };
@@ -59,22 +50,9 @@
 		FB29E7D2218AC08100F7F216 /* yubikey-c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-c.png"; sourceTree = "<group>"; };
 		FB43C41F24B7120E001645BD /* StatusMenuManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusMenuManager.m; sourceTree = "<group>"; };
 		FB43C42024B7120E001645BD /* StatusMenuManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusMenuManager.h; sourceTree = "<group>"; };
-		FB591F5224BB36C0001645BD /* authfd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = authfd.c; sourceTree = "<group>"; };
-		FB591F5E24BB3987001645BD /* sshbuf-io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sshbuf-io.c"; sourceTree = "<group>"; };
-		FB591F6024BB3987001645BD /* sshbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sshbuf.c; sourceTree = "<group>"; };
-		FB591F6124BB3987001645BD /* sshbuf-getput-basic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sshbuf-getput-basic.c"; sourceTree = "<group>"; };
-		FB591F6A24BB3A60001645BD /* sshkey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sshkey.c; sourceTree = "<group>"; };
-		FB591F6C24BB3B7C001645BD /* atomicio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atomicio.c; sourceTree = "<group>"; };
-		FB591F6E24BB3CAF001645BD /* explicit_bzero.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = explicit_bzero.c; sourceTree = "<group>"; };
-		FB591F7024BB3CDF001645BD /* freezero.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = freezero.c; sourceTree = "<group>"; };
 		FB591F7424BB45F6001645BD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = ../../../../System/Library/Frameworks/Security.framework; sourceTree = "<group>"; };
-		FB591F7A24BB53B3001645BD /* digest-openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "digest-openssl.c"; sourceTree = "<group>"; };
-		FB591F8524BB88B2001645BD /* recallocarray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recallocarray.c; sourceTree = "<group>"; };
-		FB591F8B24BCB428001645BD /* ssherr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssherr.c; sourceTree = "<group>"; };
-		FB591F8D24BDF067001645BD /* sshbuf-getput-crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sshbuf-getput-crypto.c"; sourceTree = "<group>"; };
 		FB8D982C24BE5A73001645BD /* PCSC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PCSC.framework; path = ../../../../System/Library/Frameworks/PCSC.framework; sourceTree = "<group>"; };
 		FB8D982E24BE5A7F001645BD /* PCSC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PCSC.framework; sourceTree = "<group>"; };
-		FB8D982F24BF8ED8001645BD /* libcrypto.0.9.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libcrypto.0.9.8.dylib; sourceTree = "<group>"; };
 		FBAA8EEE218B4B690087A09A /* yubikey-ng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ng.png"; sourceTree = "<group>"; };
 		FBAA8EF2218B4B940087A09A /* yubikey-ok.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ok.png"; sourceTree = "<group>"; };
 		FBB5D75624B4D8B6001645BD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -83,6 +61,10 @@
 		FBBEFE2D24C2600A001645BD /* ykcore_osx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcore_osx.c; path = ykcore/ykcore_osx.c; sourceTree = SOURCE_ROOT; };
 		FBBEFE2E24C2600A001645BD /* ykcore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcore.c; path = ykcore/ykcore.c; sourceTree = SOURCE_ROOT; };
 		FBBEFE2F24C2600A001645BD /* ykcrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcrc.c; path = ykcore/ykcrc.c; sourceTree = SOURCE_ROOT; };
+		FBBEFE4C24C36985001645BD /* libssh.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh.a; path = lib/libssh.a; sourceTree = SOURCE_ROOT; };
+		FBBEFE4F24C3698D001645BD /* libcompat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcompat.a; path = lib/libcompat.a; sourceTree = SOURCE_ROOT; };
+		FBBEFE5224C3699A001645BD /* libcompatnoopt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcompatnoopt.a; path = lib/libcompatnoopt.a; sourceTree = SOURCE_ROOT; };
+		FBBEFE5424C369BE001645BD /* crypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = crypto.a; path = lib/crypto.a; sourceTree = SOURCE_ROOT; };
 		FBDA077F21921F0D00AF79EA /* login.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = login.framework; path = /System/Library/PrivateFrameworks/login.framework; sourceTree = "<absolute>"; };
 		FBF5EB9124B5C318001645BD /* SSHKeyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHKeyManager.h; sourceTree = "<group>"; };
 		FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YubiKeyDeviceManager.m; sourceTree = "<group>"; };
@@ -97,11 +79,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBBEFE4D24C36985001645BD /* libssh.a in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				FB8D982D24BE5A73001645BD /* PCSC.framework in Frameworks */,
-				FB8D983024BF8ED8001645BD /* libcrypto.0.9.8.dylib in Frameworks */,
+				FBBEFE5524C369BE001645BD /* crypto.a in Frameworks */,
 				FBBB48F42183E30400BFD260 /* IOKit.framework in Frameworks */,
 				FB591F7524BB45F6001645BD /* Security.framework in Frameworks */,
+				FBBEFE5124C3698D001645BD /* libcompat.a in Frameworks */,
+				FBBEFE5324C3699A001645BD /* libcompatnoopt.a in Frameworks */,
 				FBDA078021921F0D00AF79EA /* login.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,6 +148,7 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				FBBEFE3924C35D49001645BD /* Libraries */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
 			name = "YubiKey-observer";
@@ -172,7 +158,6 @@
 			isa = PBXGroup;
 			children = (
 				FBBEFE2C24C25FF8001645BD /* ykcore */,
-				FB591F5124BB3606001645BD /* openssh */,
 				256AC3F00F4B6AF500CF3369 /* YubiKey_observer_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
@@ -197,31 +182,11 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FB8D982F24BF8ED8001645BD /* libcrypto.0.9.8.dylib */,
 				FB8D982C24BE5A73001645BD /* PCSC.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		FB591F5124BB3606001645BD /* openssh */ = {
-			isa = PBXGroup;
-			children = (
-				FB591F6C24BB3B7C001645BD /* atomicio.c */,
-				FB591F5224BB36C0001645BD /* authfd.c */,
-				FB591F7A24BB53B3001645BD /* digest-openssl.c */,
-				FB591F6E24BB3CAF001645BD /* explicit_bzero.c */,
-				FB591F7024BB3CDF001645BD /* freezero.c */,
-				FB591F8524BB88B2001645BD /* recallocarray.c */,
-				FB591F6124BB3987001645BD /* sshbuf-getput-basic.c */,
-				FB591F8D24BDF067001645BD /* sshbuf-getput-crypto.c */,
-				FB591F5E24BB3987001645BD /* sshbuf-io.c */,
-				FB591F6024BB3987001645BD /* sshbuf.c */,
-				FB591F8B24BCB428001645BD /* ssherr.c */,
-				FB591F6A24BB3A60001645BD /* sshkey.c */,
-			);
-			path = openssh;
 			sourceTree = "<group>";
 		};
 		FBBEFE2C24C25FF8001645BD /* ykcore */ = {
@@ -233,6 +198,17 @@
 			);
 			name = ykcore;
 			path = "New Group";
+			sourceTree = "<group>";
+		};
+		FBBEFE3924C35D49001645BD /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				FBBEFE4C24C36985001645BD /* libssh.a */,
+				FBBEFE4F24C3698D001645BD /* libcompat.a */,
+				FBBEFE5424C369BE001645BD /* crypto.a */,
+				FBBEFE5224C3699A001645BD /* libcompatnoopt.a */,
+			);
+			path = Libraries;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -307,27 +283,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB591F6F24BB3CAF001645BD /* explicit_bzero.c in Sources */,
-				FB591F6D24BB3B7C001645BD /* atomicio.c in Sources */,
 				FBBEFE3124C2600A001645BD /* ykcore.c in Sources */,
-				FB591F7B24BB53B3001645BD /* digest-openssl.c in Sources */,
-				FB591F8624BB88B2001645BD /* recallocarray.c in Sources */,
-				FB591F6324BB3987001645BD /* sshbuf-io.c in Sources */,
 				FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */,
-				FB591F7124BB3CDF001645BD /* freezero.c in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */,
-				FB591F8C24BCB428001645BD /* ssherr.c in Sources */,
-				FB591F8E24BDF067001645BD /* sshbuf-getput-crypto.c in Sources */,
 				FBF5EB9924B5D3A2001645BD /* PINManager.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m in Sources */,
-				FB591F5324BB36C0001645BD /* authfd.c in Sources */,
 				FBBEFE3224C2600A001645BD /* ykcrc.c in Sources */,
 				FBBEFE3024C2600A001645BD /* ykcore_osx.c in Sources */,
 				FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */,
-				FB591F6B24BB3A60001645BD /* sshkey.c in Sources */,
-				FB591F6624BB3987001645BD /* sshbuf-getput-basic.c in Sources */,
-				FB591F6524BB3987001645BD /* sshbuf.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,6 +322,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 355;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
@@ -373,6 +338,11 @@
 					"$(inherited)",
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/openssl",
+					"/usr/local/src/openssl-1.1.1b",
+					"/usr/local/src/openssh-8.0p1",
+					"/usr/local/src/openssh-8.0p1/openbsd-compat",
+					"$(PROJECT_DIR)/lib",
 				);
 				OTHER_CFLAGS = (
 					"-Wno-double-promotion",
@@ -389,6 +359,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "jp.b5x.YubiKey-observer";
 				PRODUCT_NAME = "YubiKey-observer";
 				SDKROOT = macosx10.14;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -396,6 +367,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CURRENT_PROJECT_VERSION = 355;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -410,6 +382,11 @@
 					"$(inherited)",
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/openssl",
+					"/usr/local/src/openssl-1.1.1b",
+					"/usr/local/src/openssh-8.0p1",
+					"/usr/local/src/openssh-8.0p1/openbsd-compat",
+					"$(PROJECT_DIR)/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
@@ -427,6 +404,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "jp.b5x.YubiKey-observer";
 				PRODUCT_NAME = "YubiKey-observer";
 				SDKROOT = macosx10.14;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};

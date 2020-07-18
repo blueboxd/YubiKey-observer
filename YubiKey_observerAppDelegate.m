@@ -55,7 +55,7 @@ NSString *pinText;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
+//	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
 		kPKCSPathKey:@"/usr/local/lib/libykcs11.dylib",
 		kSSHAddPathKey:@"/usr/local/bin/ssh-add"
