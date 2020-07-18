@@ -71,23 +71,24 @@ LONG sendAPDU(SCARDHANDLE hCard, SCARD_IO_REQUEST pioSendPci, BYTE apdu[], DWORD
 	DWORD dwRecvLength;
 	BYTE pbRecvBuffer[258];
 	
-	printf("req: ");
-	for(unsigned int i=0; i<size; i++)
-		printf("%02X ", apdu[i]);
-	printf("\n");
+//	printf("req: ");
+//	for(unsigned int i=0; i<size; i++)
+//		printf("%02X ", apdu[i]);
+//	printf("\n");
 
 	dwRecvLength = sizeof(pbRecvBuffer);
 	rv = SCardTransmit(hCard, &pioSendPci, apdu, size,
 					   NULL, pbRecvBuffer, &dwRecvLength);
 	if(rv) {
-		NSLog(@"%d",rv);
+		NSLog(@"SCardTransmit:0x%08x",rv);
 		return rv;
 	}
 	
-	printf("res: ");
-	for(unsigned int i=0; i<dwRecvLength; i++)
-		printf("%02X ", pbRecvBuffer[i]);
-	printf("\n");
+//	printf("res: ");
+//	for(unsigned int i=0; i<dwRecvLength; i++)
+//		printf("%02X ", pbRecvBuffer[i]);
+//	printf("\n");
+
 	if(result) {
 		BYTE *res = calloc(dwRecvLength,sizeof(char));
 		memcpy(res, pbRecvBuffer, dwRecvLength);
@@ -221,7 +222,7 @@ enum ConfigApplications {
 #define CHECK(f, rv) \
  if (SCARD_S_SUCCESS != rv) \
  { \
-  printf(f ": %s\n", pcsc_stringify_error(rv)); \
+  printf(f ": 0x%08x(%s)\n", rv, pcsc_stringify_error(rv)); \
   return nil; \
  }
 BYTE cmdSelectMGR[] =		{ 0x00, 0xA4, 0x04, 0x00, 0x08, 0xA0, 0x00, 0x00, 0x05, 0x27, 0x47, 0x11, 0x17 };
@@ -233,17 +234,53 @@ BYTE cmdPIVGetVersion[] = 	{ 0x00, 0xfd, 0x00, 0x00 };
 BYTE cmdSelectOTP[] =		{ 0x00, 0xA4, 0x04, 0x00, 0x08, 0xA0, 0x00, 0x00, 0x05, 0x27, 0x20, 0x01, 0x01 };
 BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 
+- (NSArray*) getAllCardReaders {
+	ULONG rv;
+	SCARDCONTEXT hContext;
+	//LPTSTR mszReaders;
+	BYTE buf[4096];
+	DWORD dwReaders=4096;
+
+	rv = SCardEstablishContext(SCARD_SCOPE_SYSTEM, NULL, NULL, &hContext);
+	CHECK("SCardEstablishContext", rv)
+	if(rv)return nil;
+
+//	rv = SCardListReaders(hContext, NULL, NULL, &dwReaders);
+//	CHECK("SCardListReaders", rv)
+//	if(rv)return nil;	
+//	mszReaders = calloc(dwReaders, sizeof(char));
+	
+	rv = SCardListReaders(hContext, NULL, buf, &dwReaders);
+	CHECK("SCardListReaders2", rv)
+	if(rv)return nil;
+
+	NSMutableArray *readers = [NSMutableArray new];
+	char *pos = buf;
+	while(*pos) {
+		[readers addObject:[NSString stringWithUTF8String:pos]];
+		pos += strlen(pos)+1;
+	}
+//	free(mszReaders);
+	NSLog(@"readers found:%@",readers);
+	rv = SCardReleaseContext(hContext);
+	return readers;
+}
+
 - (NSString*) getCardReaderForSerial:(NSNumber*)serial {
-	LONG rv;
+	ULONG rv;
 	SCARDCONTEXT hContext;
 	LPTSTR mszReaders;
 	SCARDHANDLE hCard;
 	DWORD dwReaders, dwActiveProtocol;
 	SCARD_IO_REQUEST pioSendPci;
+	
+	if(!serial)
+		return nil;
 
 	rv = SCardEstablishContext(SCARD_SCOPE_SYSTEM, NULL, NULL, &hContext);
 	CHECK("SCardEstablishContext", rv)
 	if(rv)return nil;
+
 	rv = SCardListReaders(hContext, NULL, NULL, &dwReaders);
 	CHECK("SCardListReaders", rv)
 	if(rv)return nil;
@@ -260,13 +297,15 @@ BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 		pos += strlen(pos)+1;
 	}
 	free(mszReaders);
-
+//	NSLog(@"readers found:%@",readers);
 	NSString *result=nil;
 	for(NSString*reader in readers)
 	{
 		rv = SCardConnect(hContext, [reader cStringUsingEncoding:NSUTF8StringEncoding], SCARD_SHARE_SHARED, SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwActiveProtocol);
-		CHECK("SCardConnect", rv)
-		if(rv)return nil;
+		if(rv) {
+			NSLog(@"SCardConnect:0x%08x",rv);
+			break;
+		}
 		
 		switch(dwActiveProtocol)
 		{
@@ -309,8 +348,8 @@ BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 
 	NSString *reader = [self getCardReaderForSerial:serial];
 	NSDictionary *result=nil;
+
 	rv = SCardConnect(hContext, [reader cStringUsingEncoding:NSUTF8StringEncoding], SCARD_SHARE_SHARED, SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwActiveProtocol);
-	CHECK("SCardConnect", rv)
 	if(rv)return nil;
 	
 	switch(dwActiveProtocol)
@@ -488,6 +527,21 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 	}
 }
 
+-(void) WaitTillRecognized {
+//	uint64_t start,end,diff;
+//	start=clock_gettime_nsec_np(_CLOCK_REALTIME);
+	NSArray *readers = [self getAllCardReaders];
+	int i=0;
+	for(;[readers count]==[self.devices count];i++) {
+		usleep(5000);
+		readers = [self getAllCardReaders];
+		if(i>100)
+			break;
+	}
+//	end=clock_gettime_nsec_np(_CLOCK_REALTIME);
+//	diff=end-start;
+//	NSLog(@"WaitTillRecognized:%u, %llu ns",i,diff);
+}
 
 CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 	kern_return_t kr;
@@ -499,24 +553,8 @@ CFDictionaryRef GetDeviceInfo(io_service_t usbDevice) {
 	CFRange range = CFStringFind(devName, CFSTR("CCID"), kCFCompareCaseInsensitive);
 	if(range.location==kCFNotFound)
 		return nil;
-	
-//	IOHIDDeviceRef hid = IOHIDDeviceCreate(kCFAllocatorDefault,usbDevice);
-//	if(hid) {
-//		IOReturn r = IOHIDDeviceOpen(hid, kIOHIDOptionsTypeNone);
-//		yk_init();
-//		YK_STATUS status;
-//		unsigned int serial;
-//		unsigned char buf[0xff];
-//		unsigned int len = 0xff;
-//		
-//		yk_get_status(hid, &status);
-//		yk_get_serial(hid, 1, 0, &serial);
-//		yk_get_capabilities(hid, 1, 0, buf, &len);
-//		yk_release();	
-//
-//		r = IOHIDDeviceClose(hid, kIOHIDOptionsTypeNone);
-//	}	
-	
+
+	[gSelf WaitTillRecognized];
 	if(CFDictionaryContainsKey(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryUSBSerialNumberKey)) {
 		CFStringRef serialStr = CFDictionaryGetValue(devDict, (__bridge CFStringRef)YubiKeyDeviceDictionaryUSBSerialNumberKey);
 		SInt32 serialNumber = CFStringGetIntValue(serialStr);
