@@ -15,7 +15,6 @@
 		FB29E7D3218AC08100F7F216 /* yubikey-c.png in Resources */ = {isa = PBXBuildFile; fileRef = FB29E7D2218AC08100F7F216 /* yubikey-c.png */; };
 		FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FB43C41F24B7120E001645BD /* StatusMenuManager.m */; };
 		FB591F7524BB45F6001645BD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB591F7424BB45F6001645BD /* Security.framework */; };
-		FB8D982D24BE5A73001645BD /* PCSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB8D982C24BE5A73001645BD /* PCSC.framework */; };
 		FBAA8EF0218B4B690087A09A /* yubikey-ng.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EEE218B4B690087A09A /* yubikey-ng.png */; };
 		FBAA8EF3218B4B940087A09A /* yubikey-ok.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EF2218B4B940087A09A /* yubikey-ok.png */; };
 		FBB5D75724B4D8B6001645BD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBB5D75524B4D8B6001645BD /* MainMenu.xib */; };
@@ -28,6 +27,7 @@
 		FBBEFE5124C3698D001645BD /* libcompat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE4F24C3698D001645BD /* libcompat.a */; };
 		FBBEFE5324C3699A001645BD /* libcompatnoopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE5224C3699A001645BD /* libcompatnoopt.a */; };
 		FBBEFE5524C369BE001645BD /* crypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE5424C369BE001645BD /* crypto.a */; };
+		FBBEFE5D24C36D72001645BD /* PCSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE5C24C36D72001645BD /* PCSC.framework */; };
 		FBDA078021921F0D00AF79EA /* login.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBDA077F21921F0D00AF79EA /* login.framework */; };
 		FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */; };
 		FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF5EB9324B5C319001645BD /* SSHKeyManager.m */; };
@@ -51,8 +51,6 @@
 		FB43C41F24B7120E001645BD /* StatusMenuManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusMenuManager.m; sourceTree = "<group>"; };
 		FB43C42024B7120E001645BD /* StatusMenuManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusMenuManager.h; sourceTree = "<group>"; };
 		FB591F7424BB45F6001645BD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = ../../../../System/Library/Frameworks/Security.framework; sourceTree = "<group>"; };
-		FB8D982C24BE5A73001645BD /* PCSC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PCSC.framework; path = ../../../../System/Library/Frameworks/PCSC.framework; sourceTree = "<group>"; };
-		FB8D982E24BE5A7F001645BD /* PCSC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PCSC.framework; sourceTree = "<group>"; };
 		FBAA8EEE218B4B690087A09A /* yubikey-ng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ng.png"; sourceTree = "<group>"; };
 		FBAA8EF2218B4B940087A09A /* yubikey-ok.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-ok.png"; sourceTree = "<group>"; };
 		FBB5D75624B4D8B6001645BD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -65,6 +63,7 @@
 		FBBEFE4F24C3698D001645BD /* libcompat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcompat.a; path = lib/libcompat.a; sourceTree = SOURCE_ROOT; };
 		FBBEFE5224C3699A001645BD /* libcompatnoopt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcompatnoopt.a; path = lib/libcompatnoopt.a; sourceTree = SOURCE_ROOT; };
 		FBBEFE5424C369BE001645BD /* crypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = crypto.a; path = lib/crypto.a; sourceTree = SOURCE_ROOT; };
+		FBBEFE5C24C36D72001645BD /* PCSC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PCSC.framework; path = lib/PCSC.framework; sourceTree = "<group>"; };
 		FBDA077F21921F0D00AF79EA /* login.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = login.framework; path = /System/Library/PrivateFrameworks/login.framework; sourceTree = "<absolute>"; };
 		FBF5EB9124B5C318001645BD /* SSHKeyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHKeyManager.h; sourceTree = "<group>"; };
 		FBF5EB9224B5C319001645BD /* YubiKeyDeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YubiKeyDeviceManager.m; sourceTree = "<group>"; };
@@ -80,8 +79,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				FBBEFE4D24C36985001645BD /* libssh.a in Frameworks */,
+				FBBEFE5D24C36D72001645BD /* PCSC.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				FB8D982D24BE5A73001645BD /* PCSC.framework in Frameworks */,
 				FBBEFE5524C369BE001645BD /* crypto.a in Frameworks */,
 				FBBB48F42183E30400BFD260 /* IOKit.framework in Frameworks */,
 				FB591F7524BB45F6001645BD /* Security.framework in Frameworks */,
@@ -122,7 +121,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FB8D982E24BE5A7F001645BD /* PCSC.framework */,
+				FBBEFE5C24C36D72001645BD /* PCSC.framework */,
 				FB591F7424BB45F6001645BD /* Security.framework */,
 				FBDA077F21921F0D00AF79EA /* login.framework */,
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
@@ -148,7 +147,7 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
-				FBBEFE3924C35D49001645BD /* Libraries */,
+				FBBEFE3924C35D49001645BD /* lib */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
 			name = "YubiKey-observer";
@@ -182,7 +181,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FB8D982C24BE5A73001645BD /* PCSC.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
@@ -200,7 +198,7 @@
 			path = "New Group";
 			sourceTree = "<group>";
 		};
-		FBBEFE3924C35D49001645BD /* Libraries */ = {
+		FBBEFE3924C35D49001645BD /* lib */ = {
 			isa = PBXGroup;
 			children = (
 				FBBEFE4C24C36985001645BD /* libssh.a */,
@@ -208,7 +206,7 @@
 				FBBEFE5424C369BE001645BD /* crypto.a */,
 				FBBEFE5224C3699A001645BD /* libcompatnoopt.a */,
 			);
-			path = Libraries;
+			path = lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -326,6 +324,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					"$(PROJECT_DIR)/lib",
+					"$(PROJECT_DIR)",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -372,6 +372,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					"$(PROJECT_DIR)/lib",
+					"$(PROJECT_DIR)",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
