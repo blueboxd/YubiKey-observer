@@ -8,7 +8,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
             <connections>
-                <outlet property="delegate" destination="494" id="495"/>
+                <outlet property="delegate" destination="494" id="sh3-uf-hh0"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -328,7 +328,7 @@
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="168" y="23"/>
+            <point key="canvasLocation" x="373" y="10"/>
         </menu>
         <customObject id="494" userLabel="AppDelegate" customClass="YubiKey_observerAppDelegate">
             <connections>
@@ -342,6 +342,7 @@
                 <outlet property="prefsController" destination="622" id="632"/>
                 <outlet property="providerPathAlertIcon" destination="mUg-1K-EaP" id="jiy-c2-V1g"/>
                 <outlet property="rememberPINCheckbox" destination="549" id="581"/>
+                <outlet property="statusMenuManager" destination="eRN-I1-FGU" id="5bq-nE-5zX"/>
                 <outlet property="yubikeyDeviceManager" destination="P91-QX-n2i" id="FcJ-Ux-ka6"/>
             </connections>
         </customObject>
@@ -351,7 +352,7 @@
             <connections>
                 <outlet property="sshkeysSubMenu" destination="pzj-C8-Z08" id="LSs-ax-sE0"/>
                 <outlet property="statusMenu" destination="627" id="Dsv-Fy-q3m"/>
-                <outlet property="yubikeysSubMenu" destination="rac-g7-ufQ" id="p9E-YV-UGz"/>
+                <outlet property="yubikeysSubMenu" destination="rac-g7-ufQ" id="sqf-ju-FXD"/>
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
@@ -758,12 +759,12 @@ Gw
             <point key="canvasLocation" x="-290" y="-298"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
-        <menu autoenablesItems="NO" id="627" userLabel="StatusMenu">
+        <menu id="627" userLabel="StatusMenu">
             <items>
                 <menuItem title="YubiKeys" id="6Rr-dg-N9X">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="YubiKeys" autoenablesItems="NO" id="rac-g7-ufQ"/>
+                    <menu key="submenu" title="YubiKeys" id="rac-g7-ufQ"/>
                 </menuItem>
                 <menuItem title="Identities" id="N7U-XZ-LrI">
                     <attributedString key="attributedTitle"/>

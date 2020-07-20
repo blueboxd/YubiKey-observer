@@ -16,6 +16,26 @@ static NSString *keychainServiceName;
 	keychainServiceName = [[NSBundle mainBundle] bundleIdentifier];
 }
 
+- (BOOL)hasPinForKey:(NSString*)key {
+	if(![key length]) return NO;
+	NSDictionary *query = @{
+		(__bridge id)kSecClass:(__bridge id)kSecClassGenericPassword,
+		(__bridge id)kSecAttrService:keychainServiceName,
+		(__bridge id)kSecAttrAccount:key,
+		(__bridge id)kSecReturnData:@YES,
+	};
+	
+	CFDataRef result=nil;
+	OSStatus err = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef)&result);
+	if(err) {
+		CFStringRef description = SecCopyErrorMessageString(err, nil);
+		NSLog(@"err:%d (%@)",err,description);
+		CFRelease(description);
+		return NO;
+	}	
+	return YES;
+}
+
 - (NSString*)getPinForKey:(NSString*)key {
 	if(![key length]) return nil;
 	NSDictionary *query = @{

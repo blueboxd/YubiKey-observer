@@ -20,9 +20,6 @@
 		FBB5D75724B4D8B6001645BD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBB5D75524B4D8B6001645BD /* MainMenu.xib */; };
 		FBBB48F42183E30400BFD260 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBB48F32183E30400BFD260 /* IOKit.framework */; };
 		FBBB48FB2183F2B000BFD260 /* Key_Large@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */; };
-		FBBEFE3024C2600A001645BD /* ykcore_osx.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2D24C2600A001645BD /* ykcore_osx.c */; };
-		FBBEFE3124C2600A001645BD /* ykcore.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2E24C2600A001645BD /* ykcore.c */; };
-		FBBEFE3224C2600A001645BD /* ykcrc.c in Sources */ = {isa = PBXBuildFile; fileRef = FBBEFE2F24C2600A001645BD /* ykcrc.c */; };
 		FBBEFE4D24C36985001645BD /* libssh.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE4C24C36985001645BD /* libssh.a */; };
 		FBBEFE5124C3698D001645BD /* libcompat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE4F24C3698D001645BD /* libcompat.a */; };
 		FBBEFE5324C3699A001645BD /* libcompatnoopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBBEFE5224C3699A001645BD /* libcompatnoopt.a */; };
@@ -56,9 +53,6 @@
 		FBB5D75624B4D8B6001645BD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		FBBB48F32183E30400BFD260 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Key_Large@2x.png"; sourceTree = "<group>"; };
-		FBBEFE2D24C2600A001645BD /* ykcore_osx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcore_osx.c; path = ykcore/ykcore_osx.c; sourceTree = SOURCE_ROOT; };
-		FBBEFE2E24C2600A001645BD /* ykcore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcore.c; path = ykcore/ykcore.c; sourceTree = SOURCE_ROOT; };
-		FBBEFE2F24C2600A001645BD /* ykcrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ykcrc.c; path = ykcore/ykcrc.c; sourceTree = SOURCE_ROOT; };
 		FBBEFE4C24C36985001645BD /* libssh.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh.a; path = lib/libssh.a; sourceTree = SOURCE_ROOT; };
 		FBBEFE4F24C3698D001645BD /* libcompat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcompat.a; path = lib/libcompat.a; sourceTree = SOURCE_ROOT; };
 		FBBEFE5224C3699A001645BD /* libcompatnoopt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcompatnoopt.a; path = lib/libcompatnoopt.a; sourceTree = SOURCE_ROOT; };
@@ -156,7 +150,6 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				FBBEFE2C24C25FF8001645BD /* ykcore */,
 				256AC3F00F4B6AF500CF3369 /* YubiKey_observer_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
@@ -185,17 +178,6 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		FBBEFE2C24C25FF8001645BD /* ykcore */ = {
-			isa = PBXGroup;
-			children = (
-				FBBEFE2D24C2600A001645BD /* ykcore_osx.c */,
-				FBBEFE2E24C2600A001645BD /* ykcore.c */,
-				FBBEFE2F24C2600A001645BD /* ykcrc.c */,
-			);
-			name = ykcore;
-			path = "New Group";
 			sourceTree = "<group>";
 		};
 		FBBEFE3924C35D49001645BD /* lib */ = {
@@ -281,14 +263,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBBEFE3124C2600A001645BD /* ykcore.c in Sources */,
 				FBF5EB9624B5C319001645BD /* SSHKeyManager.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				FBF5EB9524B5C319001645BD /* YubiKeyDeviceManager.m in Sources */,
 				FBF5EB9924B5D3A2001645BD /* PINManager.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* YubiKey_observerAppDelegate.m in Sources */,
-				FBBEFE3224C2600A001645BD /* ykcrc.c in Sources */,
-				FBBEFE3024C2600A001645BD /* ykcore_osx.c in Sources */,
 				FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

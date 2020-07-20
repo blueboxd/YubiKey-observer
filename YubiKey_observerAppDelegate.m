@@ -49,6 +49,9 @@ IBOutlet NSTextField *pinAlertLabel;
 
 IBOutlet YubiKeyDeviceManager *yubikeyDeviceManager;
 IBOutlet PINManager *pinManager;
+IBOutlet StatusMenuManager *statusMenuManager;
+
+IBOutlet NSMenu *testMenu;
 
 SSHKeyManager *sshKeyManager;
 NSString *pinText;
@@ -57,7 +60,7 @@ NSString *pinText;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 //	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
-		kPKCSPathKey:@"/usr/local/lib/libykcs11.dylib",
+		kPKCSPathKey:@"/usr/local/lib/opensc-pkcs11.so",
 		kSSHAddPathKey:@"/usr/local/bin/ssh-add"
 	}];
 	NSString *pkcsPath = [[prefsController values] valueForKey:kPKCSPathKey];
@@ -90,6 +93,7 @@ NSString *pinText;
 			});
 		}
 	});
+//	[NSApp setNextResponder:statusMenuManager];
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
@@ -251,10 +255,15 @@ NSString *pinText;
 	}
 }
 
-- (IBAction) forgetPINAction:(id)sender {
-	NSLog(@"forgetting PIN");
-	NSDictionary *dev = [yubikeyDeviceManager getAnySingleDevice];
-	[self->pinManager removePinForKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+- (IBAction)verifyPINAction:(NSMenuItem*)sender {
+	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
+	NSLog(@"%@:%ld",sender,(long)sender.tag);
+}
+
+- (IBAction)forgetPINAction:(NSMenuItem*)sender {
+	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
+	NSLog(@"%@:%ld",sender,(long)sender.tag);
+//	[self->pinManager removePinForKey:];
 }
 
 - (IBAction)addKeyAction:(id)sender {

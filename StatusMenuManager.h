@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface StatusMenuManager : NSObject
+@interface StatusMenuManager : NSResponder
 
 @property (nonatomic) NSImage* menuIcon;
 

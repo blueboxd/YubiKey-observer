@@ -89,8 +89,15 @@ IBOutlet	NSMenu *statusMenu;
 	NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:[newMenuItem title] attributes:attributes];
 	newMenuItem.attributedTitle = attributedTitle;
 	newMenuItem.enabled = YES;
-	yubikeyMenuItemArray[dev[YubiKeyDeviceDictionaryUniqueStringKey]] = newMenuItem;
-	[yubikeysSubMenu addItem:newMenuItem];
+	
+	NSMenu *deviceSubmenu = [[NSMenu alloc] initWithTitle:@"Device Submenu"];
+	deviceSubmenu.autoenablesItems = YES;
+	[deviceSubmenu addItemWithTitle:@"Verify PIN" action:@selector(verifyPINAction:) keyEquivalent:@""].tag = [dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertySerialKey] integerValue];
+	[deviceSubmenu addItemWithTitle:@"Forget PIN" action:@selector(forgetPINAction:) keyEquivalent:@""].tag = [dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertySerialKey] integerValue];
+	newMenuItem.submenu = deviceSubmenu;
+	
+	self->yubikeyMenuItemArray[dev[YubiKeyDeviceDictionaryUniqueStringKey]] = newMenuItem;
+	[self->yubikeysSubMenu addItem:newMenuItem];
 }
 
 - (void) deviceRemoved:(NSNotification*)notification {
@@ -104,6 +111,7 @@ IBOutlet	NSMenu *statusMenu;
 	
 	if(![yubikeyMenuItemArray count])
 		self.deviceInserted = NO;
+
 }
 
 - (void) keyStoreModified:(NSNotification*)notification {
@@ -112,7 +120,7 @@ IBOutlet	NSMenu *statusMenu;
 	self.keyAdded = NO;
 	for (NSString *key in sshKeys) {
 		NSDictionary *curSSHKey = sshKeys[key];
-		NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t%@\n\t[%@/%@]",curSSHKey[SSHKeyManagerSSHKeyDictionaryHashKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryNameKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryAlgoKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryBitsKey]];
+		NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t%@\n\t %@/%@bit",curSSHKey[SSHKeyManagerSSHKeyDictionaryHashKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryNameKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryAlgoKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryBitsKey]];
 		NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:nil keyEquivalent:@""];
 		NSDictionary *attributes = @{
 			NSFontAttributeName: [NSFont userFixedPitchFontOfSize:[NSFont smallSystemFontSize]],
