@@ -434,13 +434,19 @@ BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 	rv = SCardDisconnect(hCard, SCARD_LEAVE_CARD);
 	rv = SCardReleaseContext(hContext);
 	
-	if (res[0]==0x90)
+	if (res[0]==0x90) {
 		return kYubiKeyDeviceManagerVerifyPINSuccess;
-	else if (res[0]==0x63 && (res[1]&0xf0)==0xc0)
-		return (res[1]&0x0f);
-	else if (res[0]==0x69 && (res[1]==0x83))
-		return kYubiKeyDeviceManagerVerifyPINBlockedErr;
-		
+	} else {
+		printf("verifyPINCmd Failed:\n");
+		for(unsigned int i=0; i<len; i++)
+			printf("%02X ", res[i]);
+		printf("\n");
+
+		if (res[0]==0x63 && (res[1]&0xf0)==0xc0)
+			return (res[1]&0x0f);
+		else if (res[0]==0x69 && (res[1]==0x83))
+			return kYubiKeyDeviceManagerVerifyPINBlockedErr;
+	}	
 	return kYubiKeyDeviceManagerVerifyPINUnknownErr;
 }
 

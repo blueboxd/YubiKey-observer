@@ -159,6 +159,8 @@ NSString *pinText;
 }
 
 - (void) addSSHKeyForDev:(NSDictionary*)dev {
+	if([sshKeyManager hasOurKey])return;
+	if(!self.pkcsProviderExists)return;
 	__block BOOL doAdd=NO, done=NO;
 	__block NSString *pin;
 	dispatch_sync(dispatch_get_main_queue(), ^{		
@@ -240,9 +242,11 @@ NSString *pinText;
 	if(doAdd) {
 		NSError *err = [self->sshKeyManager updateCardAdd:YES pin:pin];
 		if(err) {
-			NSAlert *alert = [NSAlert alertWithError:err];
-			alert.informativeText = err.userInfo[NSLocalizedFailureReasonErrorKey];
-			[alert runModal];
+			dispatch_async(dispatch_get_main_queue(), ^{	
+				NSAlert *alert = [NSAlert alertWithError:err];
+				alert.informativeText = err.userInfo[NSLocalizedFailureReasonErrorKey];
+				[alert runModal];
+			});
 		}
 	}
 }
