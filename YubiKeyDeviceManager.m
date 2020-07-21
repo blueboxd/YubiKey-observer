@@ -8,7 +8,6 @@
 
 #import "YubiKeyDeviceManager.h"
 
-
 #include "ykcore/ykcore_lcl.h"
 #include "ykcore/ykcore_backend.h"
 #include "ykcore/yktsd.h"
@@ -138,12 +137,17 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 	io_service_t usbDevice;
 
 	while ((usbDevice=IOIteratorNext(iterator))) {
-		YubiKey *yubikey = [gSelf getYubiKeyInfo:usbDevice];
-		if(yubikey) {
-			if(added) {
+		if(added) {
+			YubiKey *yubikey = [gSelf getYubiKeyInfo:usbDevice];
+			if(yubikey) {
 				NSLog(@"IOServiceMatchedCallback:YubiKey inserted");
 				[gSelf addDevice:yubikey];
-			} else {
+			}
+		} else {
+			NSString *idStr = [YubiKey getUniqueStringFromIOService:usbDevice];
+			YubiKey *yubikey = gSelf.devices[idStr];
+			NSLog(@"IOServiceMatchedCallback::remove: %@",yubikey);
+			if(yubikey) {
 				NSLog(@"IOServiceMatchedCallback:YubiKey removed");
 				[gSelf removeDevice:yubikey];
 			}
@@ -152,8 +156,8 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 }
 
 -(void) WaitTillRecognized {
-//	uint64_t start,end,diff;
-//	start=clock_gettime_nsec_np(_CLOCK_REALTIME);
+	uint64_t start,end,diff;
+	start=clock_gettime_nsec_np(_CLOCK_REALTIME);
 	NSArray *readers = [self getAllCardReaders];
 	int i=0;
 	for(;[readers count]==[self.devices count];i++) {
@@ -162,9 +166,9 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 		if(i>100)
 			break;
 	}
-//	end=clock_gettime_nsec_np(_CLOCK_REALTIME);
-//	diff=end-start;
-//	NSLog(@"WaitTillRecognized:%u, %llu ns",i,diff);
+	end=clock_gettime_nsec_np(_CLOCK_REALTIME);
+	diff=end-start;
+	NSLog(@"WaitTillRecognized:%u, %llu ns",i,diff);
 }
 
 - (YubiKey*)getYubiKeyInfo:(io_service_t)usbDevice {

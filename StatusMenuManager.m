@@ -9,6 +9,7 @@
 #import "StatusMenuManager.h"
 #import "YubiKeyDeviceManager.h"
 #import "SSHKeyManager.h"
+#import "PINManager.h"
 #import "YubiKey.h"
 
 #define kStateNone			@"yubikey"
@@ -18,7 +19,8 @@
 
 @interface StatusMenuManager()
 @property BOOL deviceInserted;
-@property BOOL keyAdded;
+@property BOOL ourKeysAdded;
+@property BOOL anyKeysAdded;
 @property BOOL addCmdFailed;
 @end
 
@@ -26,6 +28,7 @@
 IBOutlet	NSMenu *yubikeysSubMenu;
 IBOutlet	NSMenu *sshkeysSubMenu;
 IBOutlet	NSMenu *statusMenu;
+IBOutlet	PINManager* pinManager;
 			NSStatusItem *statusItem;
 			NSDictionary<NSString*,NSImage*> *statusIcons;
 			NSMutableDictionary<NSString*, NSMenuItem*> *yubikeyMenuItemArray;
@@ -34,7 +37,7 @@ IBOutlet	NSMenu *statusMenu;
 -(void) awakeFromNib {
 //	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
 	self.deviceInserted = NO;
-	self.keyAdded = NO;
+	self.ourKeysAdded = NO;
 	self.addCmdFailed = NO;
 	
 	statusIcons = @{
@@ -66,7 +69,7 @@ IBOutlet	NSMenu *statusMenu;
 
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
 	if(self.deviceInserted) {
-		if(self.keyAdded) {
+		if(self.ourKeysAdded) {
 			self.menuIcon = statusIcons[kStateKeyImported];
 		} else {
 			if(self.addCmdFailed)
@@ -89,12 +92,17 @@ IBOutlet	NSMenu *statusMenu;
 	};
 	NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:[newMenuItem title] attributes:attributes];
 	newMenuItem.attributedTitle = attributedTitle;
+	newMenuItem.onStateImage = [NSImage imageNamed:@"Key_Icon"];
 	newMenuItem.enabled = YES;
 	
 	NSMenu *deviceSubmenu = [[NSMenu alloc] initWithTitle:@"Device Submenu"];
 	deviceSubmenu.autoenablesItems = YES;
-	[deviceSubmenu addItemWithTitle:@"Verify PIN" action:@selector(verifyPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
-	[deviceSubmenu addItemWithTitle:@"Forget PIN" action:@selector(forgetPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
+	if([pinManager hasPinForKey:yubikey.serial]) {
+		newMenuItem.state = NSOnState;
+		[deviceSubmenu addItemWithTitle:@"Forget PIN" action:@selector(forgetPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
+	}else{
+		[deviceSubmenu addItemWithTitle:@"Verify/Remember PIN" action:@selector(verifyPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
+	}
 	newMenuItem.submenu = deviceSubmenu;
 	
 	self->yubikeyMenuItemArray[[yubikey getUniqueString]] = newMenuItem;
@@ -102,8 +110,8 @@ IBOutlet	NSMenu *statusMenu;
 }
 
 - (void) deviceRemoved:(NSNotification*)notification {
-	NSDictionary *dev = notification.userInfo;
-	NSString *devID = dev[YubiKeyDeviceDictionaryUniqueStringKey];
+	YubiKey *yubikey = notification.userInfo;
+	NSString *devID = [yubikey getUniqueString];
 	NSMenuItem *targetMenuItem = yubikeyMenuItemArray[devID];
 	if(targetMenuItem) {
 		[yubikeyMenuItemArray removeObjectForKey:devID];
@@ -118,7 +126,8 @@ IBOutlet	NSMenu *statusMenu;
 - (void) keyStoreModified:(NSNotification*)notification {
 	NSDictionary *sshKeys = notification.userInfo[@"keys"];
 	[sshkeysSubMenu removeAllItems];
-	self.keyAdded = NO;
+	self.ourKeysAdded = NO;
+	self.anyKeysAdded = [sshKeys count]!=0;
 	for (NSString *key in sshKeys) {
 		NSDictionary *curSSHKey = sshKeys[key];
 		NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t%@\n\t %@/%@bit",curSSHKey[SSHKeyManagerSSHKeyDictionaryHashKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryNameKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryAlgoKey],curSSHKey[SSHKeyManagerSSHKeyDictionaryBitsKey]];
@@ -135,7 +144,7 @@ IBOutlet	NSMenu *statusMenu;
 			newMenuItem.state = NSOnState;
 			newMenuItem.enabled = YES;
 			
-			self.keyAdded = YES;
+			self.ourKeysAdded = YES;
 			self.addCmdFailed = NO;
 		}
 		[sshkeysSubMenu addItem:newMenuItem];

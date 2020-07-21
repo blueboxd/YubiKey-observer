@@ -186,7 +186,7 @@ NSString* const SSHKeyManagerCommandFailedStdErrStrKey = @"stderrstr";
 //				SSHKeyManagerCommandFailedStdErrStrKey:[exc stderrStr]
 			}
 		 ];
-	
+		NSLog(@"%@",err);
 		return err;
 	}
 	[self refreshKeyStore];

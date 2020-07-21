@@ -14,6 +14,7 @@
 		FB29E7C8218AC04400F7F216 /* yubikey.png in Resources */ = {isa = PBXBuildFile; fileRef = FB29E7C7218AC04400F7F216 /* yubikey.png */; };
 		FB29E7D3218AC08100F7F216 /* yubikey-c.png in Resources */ = {isa = PBXBuildFile; fileRef = FB29E7D2218AC08100F7F216 /* yubikey-c.png */; };
 		FB3E864624C63AAB001645BD /* YubiKey.m in Sources */ = {isa = PBXBuildFile; fileRef = FB3E864524C63AAB001645BD /* YubiKey.m */; };
+		FB3E864824C791DF001645BD /* Key_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = FB3E864724C791DF001645BD /* Key_Icon.png */; };
 		FB43C42124B7120F001645BD /* StatusMenuManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FB43C41F24B7120E001645BD /* StatusMenuManager.m */; };
 		FB591F7524BB45F6001645BD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB591F7424BB45F6001645BD /* Security.framework */; };
 		FBAA8EF0218B4B690087A09A /* yubikey-ng.png in Resources */ = {isa = PBXBuildFile; fileRef = FBAA8EEE218B4B690087A09A /* yubikey-ng.png */; };
@@ -48,6 +49,7 @@
 		FB29E7D2218AC08100F7F216 /* yubikey-c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yubikey-c.png"; sourceTree = "<group>"; };
 		FB3E864424C63AAB001645BD /* YubiKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YubiKey.h; sourceTree = "<group>"; };
 		FB3E864524C63AAB001645BD /* YubiKey.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YubiKey.m; sourceTree = "<group>"; };
+		FB3E864724C791DF001645BD /* Key_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Key_Icon.png; sourceTree = "<group>"; };
 		FB43C41F24B7120E001645BD /* StatusMenuManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusMenuManager.m; sourceTree = "<group>"; };
 		FB43C42024B7120E001645BD /* StatusMenuManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusMenuManager.h; sourceTree = "<group>"; };
 		FB591F7424BB45F6001645BD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = ../../../../System/Library/Frameworks/Security.framework; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				FBBB48FA2183F2B000BFD260 /* Key_Large@2x.png */,
+				FB3E864724C791DF001645BD /* Key_Icon.png */,
 				FB29E7C7218AC04400F7F216 /* yubikey.png */,
 				FB29E7D2218AC08100F7F216 /* yubikey-c.png */,
 				FBAA8EEE218B4B690087A09A /* yubikey-ng.png */,
@@ -251,6 +254,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB3E864824C791DF001645BD /* Key_Icon.png in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				FBBB48FB2183F2B000BFD260 /* Key_Large@2x.png in Resources */,
 				FB29E7C8218AC04400F7F216 /* yubikey.png in Resources */,

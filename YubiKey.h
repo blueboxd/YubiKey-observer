@@ -74,13 +74,15 @@ enum ConfigApplications {
 
 @interface YubiKey : NSObject
 
++ (NSString*) getUniqueStringFromIOService:(io_service_t) service;
 - (instancetype) initWithIOService:(io_service_t) service;
 - (NSString*) getUniqueString;
 - (int8_t) verifyPIN:(NSString*)pin;
 
-@property NSString *model;
-@property NSString *serial;
-@property NSString *location;
+@property (readonly,nonatomic) NSString *usbName;
+@property (readonly,nonatomic) NSString *model;
+@property (readonly,nonatomic) NSString *serial;
+@property (readonly,nonatomic) NSString *location;
 
 @end
 

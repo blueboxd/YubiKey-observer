@@ -160,7 +160,10 @@ NSString *pinText;
 
     [target setAnimations:[NSDictionary dictionaryWithObject: shakeAnimation forKey:@"frameOrigin"]];
     [[target animator] setFrameOrigin:[target frame].origin];
+}
 
+- (int8_t) verifyAndStorePIN:(NSString*)pin {
+	
 }
 
 - (void) addSSHKeyForYubiKey:(YubiKey*)yubikey {
@@ -204,6 +207,7 @@ NSString *pinText;
 				enteredPIN  = [self->pinTextField stringValue];
 				rememberPIN = [self->rememberPINCheckbox state];
 				int8_t verifyResult = [yubikey verifyPIN:enteredPIN];
+				//int8_t verifyResult = [yubikey verifyPIN:enteredPIN];
 				if (verifyResult==kYubiKeyDeviceManagerVerifyPINBlockedErr) {
 					done = YES;
 					doAdd = NO;
@@ -253,14 +257,16 @@ NSString *pinText;
 }
 
 - (IBAction)verifyPINAction:(NSMenuItem*)sender {
+	YubiKey *yubikey = ((__bridge YubiKey*)((void*)sender.tag));
 	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
-	NSLog(@"%@:%@",sender,((__bridge YubiKey*)((void*)sender.tag)).serial);
+	NSLog(@"%@:%@",sender,yubikey.serial);
 }
 
 - (IBAction)forgetPINAction:(NSMenuItem*)sender {
+	YubiKey *yubikey = ((__bridge YubiKey*)((void*)sender.tag));
 	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
-	NSLog(@"%@:%@",sender,((__bridge YubiKey*)((void*)sender.tag)).serial);
-//	[self->pinManager removePinForKey:];
+	NSLog(@"%@:%@",sender,yubikey.serial);
+	[self->pinManager removePinForKey:yubikey.serial];
 }
 
 - (IBAction)addKeyAction:(id)sender {
@@ -300,8 +306,8 @@ NSString *pinText;
 }
 
 - (void) deviceRemoved:(NSNotification*)notification {
-	NSDictionary *dev = notification.userInfo;
-	NSLog(@"deviceRemoved:%@",dev[YubiKeyDeviceDictionaryUniqueStringKey]);
+	YubiKey *yubikey = notification.userInfo;
+	NSLog(@"deviceRemoved:%@",[yubikey getUniqueString]);
 	[NSApp abortModal];
 	if([[[prefsController values] valueForKey:kExecSSHAddOnRemovalKey] intValue]){
 		[self removeSSHKey];

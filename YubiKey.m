@@ -43,6 +43,25 @@ BYTE cmdOTPGetSerial[] = 	{ 0x00, 0x01, 0x10, 0x00, 0x00 };
 	SCARDHANDLE hCard;
 }
 
+#define kUniqueStringFormat @"%@[%@]"
+
++ (NSString*) getUniqueStringFromIOService:(io_service_t) service {
+	kern_return_t kr;
+	NSMutableDictionary *dev = nil;
+	CFMutableDictionaryRef devDict;
+	kr = IORegistryEntryCreateCFProperties(service, &devDict, kCFAllocatorDefault, kNilOptions);
+	if(kr!=KERN_SUCCESS) return nil;
+	
+	dev = (__bridge_transfer NSMutableDictionary*)devDict;
+	if(!dev[YubiKeyDeviceDictionaryUSBSerialNumberKey])
+		return nil;
+
+	return [NSString stringWithFormat:kUniqueStringFormat,
+		dev[YubiKeyDeviceDictionaryUSBNameKey],
+		dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]
+	];
+}
+
 static YubiKey *gSelf;
 - (instancetype) initWithIOService:(io_service_t) service {
 	self = [super init];
@@ -66,10 +85,15 @@ static YubiKey *gSelf;
 	if(kr!=KERN_SUCCESS) return nil;
 	
 	dev = (__bridge_transfer NSMutableDictionary*)devDict;
+	if([dev[@kIOHIDProductKey] rangeOfString:@"CCID"].location==NSNotFound)
+		return nil;
+	
 	if(!dev[YubiKeyDeviceDictionaryUSBSerialNumberKey])
 		return nil;
-	self.serial = dev[YubiKeyDeviceDictionaryUSBSerialNumberKey];
-	self.location = dev[YubiKeyDeviceDictionaryUSBLocationKey];
+	
+	_usbName =  dev[YubiKeyDeviceDictionaryUSBNameKey]; 
+	_serial = dev[YubiKeyDeviceDictionaryUSBSerialNumberKey];
+	_location = dev[YubiKeyDeviceDictionaryUSBLocationKey];
 	[self initCardReaderForSelf];
 
 	NSDictionary *property = [self getYubKeyDevicePropertyForSelf];
@@ -80,10 +104,10 @@ static YubiKey *gSelf;
 }
 
 - (NSString*) getUniqueString {
-	return [NSString stringWithFormat:@"%@[%@]@0x%08x",
-		self.model,
-		self.serial,
-		[self.location intValue]
+	return [NSString stringWithFormat:kUniqueStringFormat,
+		self.usbName,
+		self.serial
+//		[self.location intValue]
 	];
 }
 
@@ -151,9 +175,11 @@ static YubiKey *gSelf;
 
 - (NSDictionary<NSNumber*,NSData*>*) parseTLV:(NSData*)data {
 	size_t length = [data length];
-	char *buf = calloc(length,sizeof(char));
+	if(!length)
+		return nil;
+	char *buf;
 
-	[data getBytes:buf];
+	buf = [data bytes];
 	if(buf[0]!=(length-3))
 		return nil;
 
@@ -238,7 +264,6 @@ static YubiKey *gSelf;
 	SCARDCONTEXT lhContext;
 	LPTSTR mszReaders;
 	SCARDHANDLE lhCard;
-//	SCARD_IO_REQUEST lpioSendPci;
 	DWORD dwReaders, dwActiveProtocol;
 	
 	if(readerName)
@@ -315,6 +340,7 @@ static YubiKey *gSelf;
 	[self openConnection];
 	[self sendAPDU:cmdSelectMGR size:sizeof(cmdSelectMGR) result:nil resultLength:nil];
 	[self sendAPDU:cmdGetConfig size:sizeof(cmdGetConfig) result:&res resultLength:&len];
+	
 	NSDictionary<NSNumber*,NSData*> *config = [self parseTLV:[NSData dataWithBytes:res length:len]];
 	NSMutableDictionary<NSString*,id> *devInfo = [[self parseConfig:config] mutableCopy];
 
@@ -336,7 +362,7 @@ static YubiKey *gSelf;
 
 	NSString *modelName = [NSString stringWithFormat:@"YubiKey %@%@", verString, formString];
 	devInfo[YubiKeyDevicePropertyModelKey] = modelName;
-	self.model = modelName;
+	_model = modelName;
 	result = devInfo;
 
 	return result;
@@ -346,17 +372,18 @@ static YubiKey *gSelf;
 	if([pin length]>8)
 		return -EINVAL;
 
-	[self openConnection];	
 	BYTE verifyPINCmd[] = {0x00, 0x20, 0x00, 0x80, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 	BYTE *res, rawPIN[8];
 	DWORD len;
 	
 	[pin getCString:rawPIN maxLength:8+1 encoding:NSUTF8StringEncoding];
 	memcpy(verifyPINCmd+5, rawPIN, [pin length]);
+
+	[self openConnection];
 	[self sendAPDU:cmdSelectPIV size:sizeof(cmdSelectPIV) result:nil resultLength:nil];
 	[self sendAPDU:verifyPINCmd size:sizeof(verifyPINCmd) result:&res resultLength:&len];
 	[self closeConnection];
-	
+
 	if (res[0]==0x90) {
 		return kYubiKeyDeviceManagerVerifyPINSuccess;
 	} else {
