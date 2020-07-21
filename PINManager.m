@@ -21,8 +21,7 @@ static NSString *keychainServiceName;
 	NSDictionary *query = @{
 		(__bridge id)kSecClass:(__bridge id)kSecClassGenericPassword,
 		(__bridge id)kSecAttrService:keychainServiceName,
-		(__bridge id)kSecAttrAccount:key,
-		(__bridge id)kSecReturnData:@YES,
+		(__bridge id)kSecAttrAccount:key
 	};
 	
 	CFDataRef result=nil;

@@ -11,6 +11,7 @@
 #import "SSHKeyManager.h"
 #import "PINManager.h"
 #import "StatusMenuManager.h"
+#import "YubiKey.h"
 
 #import <Quartz/Quartz.h>
 
@@ -162,21 +163,21 @@ NSString *pinText;
 
 }
 
-- (void) addSSHKeyForDev:(NSDictionary*)dev {
+- (void) addSSHKeyForYubiKey:(YubiKey*)yubikey {
 	if([sshKeyManager hasOurKey])return;
 	if(!self.pkcsProviderExists)return;
 	__block BOOL doAdd=NO, done=NO;
 	__block NSString *pin;
 	dispatch_sync(dispatch_get_main_queue(), ^{		
-		NSString *storedPIN = [self->pinManager getPinForKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+		NSString *storedPIN = [self->pinManager getPinForKey:yubikey.serial];
 		if(storedPIN) {
-			int8_t verifyResult =  [self->yubikeyDeviceManager verifyPIN:storedPIN forDeviceSerial:dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertySerialKey]];
+			int8_t verifyResult = [yubikey verifyPIN:storedPIN];
 			if (verifyResult==kYubiKeyDeviceManagerVerifyPINSuccess) {
 				doAdd = YES;
 				done = YES;
 				pin = storedPIN;
 			} else {
-				[self->pinManager removePinForKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
+				[self->pinManager removePinForKey:yubikey.serial];
 				if (verifyResult==kYubiKeyDeviceManagerVerifyPINBlockedErr) {
 					doAdd = NO;
 					done = YES;
@@ -188,11 +189,7 @@ NSString *pinText;
 			}
 		}
 
-		NSString *msg;
-		if(dev)
-			msg = [NSString stringWithFormat:@"for %@ SN#%@",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
-		else
-			msg = @"Unspecified YubiKey";
+		NSString *msg = [NSString stringWithFormat:@"for %@ SN#%@",yubikey.model,yubikey.serial];
 
 		[self->keyIDLabel setStringValue:msg];
 		[self->pinAlertIcon setHidden:YES];
@@ -206,7 +203,7 @@ NSString *pinText;
 				BOOL rememberPIN = NO;
 				enteredPIN  = [self->pinTextField stringValue];
 				rememberPIN = [self->rememberPINCheckbox state];
-				int8_t verifyResult = [self->yubikeyDeviceManager verifyPIN:enteredPIN forDeviceSerial:dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertySerialKey]];
+				int8_t verifyResult = [yubikey verifyPIN:enteredPIN];
 				if (verifyResult==kYubiKeyDeviceManagerVerifyPINBlockedErr) {
 					done = YES;
 					doAdd = NO;
@@ -220,8 +217,8 @@ NSString *pinText;
 					doAdd = YES;
 					pin = enteredPIN;
 					if(rememberPIN) {
-						NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey]];
-						[self->pinManager storePin:enteredPIN forKey:dev[YubiKeyDeviceDictionaryUSBSerialNumberKey] withLabel:labelStr];
+						NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",yubikey.model,yubikey.serial];
+						[self->pinManager storePin:enteredPIN forKey:yubikey.serial withLabel:labelStr];
 					}
 				} else {
 					[self->pinAlertIcon setHidden:NO];
@@ -257,18 +254,18 @@ NSString *pinText;
 
 - (IBAction)verifyPINAction:(NSMenuItem*)sender {
 	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
-	NSLog(@"%@:%ld",sender,(long)sender.tag);
+	NSLog(@"%@:%@",sender,((__bridge YubiKey*)((void*)sender.tag)).serial);
 }
 
 - (IBAction)forgetPINAction:(NSMenuItem*)sender {
 	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
-	NSLog(@"%@:%ld",sender,(long)sender.tag);
+	NSLog(@"%@:%@",sender,((__bridge YubiKey*)((void*)sender.tag)).serial);
 //	[self->pinManager removePinForKey:];
 }
 
 - (IBAction)addKeyAction:(id)sender {
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		[self addSSHKeyForDev:[self->yubikeyDeviceManager getAnySingleDevice]];
+		[self addSSHKeyForYubiKey:[self->yubikeyDeviceManager getAnyYubiKey]];
 	});
 }
 
@@ -282,8 +279,8 @@ NSString *pinText;
 }
 
 - (void) deviceAdded:(NSNotification*)notification {
-	NSDictionary *dev = notification.userInfo;
-	NSLog(@"deviceAdded:%@",dev[YubiKeyDeviceDictionaryUniqueStringKey]);
+	YubiKey *yubikey = notification.userInfo;
+	NSLog(@"deviceAdded:%@",[yubikey getUniqueString]);
 
 	if([[[prefsController values] valueForKey:kWakeScreenOnInsertionKey] intValue]){
 		NSLog(@"will wake screen");
@@ -297,7 +294,7 @@ NSString *pinText;
 	
 	if([[[prefsController values] valueForKey:kExecSSHAddOnInsertionKey] intValue]){
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{			
-			[self addSSHKeyForDev:dev];
+			[self addSSHKeyForYubiKey:yubikey];
 		});		   
 	}
 }

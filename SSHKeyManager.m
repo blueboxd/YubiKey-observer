@@ -7,7 +7,6 @@
 //
 
 #import "SSHKeyManager.h"
-#import "SystemCommandExecutor.h"
 
 #include <sys/un.h>
 #include <sys/socket.h>

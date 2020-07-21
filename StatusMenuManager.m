@@ -9,6 +9,7 @@
 #import "StatusMenuManager.h"
 #import "YubiKeyDeviceManager.h"
 #import "SSHKeyManager.h"
+#import "YubiKey.h"
 
 #define kStateNone			@"yubikey"
 #define kStateInserted		@"yubikey-c"
@@ -79,9 +80,9 @@ IBOutlet	NSMenu *statusMenu;
 }
 
 - (void) deviceAdded:(NSNotification*)notification {
-	NSDictionary *dev = notification.userInfo;
+	YubiKey *yubikey = notification.userInfo;
 	self.deviceInserted = YES;
-	NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t[SN#%@] @ %08x",dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertyModelKey],dev[YubiKeyDeviceDictionaryUSBSerialNumberKey],[dev[YubiKeyDeviceDictionaryUSBLocationKey] intValue]];
+	NSString *newKeyString = [NSString stringWithFormat:@"%@\n\t[SN#%@] @ %08x",yubikey.model,yubikey.serial,[yubikey.location intValue]];
 	NSMenuItem *newMenuItem = [[NSMenuItem alloc] initWithTitle:newKeyString action:nil keyEquivalent:@""];
 	NSDictionary *attributes = @{
 		NSFontAttributeName: [NSFont userFixedPitchFontOfSize:[NSFont smallSystemFontSize]],
@@ -92,11 +93,11 @@ IBOutlet	NSMenu *statusMenu;
 	
 	NSMenu *deviceSubmenu = [[NSMenu alloc] initWithTitle:@"Device Submenu"];
 	deviceSubmenu.autoenablesItems = YES;
-	[deviceSubmenu addItemWithTitle:@"Verify PIN" action:@selector(verifyPINAction:) keyEquivalent:@""].tag = [dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertySerialKey] integerValue];
-	[deviceSubmenu addItemWithTitle:@"Forget PIN" action:@selector(forgetPINAction:) keyEquivalent:@""].tag = [dev[YubiKeyDeviceDictionaryPropertyKey][YubiKeyDevicePropertySerialKey] integerValue];
+	[deviceSubmenu addItemWithTitle:@"Verify PIN" action:@selector(verifyPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
+	[deviceSubmenu addItemWithTitle:@"Forget PIN" action:@selector(forgetPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
 	newMenuItem.submenu = deviceSubmenu;
 	
-	self->yubikeyMenuItemArray[dev[YubiKeyDeviceDictionaryUniqueStringKey]] = newMenuItem;
+	self->yubikeyMenuItemArray[[yubikey getUniqueString]] = newMenuItem;
 	[self->yubikeysSubMenu addItem:newMenuItem];
 }
 
