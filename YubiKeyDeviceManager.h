@@ -16,7 +16,7 @@ extern NSNotificationName YubiKeyDeviceManagerKeyRemovedNotificationKey;
 
 @interface YubiKeyDeviceManager : NSObject
 - (kern_return_t) registerMatchingCallbacks;
-- (NSDictionary*) getAnyYubiKey;
+- (YubiKey*) getAnyYubiKey;
 - (int8_t) verifyPIN:(NSString*)pin forDeviceSerial:(NSNumber*)serial;
 @property (nonatomic,readonly) NSMutableDictionary<NSString*,YubiKey*> *devices;
 @end

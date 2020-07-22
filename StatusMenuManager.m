@@ -31,7 +31,7 @@ IBOutlet	NSMenu *statusMenu;
 IBOutlet	PINManager* pinManager;
 			NSStatusItem *statusItem;
 			NSDictionary<NSString*,NSImage*> *statusIcons;
-			NSMutableDictionary<NSString*, NSMenuItem*> *yubikeyMenuItemArray;
+			NSMutableDictionary<NSString*, NSDictionary*> *yubikeyMenuItemArray;
 }
 
 -(void) awakeFromNib {
@@ -47,7 +47,7 @@ IBOutlet	PINManager* pinManager;
 		kStateError			:	[NSImage imageNamed:kStateError],
 	};
 	
-	yubikeyMenuItemArray = [NSMutableDictionary<NSString*, NSMenuItem*> new];
+	yubikeyMenuItemArray = [NSMutableDictionary<NSString*, NSDictionary*> new];
 
 	statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
 	statusItem.menu = statusMenu;
@@ -65,6 +65,9 @@ IBOutlet	PINManager* pinManager;
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyStoreModified:) name:SSHKeyManagerKeyStoreDidChangeNotificationKey object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sshAddFailed:) name:SSHKeyManagerCommandFailedNotificationKey object:nil];
+
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshDevicesSubMenu:) name:PINManagerPINStoredNotificationKey object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshDevicesSubMenu:) name:PINManagerPINRemovedNotificationKey object:nil];
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
@@ -79,6 +82,24 @@ IBOutlet	PINManager* pinManager;
 		}
 	} else {
 		self.menuIcon = statusIcons[kStateNone];
+	}
+}
+
+- (void) refreshDevicesSubMenu:(NSNotification*)notification {
+	for (NSString *key in yubikeyMenuItemArray) {
+		NSMenuItem *menuItem = yubikeyMenuItemArray[key][@"menuItem"];
+		YubiKey *yubikey = yubikeyMenuItemArray[key][@"yubikey"];
+		menuItem.submenu = nil;
+		NSMenu *deviceSubmenu = [[NSMenu alloc] initWithTitle:@"Device Submenu"];
+		deviceSubmenu.autoenablesItems = YES;
+		if([pinManager hasPinForKey:yubikey.serial]) {
+			menuItem.state = NSOnState;
+			[deviceSubmenu addItemWithTitle:@"Forget PIN" action:@selector(forgetPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
+		}else{
+			menuItem.state = NSOffState;
+			[deviceSubmenu addItemWithTitle:@"Verify/Remember PIN" action:@selector(verifyRememberPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
+		}
+		menuItem.submenu = deviceSubmenu;
 	}
 }
 
@@ -101,18 +122,21 @@ IBOutlet	PINManager* pinManager;
 		newMenuItem.state = NSOnState;
 		[deviceSubmenu addItemWithTitle:@"Forget PIN" action:@selector(forgetPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
 	}else{
-		[deviceSubmenu addItemWithTitle:@"Verify/Remember PIN" action:@selector(verifyPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
+		[deviceSubmenu addItemWithTitle:@"Verify/Remember PIN" action:@selector(verifyRememberPINAction:) keyEquivalent:@""].tag = (NSInteger)yubikey;
 	}
 	newMenuItem.submenu = deviceSubmenu;
 	
-	self->yubikeyMenuItemArray[[yubikey getUniqueString]] = newMenuItem;
+	self->yubikeyMenuItemArray[[yubikey getUniqueString]] = @{
+		@"menuItem":newMenuItem,
+		@"yubikey":yubikey
+	};
 	[self->yubikeysSubMenu addItem:newMenuItem];
 }
 
 - (void) deviceRemoved:(NSNotification*)notification {
 	YubiKey *yubikey = notification.userInfo;
 	NSString *devID = [yubikey getUniqueString];
-	NSMenuItem *targetMenuItem = yubikeyMenuItemArray[devID];
+	NSMenuItem *targetMenuItem = yubikeyMenuItemArray[devID][@"menuItem"];
 	if(targetMenuItem) {
 		[yubikeyMenuItemArray removeObjectForKey:devID];
 		[yubikeysSubMenu removeItem:targetMenuItem];

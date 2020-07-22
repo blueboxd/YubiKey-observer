@@ -34,6 +34,7 @@
 @interface YubiKey_observerAppDelegate() {
 }
 @property BOOL pkcsProviderExists;
+@property BOOL runningModal;
 @end
 
 @implementation YubiKey_observerAppDelegate {
@@ -64,6 +65,7 @@ NSString *pinText;
 		kPKCSPathKey:@"/usr/local/lib/opensc-pkcs11.so",
 		kSSHAddPathKey:@"/usr/local/bin/ssh-add"
 	}];
+	self.runningModal = NO;
 	NSString *pkcsPath = [[prefsController values] valueForKey:kPKCSPathKey];
 	self.pkcsProviderExists = [[NSURL fileURLWithPath:pkcsPath] checkResourceIsReachableAndReturnError:nil];
 	sshKeyManager = [SSHKeyManager new];
@@ -162,8 +164,60 @@ NSString *pinText;
     [[target animator] setFrameOrigin:[target frame].origin];
 }
 
-- (int8_t) verifyAndStorePIN:(NSString*)pin {
-	
+- (void) verifyAndStorePINForYubiKey:(YubiKey*)yubikey {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		BOOL done=NO;
+		NSString *enteredPIN = nil;
+		NSString *msg = [NSString stringWithFormat:@"for %@ SN#%@",yubikey.model,yubikey.serial];
+		[self->keyIDLabel setStringValue:msg];
+		[self->pinAlertIcon setHidden:YES];
+		[self->pinAlertLabel setHidden:YES];
+
+		[[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+		while(!done) {
+			self.runningModal = YES;
+			NSModalResponse res = [[NSApplication sharedApplication] runModalForWindow:self->pinDialog];
+			self.runningModal = NO;
+			if(res==NSModalResponseOK) {
+				BOOL rememberPIN = NO;
+				enteredPIN  = [self->pinTextField stringValue];
+				rememberPIN = [self->rememberPINCheckbox state];
+				int8_t verifyResult = [yubikey verifyPIN:enteredPIN];
+				//int8_t verifyResult = [yubikey verifyPIN:enteredPIN];
+				if (verifyResult==kYubiKeyDeviceManagerVerifyPINBlockedErr) {
+					done = YES;
+					NSAlert *alert = [NSAlert new];
+					alert.messageText = @"PIN code blocked";
+					alert.informativeText = @"Please unblock PIN code before use";
+					alert.alertStyle = NSAlertStyleCritical;
+					[alert runModal];
+				} else if (verifyResult==kYubiKeyDeviceManagerVerifyPINSuccess) {
+					done = YES;
+					NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",yubikey.model,yubikey.serial];
+					if(rememberPIN) {
+						NSString *labelStr = [NSString stringWithFormat:@"PIN for %@ SN#%@",yubikey.model,yubikey.serial];
+						[self->pinManager storePin:enteredPIN forKey:yubikey.serial withLabel:labelStr];
+					}
+					NSAlert *alert = [NSAlert alertWithMessageText:@"PIN successfully verified" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:(rememberPIN)?@"PIN saved in your keychain":@""];
+					[alert runModal];
+				} else {
+					[self->pinAlertIcon setHidden:NO];
+					[self->pinAlertLabel setStringValue:[NSString stringWithFormat:@"Invalid PIN. %u retries left.",verifyResult]];
+					[self->pinAlertLabel setHidden:NO];
+					[self shakeWindow:self->pinDialog];
+					continue;
+				}
+			} else if (res==NSModalResponseCancel) {
+				done = YES;
+			}
+		}
+		[self->pinDialog orderOut:self];
+		[self->pinTextField setStringValue:@""];
+		[self->pinTextField becomeFirstResponder];
+		[self->keyIDLabel setStringValue:@""];
+		[self->pinAlertIcon setHidden:YES];
+		[self->pinAlertLabel setHidden:YES];
+	});
 }
 
 - (void) addSSHKeyForYubiKey:(YubiKey*)yubikey {
@@ -201,7 +255,9 @@ NSString *pinText;
 		NSString *enteredPIN = nil;
 		[[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
 		while(!done) {
+			self.runningModal = YES;
 			NSModalResponse res = [[NSApplication sharedApplication] runModalForWindow:self->pinDialog];
+			self.runningModal = NO;
 			if(res==NSModalResponseOK) {
 				BOOL rememberPIN = NO;
 				enteredPIN  = [self->pinTextField stringValue];
@@ -256,17 +312,22 @@ NSString *pinText;
 	}
 }
 
-- (IBAction)verifyPINAction:(NSMenuItem*)sender {
+- (IBAction)verifyRememberPINAction:(NSMenuItem*)sender {
 	YubiKey *yubikey = ((__bridge YubiKey*)((void*)sender.tag));
-	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
-	NSLog(@"%@:%@",sender,yubikey.serial);
+//	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
+//	NSLog(@"%@:%@",sender,yubikey.serial);
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[self verifyAndStorePINForYubiKey:yubikey];
+	});
 }
 
 - (IBAction)forgetPINAction:(NSMenuItem*)sender {
 	YubiKey *yubikey = ((__bridge YubiKey*)((void*)sender.tag));
-	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
-	NSLog(@"%@:%@",sender,yubikey.serial);
-	[self->pinManager removePinForKey:yubikey.serial];
+//	NSLog(@"%@:%@",NSStringFromClass([self class]),NSStringFromSelector(_cmd));
+//	NSLog(@"%@:%@",sender,yubikey.serial);
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[self->pinManager removePinForKey:yubikey.serial];
+	});
 }
 
 - (IBAction)addKeyAction:(id)sender {

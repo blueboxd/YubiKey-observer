@@ -10,6 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSNotificationName PINManagerPINStoredNotificationKey;
+extern NSNotificationName PINManagerPINRemovedNotificationKey;
+
 @interface PINManager : NSObject
 - (BOOL)hasPinForKey:(NSString*)key;
 - (NSString* _Nullable)getPinForKey:(NSString*)key;

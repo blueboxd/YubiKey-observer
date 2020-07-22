@@ -8,8 +8,10 @@
 
 #import "PINManager.h"
 
-static NSString *keychainServiceName;
+NSNotificationName PINManagerPINStoredNotificationKey = @"PINManagerPINStoredNotificationKey";
+NSNotificationName PINManagerPINRemovedNotificationKey = @"PINManagerPINRemovedNotificationKey";
 
+static NSString *keychainServiceName;
 @implementation PINManager
 
 -(void) awakeFromNib {
@@ -71,6 +73,7 @@ static NSString *keychainServiceName;
 		CFRelease(description);
 		return err;
 	}
+	[[NSNotificationCenter defaultCenter] postNotificationName:PINManagerPINRemovedNotificationKey object:self userInfo:key];
 	return err;
 }
 
@@ -94,6 +97,8 @@ static NSString *keychainServiceName;
 		[query removeObjectForKey:(__bridge id)kSecAttrLabel];
 		err = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)changes);
 	}
+	if(!err)
+		[[NSNotificationCenter defaultCenter] postNotificationName:PINManagerPINStoredNotificationKey object:self userInfo:key];
 	return err;
 }
 

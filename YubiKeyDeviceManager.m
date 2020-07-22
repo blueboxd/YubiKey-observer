@@ -77,7 +77,7 @@ static YubiKeyDeviceManager *gSelf;
 	return readers;
 }
 
-- (NSDictionary*)getAnyYubiKey {
+- (YubiKey*)getAnyYubiKey {
 	return self.devices[[[self.devices allKeys] objectAtIndex:0]];
 }
 
@@ -107,7 +107,7 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	while ((usbDevice=IOIteratorNext(iterator))) {
 		YubiKey *yubikey = [gSelf getYubiKeyInfo:usbDevice];
 		if(yubikey) {
-			NSLog(@"initial device found:%@",[yubikey getUniqueString]);
+//			NSLog(@"initial device found:%@",[yubikey getUniqueString]);
 			[self addDevice:yubikey];
 		}
 	}
@@ -116,8 +116,8 @@ void IOServiceMatchedCallback(void* refcon, io_iterator_t iterator);
 	if(kr!=KERN_SUCCESS) return kr;
 	while ((usbDevice=IOIteratorNext(iterator))) {
 		YubiKey *yubikey = [gSelf getYubiKeyInfo:usbDevice];
-		if(yubikey)
-			NSLog(@"device found for termination:%@",[yubikey getUniqueString]);
+//		if(yubikey)
+//			NSLog(@"device found for termination:%@",[yubikey getUniqueString]);
 	}
 	[[NSRunLoop currentRunLoop] run];
 	return KERN_SUCCESS;
@@ -140,15 +140,15 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 		if(added) {
 			YubiKey *yubikey = [gSelf getYubiKeyInfo:usbDevice];
 			if(yubikey) {
-				NSLog(@"IOServiceMatchedCallback:YubiKey inserted");
+//				NSLog(@"IOServiceMatchedCallback:YubiKey inserted");
 				[gSelf addDevice:yubikey];
 			}
 		} else {
 			NSString *idStr = [YubiKey getUniqueStringFromIOService:usbDevice];
 			YubiKey *yubikey = gSelf.devices[idStr];
-			NSLog(@"IOServiceMatchedCallback::remove: %@",yubikey);
+//			NSLog(@"IOServiceMatchedCallback::remove: %@",yubikey);
 			if(yubikey) {
-				NSLog(@"IOServiceMatchedCallback:YubiKey removed");
+//				NSLog(@"IOServiceMatchedCallback:YubiKey removed");
 				[gSelf removeDevice:yubikey];
 			}
 		}
