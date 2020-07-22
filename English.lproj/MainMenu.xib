@@ -350,6 +350,7 @@
         <customObject id="PN1-jL-m82" userLabel="PIN Manager" customClass="PINManager"/>
         <customObject id="eRN-I1-FGU" customClass="StatusMenuManager">
             <connections>
+                <outlet property="pinManager" destination="PN1-jL-m82" id="6zh-PJ-Gfu"/>
                 <outlet property="sshkeysSubMenu" destination="pzj-C8-Z08" id="LSs-ax-sE0"/>
                 <outlet property="statusMenu" destination="627" id="Dsv-Fy-q3m"/>
                 <outlet property="yubikeysSubMenu" destination="rac-g7-ufQ" id="sqf-ju-FXD"/>
@@ -596,9 +597,6 @@ Gw
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
                                     </buttonCell>
-                                    <connections>
-                                        <action selector="forgetPINAction:" target="494" id="650"/>
-                                    </connections>
                                 </button>
                                 <button id="606">
                                     <rect key="frame" x="16" y="42" width="210" height="18"/>
@@ -759,25 +757,58 @@ Gw
             <point key="canvasLocation" x="-290" y="-298"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
-        <menu id="627" userLabel="StatusMenu">
+        <menu autoenablesItems="NO" id="627" userLabel="StatusMenu">
             <items>
-                <menuItem title="YubiKeys" id="6Rr-dg-N9X">
+                <menuItem title="YubiKeys" enabled="NO" id="6Rr-dg-N9X">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="YubiKeys" id="rac-g7-ufQ"/>
+                    <connections>
+                        <binding destination="494" name="enabled2" keyPath="self.runningModal" previousBinding="oJa-Ca-chA" id="S0z-kc-4vN">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                <integer key="NSNullPlaceholder" value="-1"/>
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.deviceInserted" id="oJa-Ca-chA"/>
+                    </connections>
                 </menuItem>
-                <menuItem title="Identities" id="N7U-XZ-LrI">
+                <menuItem title="Identities" enabled="NO" id="N7U-XZ-LrI">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Identities" autoenablesItems="NO" id="pzj-C8-Z08"/>
+                    <connections>
+                        <binding destination="494" name="enabled2" keyPath="self.runningModal" previousBinding="7DC-xK-wKl" id="abi-WY-z1I">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                <integer key="NSNullPlaceholder" value="-1"/>
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.anyKeysAdded" id="7DC-xK-wKl"/>
+                    </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="ZJe-2e-Gh5"/>
                 <menuItem title="Add Identities" hidden="YES" enabled="NO" id="HJf-zz-hAk">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="addKeyAction:" target="494" id="wfX-tJ-FkT"/>
+                        <binding destination="494" name="enabled3" keyPath="self.runningModal" previousBinding="UYo-6M-uDn" id="GIL-mJ-IAV">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                <integer key="NSNullPlaceholder" value="-1"/>
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.ourKeysAdded" previousBinding="GIL-mJ-IAV" id="ly2-x5-edt"/>
                         <binding destination="eRN-I1-FGU" name="enabled" keyPath="self.deviceInserted" id="lom-6V-Egt"/>
-                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="UYo-6M-uDn" id="GWM-a4-qBU"/>
                         <binding destination="494" name="enabled2" keyPath="self.pkcsProviderExists" previousBinding="lom-6V-Egt" id="UYo-6M-uDn">
                             <dictionary key="options">
                                 <integer key="NSMultipleValuesPlaceholder" value="-1"/>
@@ -792,7 +823,16 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="removeKeyAction:" target="494" id="tKi-4j-B0b"/>
-                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.keyAdded" previousBinding="hZg-LY-965" id="Raf-WJ-cdE">
+                        <binding destination="494" name="enabled2" keyPath="self.runningModal" previousBinding="hZg-LY-965" id="AHN-hU-YU8">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                <integer key="NSNullPlaceholder" value="-1"/>
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="eRN-I1-FGU" name="hidden" keyPath="self.ourKeysAdded" previousBinding="AHN-hU-YU8" id="av5-sP-goz">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                             </dictionary>
@@ -813,6 +853,11 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="preferenceAction:" target="494" id="643"/>
+                        <binding destination="494" name="enabled" keyPath="self.runningModal" id="Un9-hn-2zj">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="644"/>
@@ -820,6 +865,11 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="orderFrontStandardAboutPanel:" target="-1" id="uqm-Wk-WMl"/>
+                        <binding destination="494" name="enabled" keyPath="self.runningModal" id="006-Hz-3DR">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="oso-KC-tY4"/>
