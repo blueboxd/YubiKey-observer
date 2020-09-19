@@ -57,7 +57,7 @@ IBOutlet	PINManager* pinManager;
 
 	self.menuIcon = statusIcons[kStateNone];
 	[self addObserver:self forKeyPath:@"deviceInserted" options:NSKeyValueObservingOptionNew context:nil];
-	[self addObserver:self forKeyPath:@"keyAdded" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"ourKeysAdded" options:NSKeyValueObservingOptionNew context:nil];
 	[self addObserver:self forKeyPath:@"addCmdFailed" options:NSKeyValueObservingOptionNew context:nil];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceAdded:) name:YubiKeyDeviceManagerKeyInsertedNotificationKey object:nil];

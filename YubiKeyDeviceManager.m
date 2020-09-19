@@ -72,7 +72,7 @@ static YubiKeyDeviceManager *gSelf;
 		pos += strlen(pos)+1;
 	}
 //	free(mszReaders);
-	NSLog(@"readers found:%@",readers);
+//	NSLog(@"readers found:%@",readers);
 	rv = SCardReleaseContext(hContext);
 	return readers;
 }
@@ -156,19 +156,20 @@ void IOServiceMatchedCallback(void* added, io_iterator_t iterator) {
 }
 
 -(void) WaitTillRecognized {
-	uint64_t start,end,diff;
-	start=clock_gettime_nsec_np(_CLOCK_REALTIME);
+//	uint64_t start,end,diff;
+//	start=clock_gettime_nsec_np(_CLOCK_REALTIME);
 	NSArray *readers = [self getAllCardReaders];
+	NSUInteger curCount = [self.devices count];
 	int i=0;
-	for(;[readers count]==[self.devices count];i++) {
+	for(;[readers count]==curCount;i++) {
 		usleep(5000);
 		readers = [self getAllCardReaders];
 		if(i>100)
 			break;
 	}
-	end=clock_gettime_nsec_np(_CLOCK_REALTIME);
-	diff=end-start;
-	NSLog(@"WaitTillRecognized:%u, %llu ns",i,diff);
+//	end=clock_gettime_nsec_np(_CLOCK_REALTIME);
+//	diff=end-start;
+//	NSLog(@"WaitTillRecognized:%u, %llu ns",i,diff);
 }
 
 - (YubiKey*)getYubiKeyInfo:(io_service_t)usbDevice {

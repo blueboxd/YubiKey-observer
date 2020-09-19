@@ -346,9 +346,9 @@ static YubiKey *gSelf;
 
 	if(!devInfo[YubiKeyDevicePropertyVersionKey]) {
 		[self sendAPDU:cmdSelectPIV size:sizeof(cmdSelectPIV) result:&res resultLength:&len];
-		if(res[len-2]==0x90) {
+		if(len && res[len-2]==0x90) {
 			[self sendAPDU:cmdPIVGetVersion size:sizeof(cmdPIVGetVersion) result:&res resultLength:&len];
-			if(res[len-2]==0x90)
+			if(len && res[len-2]==0x90)
 				devInfo[YubiKeyDevicePropertyVersionKey] = [NSString stringWithFormat:@"%d.%d.%d",res[0],res[1],res[2]];
 		}
 	}
@@ -384,7 +384,7 @@ static YubiKey *gSelf;
 	[self sendAPDU:verifyPINCmd size:sizeof(verifyPINCmd) result:&res resultLength:&len];
 	[self closeConnection];
 
-	if (res[0]==0x90) {
+	if (len && res[0]==0x90) {
 		return kYubiKeyDeviceManagerVerifyPINSuccess;
 	} else {
 		printf("verifyPINCmd Failed:\n");

@@ -49,9 +49,11 @@ static NSString *keychainServiceName;
 	CFDataRef result=nil;
 	OSStatus err = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef)&result);
 	if(err) {
-		CFStringRef description = SecCopyErrorMessageString(err, nil);
-		NSLog(@"err:%d (%@)",err,description);
-		CFRelease(description);
+		if(err!=errSecItemNotFound) {
+			CFStringRef description = SecCopyErrorMessageString(err, nil);
+			NSLog(@"err:%d (%@)",err,description);
+			CFRelease(description);
+		}
 		return nil;
 	}
 	NSString *passwd = [[NSString alloc] initWithData:(__bridge NSData*)result encoding:NSUTF8StringEncoding];

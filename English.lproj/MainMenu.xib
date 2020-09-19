@@ -479,14 +479,14 @@ Gw
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="590" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="1178" y="382" width="437" height="530"/>
+            <rect key="contentRect" x="1178" y="382" width="437" height="503"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1578"/>
             <view key="contentView" id="591">
-                <rect key="frame" x="0.0" y="0.0" width="437" height="530"/>
+                <rect key="frame" x="0.0" y="0.0" width="437" height="503"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box autoresizesSubviews="NO" borderType="line" title="Actions on device insertion" id="592">
-                        <rect key="frame" x="17" y="415" width="403" height="95"/>
+                        <rect key="frame" x="17" y="388" width="403" height="95"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="7Ow-22-Txh">
                             <rect key="frame" x="1" y="1" width="401" height="79"/>
@@ -529,7 +529,7 @@ Gw
                         </view>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="Actions on device removal" id="598">
-                        <rect key="frame" x="17" y="295" width="403" height="116"/>
+                        <rect key="frame" x="17" y="268" width="403" height="116"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="UA2-uN-Wvs">
                             <rect key="frame" x="1" y="1" width="401" height="100"/>
@@ -584,22 +584,14 @@ Gw
                         </view>
                     </box>
                     <box autoresizesSubviews="NO" borderType="line" title="PIN cache policy" id="603">
-                        <rect key="frame" x="17" y="207" width="403" height="84"/>
+                        <rect key="frame" x="17" y="207" width="403" height="57"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="JLh-T4-Lw1">
-                            <rect key="frame" x="1" y="1" width="401" height="68"/>
+                            <rect key="frame" x="1" y="1" width="401" height="41"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <button verticalHuggingPriority="750" id="604">
-                                    <rect key="frame" x="12" y="6" width="100" height="32"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="push" title="Forget now" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="605">
-                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="smallSystem"/>
-                                    </buttonCell>
-                                </button>
                                 <button id="606">
-                                    <rect key="frame" x="16" y="42" width="210" height="18"/>
+                                    <rect key="frame" x="16" y="15" width="210" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Forget cached PIN after input:" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="607">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -610,7 +602,7 @@ Gw
                                     </connections>
                                 </button>
                                 <textField verticalHuggingPriority="750" id="608">
-                                    <rect key="frame" x="230" y="40" width="33" height="22"/>
+                                    <rect key="frame" x="230" y="13" width="33" height="22"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="999" placeholderString="60" drawsBackground="YES" id="609">
                                         <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="651"/>
@@ -628,7 +620,7 @@ Gw
                                     </connections>
                                 </textField>
                                 <textField verticalHuggingPriority="750" id="610">
-                                    <rect key="frame" x="268" y="43" width="56" height="17"/>
+                                    <rect key="frame" x="268" y="16" width="56" height="17"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="min." id="611">
                                         <font key="font" metaFont="system"/>
@@ -754,7 +746,7 @@ Gw
                     </box>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-290" y="-298"/>
+            <point key="canvasLocation" x="-290.5" y="-311.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="622"/>
         <menu autoenablesItems="NO" id="627" userLabel="StatusMenu">
